@@ -4,44 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Le parcours de soins</title>
+<title>Jeu du parcours de soins</title>
 
 <style>
 
 /* =========================================================
-   VARIABLES
-========================================================= */
-
-:root {
-    --blue: #2457a6;
-    --blue-dark: #173b73;
-    --blue-light: #eaf2ff;
-
-    --green: #24a06b;
-    --green-light: #e8f8f0;
-
-    --red: #d94c4c;
-    --red-light: #fff0f0;
-
-    --orange: #ed9b35;
-    --yellow: #f5c84b;
-
-    --purple: #7357b8;
-
-    --dark: #202938;
-    --gray: #697386;
-    --light: #f4f6fa;
-    --white: #ffffff;
-
-    --shadow:
-        0 12px 30px rgba(20, 42, 75, 0.12);
-
-    --radius: 20px;
-}
-
-
-/* =========================================================
-   RESET
+   BASE
 ========================================================= */
 
 * {
@@ -52,27 +20,18 @@ html,
 body {
     margin: 0;
     padding: 0;
+    width: 100%;
     min-height: 100%;
 }
 
 body {
     font-family:
-        Inter,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
+        Arial,
+        Helvetica,
         sans-serif;
 
-    background:
-        radial-gradient(
-            circle at top,
-            #edf4ff 0%,
-            #f5f7fb 45%,
-            #e9edf4 100%
-        );
-
-    color: var(--dark);
+    background: #eef2f7;
+    color: #202938;
 }
 
 
@@ -81,204 +40,192 @@ body {
 ========================================================= */
 
 .screen {
+    width: 100%;
     min-height: 100vh;
+
     display: none;
-    padding: 30px;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 25px;
 }
 
 .screen.active {
     display: flex;
 }
 
-.hidden {
-    display: none !important;
-}
-
-
-/* =========================================================
-   ÉCRAN D'ACCUEIL
-========================================================= */
-
-#setupScreen {
-    align-items: center;
-    justify-content: center;
-}
-
-.setup-container {
-    width: min(950px, 100%);
-    background: white;
-    border-radius: 30px;
-    box-shadow: var(--shadow);
-    overflow: hidden;
-}
-
-.setup-header {
-    background:
-        linear-gradient(
-            135deg,
-            var(--blue-dark),
-            var(--blue)
-        );
-
-    color: white;
-    text-align: center;
-    padding: 45px 30px;
-}
-
-.setup-header .icon {
-    font-size: 70px;
-    margin-bottom: 10px;
-}
-
-.setup-header h1 {
-    margin: 0;
-    font-size: clamp(32px, 5vw, 55px);
-}
-
-.setup-header p {
-    margin: 12px 0 0;
-    font-size: 18px;
-    opacity: .9;
-}
-
-.setup-body {
-    padding: 35px;
-}
-
-.setup-body h2 {
-    text-align: center;
-    margin-top: 0;
-}
-
-.players-grid {
-    display: grid;
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap: 15px;
-    margin: 25px 0;
-}
-
-.player-input {
-    position: relative;
-}
-
-.player-input input {
-    width: 100%;
-    border: 2px solid #dfe5ef;
-    border-radius: 13px;
-    padding: 15px 15px 15px 48px;
-    font-size: 16px;
-    outline: none;
-    transition: .2s;
-}
-
-.player-input input:focus {
-    border-color: var(--blue);
-    box-shadow:
-        0 0 0 4px
-        rgba(36,87,166,.10);
-}
-
-.player-color {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-}
-
-.color-1 { background: #e74c3c; }
-.color-2 { background: #2980b9; }
-.color-3 { background: #27ae60; }
-.color-4 { background: #8e44ad; }
-.color-5 { background: #f39c12; }
-.color-6 { background: #16a085; }
-
 
 /* =========================================================
    BOUTONS
 ========================================================= */
 
-.game-button {
-    border: 0;
-    border-radius: 15px;
-    padding: 16px 28px;
-    background:
-        linear-gradient(
-            135deg,
-            var(--blue),
-            var(--blue-dark)
-        );
+button {
+    font-family: inherit;
+}
 
+.main-button {
+    border: none;
+
+    background: #2457a6;
     color: white;
-    font-size: 16px;
-    font-weight: 800;
-    cursor: pointer;
 
-    box-shadow:
-        0 7px 15px
-        rgba(36,87,166,.25);
+    padding: 18px 35px;
+
+    border-radius: 14px;
+
+    font-size: 20px;
+    font-weight: bold;
+
+    cursor: pointer;
 
     transition:
         transform .15s,
-        box-shadow .15s,
-        opacity .15s;
+        background .15s;
 }
 
-.game-button:hover {
+.main-button:hover {
+    background: #173b73;
     transform: translateY(-2px);
-    box-shadow:
-        0 10px 20px
-        rgba(36,87,166,.3);
 }
 
-.game-button:active {
-    transform: translateY(1px);
-}
-
-.game-button:disabled {
-    opacity: .45;
+.main-button:disabled {
+    opacity: .5;
     cursor: not-allowed;
     transform: none;
 }
 
-.full-button {
-    width: 100%;
-}
-
 
 /* =========================================================
-   ÉCRAN DÉ
+   ÉCRAN 1 : JOUEURS
 ========================================================= */
 
-#diceScreen {
-    align-items: center;
-    justify-content: center;
+#playersScreen {
+    background:
+        linear-gradient(
+            135deg,
+            #edf4ff,
+            #f8fafc
+        );
 }
 
-.dice-container {
-    width: min(600px, 100%);
+.players-box {
+    width: min(700px, 100%);
+
+    background: white;
+
+    border-radius: 25px;
+
+    padding: 45px;
+
+    box-shadow:
+        0 15px 45px rgba(20,40,70,.15);
+
     text-align: center;
 }
 
-.turn-badge {
-    display: inline-block;
-    background: white;
-    color: var(--blue);
-    font-weight: 900;
-    padding: 9px 17px;
-    border-radius: 30px;
-    box-shadow: var(--shadow);
-    margin-bottom: 25px;
+.players-box h1 {
+    margin: 0 0 10px;
+
+    color: #173b73;
+
+    font-size: clamp(32px, 5vw, 50px);
 }
 
-.big-player-token {
-    width: 80px;
-    height: 80px;
+.players-box p {
+    color: #697386;
+    font-size: 18px;
+}
+
+.players-list {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 15px;
+
+    margin: 30px 0;
+}
+
+.player-field {
+    position: relative;
+}
+
+.player-field input {
+    width: 100%;
+
+    padding: 16px 16px 16px 48px;
+
+    border:
+        2px solid #dce2eb;
+
+    border-radius: 12px;
+
+    font-size: 17px;
+
+    outline: none;
+}
+
+.player-field input:focus {
+    border-color: #2457a6;
+}
+
+.player-color {
+    position: absolute;
+
+    width: 20px;
+    height: 20px;
+
     border-radius: 50%;
+
+    left: 17px;
+    top: 50%;
+
+    transform: translateY(-50%);
+}
+
+.c1 { background:#e74c3c; }
+.c2 { background:#2980b9; }
+.c3 { background:#27ae60; }
+.c4 { background:#8e44ad; }
+.c5 { background:#f39c12; }
+.c6 { background:#16a085; }
+
+
+/* =========================================================
+   ÉCRAN 2 : DÉ
+========================================================= */
+
+#diceScreen {
+    background:
+        linear-gradient(
+            135deg,
+            #edf4ff,
+            #f7f9fc
+        );
+}
+
+.dice-only {
+    width: min(650px, 100%);
+
+    text-align: center;
+}
+
+.dice-only h1 {
+    font-size: clamp(38px, 7vw, 65px);
+
+    color: #173b73;
+
+    margin: 20px 0 40px;
+}
+
+.player-circle {
+    width: 100px;
+    height: 100px;
+
+    border-radius: 50%;
+
     margin: auto;
 
     display: flex;
@@ -286,31 +233,23 @@ body {
     justify-content: center;
 
     color: white;
-    font-size: 30px;
-    font-weight: 900;
+
+    font-size: 38px;
+    font-weight: bold;
 
     border: 7px solid white;
 
     box-shadow:
-        0 10px 25px
-        rgba(0,0,0,.18);
+        0 10px 30px rgba(0,0,0,.2);
 }
 
-#dicePlayerName {
-    font-size: 42px;
-    margin: 15px 0 5px;
-}
+.dice {
+    width: 180px;
+    height: 180px;
 
-.dice-subtitle {
-    color: var(--gray);
-    font-size: 18px;
-}
+    margin: 0 auto 40px;
 
-.big-dice {
-    width: 150px;
-    height: 150px;
-
-    margin: 35px auto;
+    background: white;
 
     border-radius: 30px;
 
@@ -318,241 +257,181 @@ body {
     align-items: center;
     justify-content: center;
 
-    background: white;
-
-    font-size: 90px;
+    font-size: 110px;
 
     box-shadow:
-        0 15px 35px
-        rgba(30,50,90,.20);
+        0 15px 35px rgba(20,40,70,.2);
 }
 
-.big-dice.rolling {
+.dice.rolling {
     animation:
-        diceRoll .12s linear infinite;
+        roll .1s linear infinite;
 }
 
-@keyframes diceRoll {
+@keyframes roll {
+
     0% {
-        transform: rotate(0deg) scale(1);
+        transform: rotate(-5deg);
     }
 
     50% {
-        transform: rotate(8deg) scale(1.05);
+        transform: rotate(5deg) scale(1.05);
     }
 
     100% {
-        transform: rotate(-8deg) scale(1);
+        transform: rotate(-5deg);
     }
 }
 
 
 /* =========================================================
-   ÉCRAN QUESTION
+   ÉCRAN 3 : QUESTION
 ========================================================= */
 
 #questionScreen {
-    align-items: center;
-    justify-content: center;
+    background: #f5f7fa;
 }
 
-.question-container {
-    width: min(850px, 100%);
-}
+.question-box {
+    width: min(900px, 100%);
 
-.question-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-
-    margin-bottom: 18px;
-}
-
-.question-label {
-    background: var(--blue);
-    color: white;
-    padding: 10px 16px;
-    border-radius: 12px;
-    font-weight: 900;
-}
-
-.difficulty {
-    padding: 10px 16px;
-    border-radius: 12px;
-    font-weight: 800;
-    background: #edf1f7;
-}
-
-.question-card {
     background: white;
+
     border-radius: 25px;
-    padding: 35px;
-    box-shadow: var(--shadow);
+
+    padding: 45px;
+
+    box-shadow:
+        0 15px 45px rgba(20,40,70,.15);
 }
 
-.question-card h2 {
-    font-size: clamp(23px, 4vw, 32px);
+.question-box h1 {
+    font-size: clamp(25px, 4vw, 37px);
+
     line-height: 1.35;
+
     margin-top: 0;
+
+    color: #202938;
 }
 
-.qcm {
+.options {
     display: grid;
-    gap: 13px;
-    margin-top: 30px;
-}
 
-.qcm-option {
-    display: flex;
-    align-items: center;
     gap: 15px;
 
-    width: 100%;
+    margin-top: 35px;
+}
 
-    padding: 17px;
+.option {
+    border:
+        2px solid #dce2eb;
 
     background: white;
 
-    border: 2px solid #dfe5ee;
+    padding: 18px;
 
-    border-radius: 15px;
-
-    text-align: left;
-
-    font-size: 17px;
-    font-weight: 650;
+    border-radius: 14px;
 
     cursor: pointer;
 
-    transition: .18s;
+    text-align: left;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    font-size: 18px;
+
+    transition: .15s;
 }
 
-.qcm-option:hover:not(:disabled) {
-    border-color: var(--blue);
-    background: var(--blue-light);
-    transform: translateX(3px);
+.option:hover {
+    border-color: #2457a6;
+
+    background: #edf4ff;
 }
 
-.qcm-option:disabled {
-    cursor: default;
-}
+.option-letter {
+    width: 43px;
+    height: 43px;
 
-.qcm-letter {
-    flex: 0 0 40px;
-
-    width: 40px;
-    height: 40px;
+    flex-shrink: 0;
 
     border-radius: 50%;
+
+    background: #edf1f7;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    background: #edf1f7;
+    font-weight: bold;
 
-    font-weight: 900;
-    color: var(--blue-dark);
+    color: #173b73;
 }
 
-.qcm-option.correct {
-    border-color: var(--green);
-    background: var(--green-light);
+.option.correct {
+    border-color: #24a06b;
+    background: #e8f8f0;
 }
 
-.qcm-option.correct .qcm-letter {
-    background: var(--green);
+.option.correct .option-letter {
+    background: #24a06b;
     color: white;
 }
 
-.qcm-option.incorrect {
-    border-color: var(--red);
-    background: var(--red-light);
+.option.wrong {
+    border-color: #d94c4c;
+    background: #fff0f0;
 }
 
-.qcm-option.incorrect .qcm-letter {
-    background: var(--red);
+.option.wrong .option-letter {
+    background: #d94c4c;
     color: white;
 }
 
 .feedback {
-    margin-top: 22px;
+    margin-top: 25px;
+
     padding: 20px;
-    border-radius: 17px;
+
+    border-radius: 14px;
+
     line-height: 1.5;
+
+    font-size: 17px;
 }
 
-.feedback.correct {
-    background: var(--green-light);
-    border: 2px solid #a8dfc4;
+.feedback.good {
+    background: #e8f8f0;
+    border: 2px solid #9dd9bb;
 }
 
-.feedback.incorrect {
-    background: var(--red-light);
-    border: 2px solid #efb3b3;
+.feedback.bad {
+    background: #fff0f0;
+    border: 2px solid #eab0b0;
 }
 
-.feedback strong {
-    font-size: 20px;
+.feedback button {
+    margin-top: 15px;
 }
 
 
 /* =========================================================
-   ÉCRAN PLATEAU
+   ÉCRAN 4 : PLATEAU
 ========================================================= */
 
 #boardScreen {
-    flex-direction: column;
+    background: #eef2f7;
+
     align-items: center;
 }
 
-.board-container {
+.board-wrapper {
     width: min(1200px, 100%);
-}
-
-.board-header {
-    width: 100%;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    background: white;
-
-    padding: 20px 25px;
-
-    border-radius: 20px;
-
-    box-shadow: var(--shadow);
-
-    margin-bottom: 20px;
-}
-
-.board-player {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-}
-
-.small-token {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    border: 4px solid white;
-    box-shadow: 0 4px 10px rgba(0,0,0,.18);
-}
-
-.board-player h2 {
-    margin: 0;
-}
-
-.movement {
-    background: var(--blue-light);
-    color: var(--blue-dark);
-    border-radius: 13px;
-    padding: 12px 18px;
-    font-weight: 800;
 }
 
 .board {
@@ -563,262 +442,249 @@ body {
 
     gap: 10px;
 
+    padding: 20px;
+
     background:
         linear-gradient(
             135deg,
-            #dfeaff,
-            #edf3fc
+            #dce8f8,
+            #edf3fb
         );
-
-    padding: 18px;
 
     border-radius: 25px;
 
-    box-shadow: var(--shadow);
+    box-shadow:
+        0 15px 40px rgba(20,40,70,.15);
 }
 
 .cell {
-    min-height: 105px;
+    min-height: 110px;
 
     background: white;
 
-    border-radius: 15px;
+    border-radius: 14px;
 
-    border: 3px solid transparent;
-
-    padding: 9px;
+    border: 3px solid #dce2eb;
 
     display: flex;
+
     flex-direction: column;
-    align-items: center;
+
     justify-content: center;
+
+    align-items: center;
 
     text-align: center;
 
+    padding: 8px;
+
     position: relative;
+}
+
+.cell.start {
+    background: #e8f8f0;
+    border-color: #75c99c;
+}
+
+.cell.special {
+    background: #fff7e6;
+    border-color: #f0c96a;
+}
+
+.cell.finish {
+    background: #eee9ff;
+    border-color: #ad9ae8;
+}
+
+.cell.current {
+    border:
+        5px solid #2457a6;
 
     box-shadow:
-        0 4px 10px
-        rgba(20,40,70,.08);
+        0 0 0 5px
+        rgba(36,87,166,.15);
 }
 
 .cell-number {
-    font-size: 11px;
+    font-size: 10px;
     color: #8792a5;
-    font-weight: 900;
+    font-weight: bold;
 }
 
 .cell-icon {
     font-size: 28px;
-    margin: 3px 0;
+    margin: 5px;
 }
 
-.cell-label {
+.cell-name {
     font-size: 12px;
-    font-weight: 800;
+    font-weight: bold;
 }
 
-.cell.start {
-    background: #e9f8f0;
-    border-color: #72c99d;
-}
+.pawns {
+    position: absolute;
 
-.cell.health {
-    background: #eef5ff;
-    border-color: #a7c8f7;
-}
+    bottom: 5px;
 
-.cell.warning {
-    background: #fff8e9;
-    border-color: #f1cc76;
-}
-
-.cell.finish {
-    background: #eeeaff;
-    border-color: #b5a5eb;
-}
-
-.cell.current {
-    border-color: var(--blue);
-    box-shadow:
-        0 0 0 5px
-        rgba(36,87,166,.15),
-        0 8px 18px
-        rgba(36,87,166,.15);
-}
-
-.tokens {
     display: flex;
-    margin-top: 5px;
 }
 
-.token {
-    width: 19px;
-    height: 19px;
+.pawn {
+    width: 21px;
+    height: 21px;
+
     border-radius: 50%;
+
     border: 2px solid white;
-    margin-left: -3px;
-    box-shadow: 0 2px 5px rgba(0,0,0,.2);
+
+    margin-left: -4px;
+
+    box-shadow:
+        0 2px 5px rgba(0,0,0,.2);
 }
 
-.board-message {
-    margin: 20px 0;
-
-    width: 100%;
-
-    background: white;
-
-    padding: 18px;
-
+.board-text {
     text-align: center;
 
-    border-radius: 16px;
+    font-size: 25px;
 
-    box-shadow: var(--shadow);
+    font-weight: bold;
+
+    margin-bottom: 20px;
+
+    color: #173b73;
+}
+
+.move-button-container {
+    text-align: center;
+
+    margin-top: 25px;
 }
 
 
 /* =========================================================
-   FIN DU TOUR
+   ÉCRAN 5 : FIN DU TOUR
 ========================================================= */
 
-#nextScreen {
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+#endTurnScreen {
+    background:
+        linear-gradient(
+            135deg,
+            #edf4ff,
+            #f7f9fc
+        );
 }
 
-.next-container {
+.end-turn-box {
     width: min(600px, 100%);
+
     background: white;
-    border-radius: 28px;
-    padding: 45px 30px;
-    box-shadow: var(--shadow);
+
+    padding: 50px 35px;
+
+    border-radius: 25px;
+
+    text-align: center;
+
+    box-shadow:
+        0 15px 45px rgba(20,40,70,.15);
 }
 
-.next-icon {
-    font-size: 65px;
+.end-turn-box h1 {
+    color: #173b73;
+
+    font-size: 42px;
 }
 
-.next-container h1 {
-    font-size: 38px;
-    margin: 10px 0;
-}
+.next-player-label {
+    color: #697386;
 
-.next-player {
-    margin: 25px 0;
-    background: var(--blue-light);
-    border-radius: 17px;
-    padding: 20px;
-}
+    font-weight: bold;
 
-.next-player span {
-    display: block;
-    color: var(--gray);
-    font-size: 13px;
-    font-weight: 800;
     text-transform: uppercase;
+
+    margin-top: 30px;
 }
 
-.next-player strong {
-    display: block;
-    color: var(--blue-dark);
-    font-size: 30px;
-    margin-top: 5px;
+.next-player-name {
+    font-size: 35px;
+
+    color: #2457a6;
+
+    font-weight: bold;
+
+    margin: 8px 0 30px;
 }
 
 
 /* =========================================================
-   FIN DE PARTIE
+   ÉCRAN FIN DE PARTIE
 ========================================================= */
 
 #winnerScreen {
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+    background:
+        linear-gradient(
+            135deg,
+            #fff8dd,
+            #edf4ff
+        );
 }
 
-.winner-container {
+.winner-box {
     width: min(700px, 100%);
+
     background: white;
+
     border-radius: 30px;
-    padding: 45px;
-    box-shadow: var(--shadow);
+
+    padding: 50px;
+
+    text-align: center;
+
+    box-shadow:
+        0 15px 45px rgba(20,40,70,.15);
 }
 
-.winner-trophy {
+.trophy {
     font-size: 90px;
 }
 
-.winner-container h1 {
+.winner-box h1 {
     font-size: 45px;
-    margin: 5px 0;
+
+    color: #173b73;
+}
+
+.winner-name {
+    font-size: 35px;
+
+    font-weight: bold;
+
+    color: #2457a6;
+
+    margin: 20px;
 }
 
 .scores {
-    margin: 30px 0;
     display: grid;
+
     gap: 10px;
+
+    margin: 30px 0;
 }
 
-.score-line {
+.score {
+    padding: 15px;
+
+    border-radius: 12px;
+
+    background: #f1f4f8;
+
     display: flex;
+
     justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    background: var(--light);
-    border-radius: 13px;
-}
 
-.score-line:first-child {
-    background: #fff4cf;
-    border: 2px solid #f1d36b;
-}
-
-.score-name {
-    font-weight: 850;
-}
-
-.score-points {
-    font-weight: 900;
-    color: var(--blue);
-}
-
-
-/* =========================================================
-   MESSAGE
-========================================================= */
-
-.toast {
-    position: fixed;
-
-    left: 50%;
-    bottom: 25px;
-
-    transform:
-        translate(-50%, 120px);
-
-    background: #202938;
-    color: white;
-
-    padding: 14px 22px;
-
-    border-radius: 13px;
-
-    font-weight: 700;
-
-    box-shadow:
-        0 8px 25px
-        rgba(0,0,0,.25);
-
-    transition: .3s;
-
-    z-index: 999;
-}
-
-.toast.show {
-    transform:
-        translate(-50%, 0);
+    font-weight: bold;
 }
 
 
@@ -828,13 +694,13 @@ body {
 
 @media(max-width: 800px) {
 
-    .screen {
-        padding: 15px;
+    .players-list {
+        grid-template-columns: 1fr;
     }
 
-    .players-grid {
-        grid-template-columns:
-            repeat(2, 1fr);
+    .players-box,
+    .question-box {
+        padding: 25px;
     }
 
     .board {
@@ -842,6 +708,7 @@ body {
             repeat(4, 1fr);
 
         gap: 6px;
+
         padding: 10px;
     }
 
@@ -849,19 +716,12 @@ body {
         min-height: 85px;
     }
 
-    .board-header {
-        padding: 15px;
-    }
 }
 
 @media(max-width: 550px) {
 
-    .players-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .setup-body {
-        padding: 22px;
+    .screen {
+        padding: 15px;
     }
 
     .board {
@@ -869,37 +729,10 @@ body {
             repeat(3, 1fr);
     }
 
-    .board-header {
-        flex-direction: column;
-        gap: 12px;
-        align-items: flex-start;
-    }
-
-    #dicePlayerName {
-        font-size: 34px;
-    }
-
-    .big-dice {
-        width: 125px;
-        height: 125px;
-        font-size: 75px;
-    }
-
-}
-
-
-/* =========================================================
-   IMPRESSION
-========================================================= */
-
-@media print {
-
-    body {
-        background: white;
-    }
-
-    .screen {
-        display: none !important;
+    .dice {
+        width: 140px;
+        height: 140px;
+        font-size: 85px;
     }
 
 }
@@ -911,107 +744,85 @@ body {
 <body>
 
 
-<!-- =======================================================
-     ÉCRAN DE CONFIGURATION
-======================================================== -->
+<!-- ======================================================
+     1 — INSCRIPTION DES JOUEURS
+====================================================== -->
 
 <section
-    id="setupScreen"
+    id="playersScreen"
     class="screen active"
 >
 
-    <div class="setup-container">
+    <div class="players-box">
 
-        <div class="setup-header">
+        <h1>
+            🩺 Parcours de soins
+        </h1>
 
-            <div class="icon">
-                🩺
+        <p>
+            Inscrivez les joueurs pour commencer la partie.
+        </p>
+
+
+        <div class="players-list">
+
+            <div class="player-field">
+                <span class="player-color c1"></span>
+                <input
+                    id="player1"
+                    placeholder="Joueur 1"
+                >
             </div>
 
-            <h1>
-                Le parcours de soins
-            </h1>
+            <div class="player-field">
+                <span class="player-color c2"></span>
+                <input
+                    id="player2"
+                    placeholder="Joueur 2"
+                >
+            </div>
 
-            <p>
-                Un jeu pour comprendre comment fonctionne
-                le parcours de soins coordonné.
-            </p>
+            <div class="player-field">
+                <span class="player-color c3"></span>
+                <input
+                    id="player3"
+                    placeholder="Joueur 3"
+                >
+            </div>
+
+            <div class="player-field">
+                <span class="player-color c4"></span>
+                <input
+                    id="player4"
+                    placeholder="Joueur 4"
+                >
+            </div>
+
+            <div class="player-field">
+                <span class="player-color c5"></span>
+                <input
+                    id="player5"
+                    placeholder="Joueur 5"
+                >
+            </div>
+
+            <div class="player-field">
+                <span class="player-color c6"></span>
+                <input
+                    id="player6"
+                    placeholder="Joueur 6"
+                >
+            </div>
 
         </div>
 
 
-        <div class="setup-body">
-
-            <h2>
-                👥 Qui joue ?
-            </h2>
-
-            <p style="text-align:center;color:#697386;">
-                Inscris entre 2 et 6 joueurs.
-            </p>
-
-
-            <div class="players-grid">
-
-                <div class="player-input">
-                    <span class="player-color color-1"></span>
-                    <input
-                        id="player1"
-                        placeholder="Joueur 1"
-                    >
-                </div>
-
-                <div class="player-input">
-                    <span class="player-color color-2"></span>
-                    <input
-                        id="player2"
-                        placeholder="Joueur 2"
-                    >
-                </div>
-
-                <div class="player-input">
-                    <span class="player-color color-3"></span>
-                    <input
-                        id="player3"
-                        placeholder="Joueur 3"
-                    >
-                </div>
-
-                <div class="player-input">
-                    <span class="player-color color-4"></span>
-                    <input
-                        id="player4"
-                        placeholder="Joueur 4"
-                    >
-                </div>
-
-                <div class="player-input">
-                    <span class="player-color color-5"></span>
-                    <input
-                        id="player5"
-                        placeholder="Joueur 5"
-                    >
-                </div>
-
-                <div class="player-input">
-                    <span class="player-color color-6"></span>
-                    <input
-                        id="player6"
-                        placeholder="Joueur 6"
-                    >
-                </div>
-
-            </div>
-
-
-            <button
-                class="game-button full-button"
-                onclick="startGame()"
-            >
-                🚀 COMMENCER LA PARTIE
-            </button>
-
-        </div>
+        <button
+            class="main-button"
+            onclick="startGame()"
+        >
+            COMMENCER LA PARTIE
+        </button>
 
     </div>
 
@@ -1019,46 +830,32 @@ body {
 
 
 
-<!-- =======================================================
-     ÉCRAN DU DÉ
-======================================================== -->
+<!-- ======================================================
+     2 — DÉ UNIQUEMENT
+====================================================== -->
 
 <section
     id="diceScreen"
     class="screen"
 >
 
-    <div class="dice-container">
+    <div class="dice-only">
 
         <div
-            id="turnBadge"
-            class="turn-badge"
+            id="playerCircle"
+            class="player-circle"
         >
-            TOUR 1
         </div>
 
-
-        <div
-            id="bigPlayerToken"
-            class="big-player-token"
+        <h1
+            id="dicePlayerName"
         >
-            1
-        </div>
-
-
-        <h1 id="dicePlayerName">
-            Joueur
         </h1>
 
 
-        <p class="dice-subtitle">
-            C'est à toi de jouer !
-        </p>
-
-
         <div
-            id="bigDice"
-            class="big-dice"
+            id="dice"
+            class="dice"
         >
             ⚀
         </div>
@@ -1066,7 +863,7 @@ body {
 
         <button
             id="rollButton"
-            class="game-button"
+            class="main-button"
             onclick="rollDice()"
         >
             🎲 LANCER LE DÉ
@@ -1078,63 +875,35 @@ body {
 
 
 
-<!-- =======================================================
-     ÉCRAN QUESTION
-======================================================== -->
+<!-- ======================================================
+     3 — QUESTION UNIQUEMENT
+====================================================== -->
 
 <section
     id="questionScreen"
     class="screen"
 >
 
-    <div class="question-container">
+    <div class="question-box">
 
-        <div class="question-header">
+        <h1
+            id="questionText"
+        >
+        </h1>
 
-            <div class="question-label">
-                🃏 CARTE QUESTION
-            </div>
 
-            <div
-                id="difficulty"
-                class="difficulty"
-            >
-                🟢 FACILE
-            </div>
-
+        <div
+            id="options"
+            class="options"
+        >
         </div>
 
 
-        <div class="question-card">
-
-            <div
-                style="
-                    color:#697386;
-                    font-weight:700;
-                    margin-bottom:12px;
-                "
-            >
-                Réponds à la question avant de
-                poursuivre ton tour.
-            </div>
-
-
-            <h2 id="questionText">
-                Question
-            </h2>
-
-
-            <div
-                id="qcm"
-                class="qcm"
-            ></div>
-
-
-            <div
-                id="feedback"
-                class="feedback hidden"
-            ></div>
-
+        <div
+            id="feedback"
+            class="feedback"
+            style="display:none"
+        >
         </div>
 
     </div>
@@ -1143,91 +912,39 @@ body {
 
 
 
-<!-- =======================================================
-     ÉCRAN PLATEAU
-======================================================== -->
+<!-- ======================================================
+     4 — PLATEAU UNIQUEMENT
+====================================================== -->
 
 <section
     id="boardScreen"
     class="screen"
 >
 
-    <div class="board-container">
+    <div class="board-wrapper">
 
-        <div class="board-header">
-
-            <div class="board-player">
-
-                <div
-                    id="smallToken"
-                    class="small-token"
-                ></div>
-
-                <div>
-
-                    <div
-                        style="
-                            font-size:12px;
-                            color:#697386;
-                            font-weight:800;
-                        "
-                    >
-                        TOUR DE
-                    </div>
-
-                    <h2
-                        id="boardPlayerName"
-                    >
-                        Joueur
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <div class="movement">
-
-                🎲
-
-                <span
-                    id="movementNumber"
-                >
-                    0
-                </span>
-
-                case(s)
-
-            </div>
-
+        <div
+            id="boardText"
+            class="board-text"
+        >
         </div>
 
 
         <div
             id="board"
             class="board"
-        ></div>
-
-
-        <div
-            id="boardMessage"
-            class="board-message"
         >
-            Ton pion avance !
         </div>
 
 
-        <div
-            style="
-                text-align:center;
-            "
-        >
+        <div class="move-button-container">
 
             <button
-                class="game-button"
-                onclick="finishTurn()"
+                id="finishBoardButton"
+                class="main-button"
+                onclick="finishBoard()"
             >
-                ✅ TERMINER MON TOUR
+                CONTINUER
             </button>
 
         </div>
@@ -1238,51 +955,45 @@ body {
 
 
 
-<!-- =======================================================
-     ÉCRAN JOUEUR SUIVANT
-======================================================== -->
+<!-- ======================================================
+     5 — FIN DU TOUR UNIQUEMENT
+====================================================== -->
 
 <section
-    id="nextScreen"
+    id="endTurnScreen"
     class="screen"
 >
 
-    <div class="next-container">
-
-        <div class="next-icon">
-            🔄
-        </div>
+    <div class="end-turn-box">
 
         <h1>
-            Tour terminé !
+            Tour terminé
         </h1>
 
-        <p>
-            <strong id="finishedPlayer">
-                Joueur
-            </strong>
-            a terminé son tour.
-        </p>
+
+        <div
+            id="finishedPlayer"
+        >
+        </div>
 
 
-        <div class="next-player">
+        <div class="next-player-label">
+            Prochain joueur
+        </div>
 
-            <span>
-                Prochain joueur
-            </span>
 
-            <strong id="nextPlayer">
-                Joueur
-            </strong>
-
+        <div
+            id="nextPlayerName"
+            class="next-player-name"
+        >
         </div>
 
 
         <button
-            class="game-button"
-            onclick="nextPlayerTurn()"
+            class="main-button"
+            onclick="startNextTurn()"
         >
-            ▶️ COMMENCER LE TOUR
+            COMMENCER LE TOUR
         </button>
 
     </div>
@@ -1291,18 +1002,18 @@ body {
 
 
 
-<!-- =======================================================
-     ÉCRAN VAINQUEUR
-======================================================== -->
+<!-- ======================================================
+     6 — FIN DE PARTIE
+====================================================== -->
 
 <section
     id="winnerScreen"
     class="screen"
 >
 
-    <div class="winner-container">
+    <div class="winner-box">
 
-        <div class="winner-trophy">
+        <div class="trophy">
             🏆
         </div>
 
@@ -1310,20 +1021,10 @@ body {
             Partie terminée !
         </h1>
 
-        <p>
-            Le premier joueur a atteint
-            l'arrivée du parcours de soins.
-        </p>
-
 
         <div
             id="winnerName"
-            style="
-                font-size:30px;
-                font-weight:900;
-                color:#2457a6;
-                margin:20px 0;
-            "
+            class="winner-name"
         >
         </div>
 
@@ -1331,14 +1032,15 @@ body {
         <div
             id="scores"
             class="scores"
-        ></div>
+        >
+        </div>
 
 
         <button
-            class="game-button"
+            class="main-button"
             onclick="location.reload()"
         >
-            🔄 NOUVELLE PARTIE
+            NOUVELLE PARTIE
         </button>
 
     </div>
@@ -1347,21 +1049,10 @@ body {
 
 
 
-<!-- =======================================================
-     TOAST
-======================================================== -->
-
-<div
-    id="toast"
-    class="toast"
-></div>
-
-
-
 <script>
 
 /* =========================================================
-   VARIABLES DU JEU
+   VARIABLES
 ========================================================= */
 
 let players = [];
@@ -1370,17 +1061,15 @@ let currentPlayerIndex = 0;
 
 let currentPlayer = null;
 
+let diceValue = 0;
+
 let currentCard = null;
+
+let answered = false;
 
 let remainingCards = [];
 
-let diceValue = 0;
-
-let turnNumber = 1;
-
-let hasAnswered = false;
-
-let gameOver = false;
+let gameFinished = false;
 
 
 const colors = [
@@ -1410,146 +1099,130 @@ const diceFaces = [
 const boardCells = [
 
     {
-        label:"Départ",
         icon:"🏠",
+        name:"Départ",
         type:"start"
     },
 
     {
-        label:"Médecin traitant",
         icon:"👨‍⚕️",
-        type:"health"
+        name:"Médecin traitant"
     },
 
     {
-        label:"Conseil de prévention",
         icon:"💡",
-        type:"warning"
+        name:"Prévention",
+        type:"special"
     },
 
     {
-        label:"Consultation",
         icon:"🩺",
-        type:"health"
+        name:"Consultation"
     },
 
     {
-        label:"Spécialiste",
         icon:"🔬",
-        type:"health"
+        name:"Spécialiste"
     },
 
     {
-        label:"Pharmacie",
         icon:"💊",
-        type:"health"
+        name:"Pharmacie"
     },
 
     {
-        label:"Remboursement",
         icon:"💶",
-        type:"warning"
+        name:"Remboursement",
+        type:"special"
     },
 
     {
-        label:"Médecin traitant",
         icon:"👨‍⚕️",
-        type:"health"
+        name:"Médecin traitant"
     },
 
     {
-        label:"Consultation",
         icon:"🩺",
-        type:"health"
+        name:"Consultation"
     },
 
     {
-        label:"Spécialiste",
         icon:"🔬",
-        type:"health"
+        name:"Spécialiste"
     },
 
     {
-        label:"Urgences",
         icon:"🚑",
-        type:"warning"
+        name:"Urgences",
+        type:"special"
     },
 
     {
-        label:"Pharmacie",
         icon:"💊",
-        type:"health"
+        name:"Pharmacie"
     },
 
     {
-        label:"Remboursement",
         icon:"💶",
-        type:"warning"
+        name:"Remboursement",
+        type:"special"
     },
 
     {
-        label:"Médecin traitant",
         icon:"👨‍⚕️",
-        type:"health"
+        name:"Médecin traitant"
     },
 
     {
-        label:"Consultation",
         icon:"🩺",
-        type:"health"
+        name:"Consultation"
     },
 
     {
-        label:"Spécialiste",
         icon:"🔬",
-        type:"health"
+        name:"Spécialiste"
     },
 
     {
-        label:"Prévention",
         icon:"❤️",
-        type:"warning"
+        name:"Prévention",
+        type:"special"
     },
 
     {
-        label:"Consultation",
         icon:"🩺",
-        type:"health"
+        name:"Consultation"
     },
 
     {
-        label:"Remboursement",
         icon:"💶",
-        type:"warning"
+        name:"Remboursement",
+        type:"special"
     },
 
     {
-        label:"Médecin traitant",
         icon:"👨‍⚕️",
-        type:"health"
+        name:"Médecin traitant"
     },
 
     {
-        label:"Spécialiste",
         icon:"🔬",
-        type:"health"
+        name:"Spécialiste"
     },
 
     {
-        label:"Pharmacie",
         icon:"💊",
-        type:"health"
+        name:"Pharmacie"
     },
 
     {
-        label:"Consultation",
         icon:"🩺",
-        type:"health"
+        name:"Consultation"
     },
 
     {
-        label:"Arrivée",
         icon:"🏆",
+        name:"Arrivée",
         type:"finish"
     }
 
@@ -1557,524 +1230,375 @@ const boardCells = [
 
 
 /* =========================================================
-   CARTES QCM
+   CARTES
 ========================================================= */
 
 const cards = [
 
-/* ---------- FACILES ---------- */
+    {
+        question:
+        "Quel professionnel joue généralement un rôle central dans le parcours de soins coordonné ?",
 
-{
-    difficulty:"easy",
-    points:1,
+        options:[
+            "Le médecin traitant",
+            "Le pharmacien",
+            "L'Assurance Maladie",
+            "Le spécialiste"
+        ],
 
-    question:
-        "À quoi sert le médecin traitant dans le parcours de soins coordonné ?",
+        correct:0,
 
-    options:[
-        "À coordonner les soins et orienter le patient si nécessaire.",
-        "À remplacer tous les médecins spécialistes.",
-        "À fixer le prix de toutes les consultations.",
-        "À délivrer les médicaments."
-    ],
+        explanation:
+        "Le médecin traitant joue un rôle central dans le suivi et la coordination des soins."
+    },
 
-    correct:0,
 
-    explanation:
-        "Le médecin traitant joue un rôle central dans la coordination du parcours de soins."
-},
+    {
+        question:
+        "Pourquoi le médecin traitant peut-il orienter son patient vers un spécialiste ?",
 
-{
-    difficulty:"easy",
-    points:1,
+        options:[
+            "Pour coordonner et adapter les soins aux besoins du patient",
+            "Pour rendre la consultation gratuite",
+            "Pour remplacer le spécialiste",
+            "Pour choisir le remboursement"
+        ],
 
-    question:
-        "Que signifie respecter le parcours de soins coordonné ?",
+        correct:0,
 
-    options:[
-        "Consulter son médecin traitant lorsque cela est prévu avant d'aller vers un spécialiste.",
-        "Ne consulter que les urgences.",
-        "Ne jamais consulter de spécialiste.",
-        "Choisir toujours le médecin le plus proche."
-    ],
+        explanation:
+        "Il coordonne le parcours et peut orienter le patient vers le professionnel adapté."
+    },
 
-    correct:0,
 
-    explanation:
-        "Le parcours coordonné repose notamment sur le rôle du médecin traitant et l'orientation vers les autres professionnels lorsque cela est nécessaire."
-},
+    {
+        question:
+        "Que peut-il se passer lorsqu'un patient consulte un spécialiste sans respecter le parcours de soins coordonné ?",
 
-{
-    difficulty:"easy",
-    points:1,
+        options:[
+            "Le remboursement peut être moins favorable",
+            "La consultation est automatiquement interdite",
+            "Le patient est automatiquement hospitalisé",
+            "La consultation devient gratuite"
+        ],
 
-    question:
-        "Quel professionnel peut orienter un patient vers un spécialiste dans le parcours coordonné ?",
+        correct:0,
 
-    options:[
-        "Le médecin traitant.",
-        "Le pharmacien uniquement.",
-        "Le patient uniquement.",
-        "La caisse d'assurance maladie."
-    ],
-
-    correct:0,
-
-    explanation:
-        "Le médecin traitant assure notamment la coordination et peut orienter son patient vers un spécialiste."
-},
-
-{
-    difficulty:"easy",
-    points:1,
-
-    question:
-        "Que se passe-t-il généralement lorsqu'une personne consulte un spécialiste sans respecter les règles du parcours de soins ?",
-
-    options:[
-        "Elle peut être moins bien remboursée.",
-        "Elle est automatiquement hospitalisée.",
-        "Elle ne peut jamais consulter le spécialiste.",
-        "La consultation devient gratuite."
-    ],
-
-    correct:0,
-
-    explanation:
+        explanation:
         "Le non-respect du parcours peut entraîner une diminution du remboursement."
-},
+    },
 
-{
-    difficulty:"easy",
-    points:1,
 
-    question:
-        "Quel document permet notamment au médecin de suivre l'historique des soins du patient ?",
+    {
+        question:
+        "Dans le régime général, quelle est la part habituellement prise en charge par l'Assurance Maladie pour de nombreuses consultations médicales, sur la base de remboursement, avant certaines participations ?",
 
-    options:[
-        "Le dossier médical.",
-        "Le permis de conduire.",
-        "La carte bancaire.",
-        "Le bulletin scolaire."
-    ],
+        options:[
+            "70 %",
+            "25 %",
+            "50 %",
+            "100 %"
+        ],
 
-    correct:0,
+        correct:0,
 
-    explanation:
-        "Le dossier médical permet au professionnel de santé de disposer d'informations utiles au suivi du patient."
-},
+        explanation:
+        "Le taux de remboursement de nombreuses consultations est de 70 % de la base de remboursement, avant certaines participations et hors situations particulières."
+    },
 
-{
-    difficulty:"easy",
-    points:1,
 
-    question:
-        "Quel professionnel délivre les médicaments prescrits ?",
+    {
+        question:
+        "Qu'est-ce que la base de remboursement ?",
 
-    options:[
-        "Le pharmacien.",
-        "Le médecin traitant.",
-        "L'infirmier scolaire uniquement.",
-        "La caisse d'assurance maladie."
-    ],
+        options:[
+            "Un tarif de référence utilisé pour calculer le remboursement",
+            "Le montant toujours payé par le patient",
+            "Le salaire du médecin",
+            "Le prix fixé par la mutuelle"
+        ],
 
-    correct:0,
+        correct:0,
 
-    explanation:
-        "Le pharmacien délivre les médicaments prescrits et peut également conseiller le patient."
-},
+        explanation:
+        "Le remboursement est calculé à partir d'une base de remboursement définie par les règles de l'Assurance Maladie."
+    },
 
-{
-    difficulty:"easy",
-    points:1,
 
-    question:
-        "Pourquoi le parcours de soins est-il coordonné ?",
+    {
+        question:
+        "Une situation d'urgence nécessite-t-elle toujours de passer d'abord par le médecin traitant ?",
 
-    options:[
-        "Pour assurer un suivi cohérent du patient.",
-        "Pour empêcher les patients de consulter.",
-        "Pour supprimer les médecins spécialistes.",
-        "Pour éviter toute prescription."
-    ],
+        options:[
+            "Non, l'urgence constitue une situation particulière",
+            "Oui, toujours",
+            "Oui, uniquement le week-end",
+            "Oui, si le patient possède une mutuelle"
+        ],
 
-    correct:0,
+        correct:0,
 
-    explanation:
-        "La coordination vise notamment à assurer un suivi cohérent et adapté aux besoins du patient."
-},
+        explanation:
+        "Les situations d'urgence font partie des situations particulières dans lesquelles le parcours habituel ne s'applique pas de la même manière."
+    },
 
 
-/* ---------- INTERMÉDIAIRES ---------- */
+    {
+        question:
+        "Quel est l'objectif principal du parcours de soins coordonné ?",
 
-{
-    difficulty:"medium",
-    points:2,
+        options:[
+            "Améliorer la coordination et la continuité des soins",
+            "Empêcher l'accès aux spécialistes",
+            "Faire payer davantage les patients",
+            "Supprimer le médecin traitant"
+        ],
 
-    question:
-        "Un patient consulte directement un spécialiste sans passer par son médecin traitant alors qu'il n'entre pas dans une situation d'accès direct. Quel est le principal risque ?",
+        correct:0,
 
-    options:[
-        "Un remboursement moins favorable.",
-        "Une consultation automatiquement interdite.",
-        "Une hospitalisation obligatoire.",
-        "La suppression de sa carte Vitale."
-    ],
+        explanation:
+        "Le parcours vise notamment à organiser les soins autour du patient et à favoriser leur coordination."
+    },
 
-    correct:0,
 
-    explanation:
-        "Le non-respect du parcours de soins coordonné peut conduire à une moins bonne prise en charge."
-},
+    {
+        question:
+        "Pourquoi le respect du parcours de soins peut-il avoir une conséquence financière ?",
 
-{
-    difficulty:"medium",
-    points:2,
+        options:[
+            "Parce que les règles de remboursement peuvent être moins favorables hors parcours",
+            "Parce que le médecin fixe le remboursement",
+            "Parce que la carte Vitale change de couleur",
+            "Parce que le spécialiste décide du taux de remboursement"
+        ],
 
-    question:
-        "Lequel de ces cas peut permettre de consulter directement certains spécialistes ?",
+        correct:0,
 
-    options:[
-        "Certaines situations d'accès direct prévues par les règles de l'Assurance Maladie.",
-        "N'importe quelle consultation, sans condition.",
-        "Uniquement lorsqu'on veut économiser du temps.",
-        "Uniquement le week-end."
-    ],
+        explanation:
+        "Le respect du parcours de soins coordonné peut avoir une incidence sur le niveau de remboursement."
+    },
 
-    correct:0,
 
-    explanation:
-        "Il existe des situations particulières dans lesquelles l'accès direct à certains spécialistes est prévu."
-},
+    {
+        question:
+        "Quelle situation correspond à une bonne coordination des soins ?",
 
-{
-    difficulty:"medium",
-    points:2,
+        options:[
+            "Le médecin traitant oriente le patient vers le professionnel adapté",
+            "Le patient consulte uniquement les urgences",
+            "Le patient change de médecin à chaque consultation",
+            "Le pharmacien pose tous les diagnostics"
+        ],
 
-    question:
-        "Quel est le rôle principal de l'Assurance Maladie dans le parcours de soins ?",
+        correct:0,
 
-    options:[
-        "Participer à la prise en charge des dépenses de santé selon les règles prévues.",
-        "Choisir le médecin traitant de chaque patient.",
-        "Poser les diagnostics.",
-        "Remplacer les professionnels de santé."
-    ],
+        explanation:
+        "L'orientation par le médecin traitant participe à la coordination du parcours."
+    },
 
-    correct:0,
 
-    explanation:
-        "L'Assurance Maladie participe au remboursement des soins selon les règles applicables."
-},
+    {
+        question:
+        "Une personne atteinte d'une affection de longue durée reconnue peut bénéficier, pour les soins en rapport avec cette affection, d'une prise en charge particulière. Laquelle ?",
 
-{
-    difficulty:"medium",
-    points:2,
+        options:[
+            "Une prise en charge à 100 % de la base de remboursement dans les conditions prévues",
+            "Tous ses soins deviennent automatiquement gratuits",
+            "Elle n'a plus besoin de médecin",
+            "Elle n'a plus besoin de carte Vitale"
+        ],
 
-    question:
-        "Pourquoi est-il important de déclarer un médecin traitant ?",
+        correct:0,
 
-    options:[
-        "Parce qu'il constitue un interlocuteur privilégié pour le suivi et la coordination des soins.",
-        "Parce qu'il est obligatoire de consulter uniquement lui.",
-        "Parce qu'il fixe les tarifs de tous les professionnels.",
-        "Parce qu'il remplace le pharmacien."
-    ],
+        explanation:
+        "Pour une ALD exonérante, les soins en rapport avec l'affection peuvent être pris en charge à 100 % de la base de remboursement, selon les règles applicables."
+    },
 
-    correct:0,
 
-    explanation:
-        "Le médecin traitant est un acteur central du suivi médical et de la coordination des soins."
-},
+    {
+        question:
+        "Un dépassement d'honoraires est-il automatiquement remboursé intégralement par l'Assurance Maladie ?",
 
-{
-    difficulty:"medium",
-    points:2,
+        options:[
+            "Non",
+            "Oui, toujours",
+            "Oui, si le médecin est spécialiste",
+            "Oui, uniquement aux urgences"
+        ],
 
-    question:
-        "Une personne doit consulter rapidement pour une situation qui relève d'une urgence. Que doit-elle faire ?",
+        correct:0,
 
-    options:[
-        "Recourir aux structures ou services adaptés à l'urgence.",
-        "Attendre obligatoirement son médecin traitant plusieurs jours.",
-        "Demander d'abord l'accord de sa mutuelle.",
-        "Ne rien faire."
-    ],
+        explanation:
+        "L'Assurance Maladie rembourse selon les bases prévues. Un dépassement peut rester à la charge du patient ou être couvert en partie par une complémentaire."
+    },
 
-    correct:0,
 
-    explanation:
-        "Les situations d'urgence constituent un cas particulier du parcours de soins."
-},
+    {
+        question:
+        "Certaines spécialités bénéficient de règles d'accès direct spécifique. Que signifie cela ?",
 
-{
-    difficulty:"medium",
-    points:2,
+        options:[
+            "Dans certaines situations prévues, le patient peut consulter directement certains spécialistes sans passer par son médecin traitant",
+            "Tous les spécialistes sont accessibles directement",
+            "Le spécialiste devient automatiquement le médecin traitant",
+            "La consultation est forcément gratuite"
+        ],
 
-    question:
-        "Quel est l'intérêt de l'orientation par le médecin traitant ?",
+        correct:0,
 
-    options:[
-        "Elle permet d'adapter l'orientation aux besoins du patient.",
-        "Elle garantit que le spécialiste sera toujours gratuit.",
-        "Elle évite toute prescription.",
-        "Elle empêche le patient de choisir son professionnel."
-    ],
+        explanation:
+        "Certaines situations et spécialités permettent un accès direct spécifique dans le cadre prévu par les règles de l'Assurance Maladie."
+    },
 
-    correct:0,
 
-    explanation:
-        "Le médecin traitant peut orienter le patient vers le professionnel adapté à sa situation."
-},
+    {
+        question:
+        "Quel professionnel délivre généralement les médicaments prescrits ?",
 
-{
-    difficulty:"medium",
-    points:2,
+        options:[
+            "Le pharmacien",
+            "Le médecin traitant",
+            "L'Assurance Maladie",
+            "Le spécialiste"
+        ],
 
-    question:
-        "Quel élément peut expliquer une différence de remboursement entre deux patients ayant consulté le même spécialiste ?",
+        correct:0,
 
-    options:[
-        "Le respect ou non du parcours de soins coordonné.",
-        "La couleur de leur carte Vitale.",
-        "Leur profession.",
-        "Le jour de naissance."
-    ],
+        explanation:
+        "Le pharmacien délivre les médicaments et peut également apporter des conseils."
+    },
 
-    correct:0,
 
-    explanation:
-        "Le respect du parcours de soins peut avoir une incidence sur le niveau de remboursement."
-},
+    {
+        question:
+        "Le fait d'avoir un médecin traitant signifie-t-il qu'il est interdit de consulter un autre médecin ?",
 
+        options:[
+            "Non",
+            "Oui, absolument",
+            "Oui, sauf pendant les vacances",
+            "Oui, sauf avec une mutuelle"
+        ],
 
-/* ---------- DIFFICILES ---------- */
+        correct:0,
 
-{
-    difficulty:"hard",
-    points:3,
+        explanation:
+        "Le médecin traitant coordonne le parcours mais le patient peut consulter d'autres professionnels selon ses besoins et les règles applicables."
+    },
 
-    question:
-        "Dans le parcours de soins coordonné, quel professionnel est généralement considéré comme le pivot du suivi du patient ?",
 
-    options:[
-        "Le médecin traitant.",
-        "Le pharmacien.",
-        "Le spécialiste consulté en premier.",
-        "L'Assurance Maladie."
-    ],
+    {
+        question:
+        "Quel peut être l'intérêt de consulter son médecin traitant avant un spécialiste ?",
 
-    correct:0,
+        options:[
+            "Bénéficier d'une orientation adaptée et d'un suivi coordonné",
+            "Obtenir automatiquement un médicament",
+            "Éviter toute consultation spécialisée",
+            "Ne jamais payer de consultation"
+        ],
 
-    explanation:
-        "Le médecin traitant constitue le pivot du parcours de soins coordonné."
-},
+        correct:0,
 
-{
-    difficulty:"hard",
-    points:3,
+        explanation:
+        "Le médecin traitant peut évaluer la situation et orienter vers le professionnel approprié."
+    },
 
-    question:
-        "Pour une consultation médicale prise en charge selon le tarif conventionnel, quelle est la part habituellement remboursée par l'Assurance Maladie dans le parcours coordonné, avant prise en compte de la participation forfaitaire ?",
 
-    options:[
-        "70 % de la base de remboursement.",
-        "25 % de la base de remboursement.",
-        "100 % dans tous les cas.",
-        "10 % de la base de remboursement."
-    ],
+    {
+        question:
+        "Si un patient respecte le parcours de soins mais consulte un professionnel pratiquant un dépassement d'honoraires, que peut-il rester à payer ?",
 
-    correct:0,
+        options:[
+            "Tout ou partie du dépassement, selon les conditions et la complémentaire",
+            "Rien dans tous les cas",
+            "La totalité de la consultation obligatoirement",
+            "Uniquement les médicaments"
+        ],
 
-    explanation:
-        "Dans le régime général, le taux de remboursement de nombreuses consultations médicales est de 70 % de la base de remboursement, avant certaines participations et éventuels remboursements complémentaires."
-},
+        correct:0,
 
-{
-    difficulty:"hard",
-    points:3,
+        explanation:
+        "Le respect du parcours ne signifie pas que tous les dépassements d'honoraires sont remboursés."
+    },
 
-    question:
-        "Lorsqu'une consultation est réalisée hors du parcours de soins coordonné, le taux de remboursement peut être diminué. Quelle affirmation est correcte ?",
 
-    options:[
-        "Le remboursement peut être nettement moins favorable.",
-        "La consultation est toujours remboursée à 100 %.",
-        "Le spécialiste doit rembourser lui-même le patient.",
-        "Le patient ne peut jamais être remboursé."
-    ],
+    {
+        question:
+        "Quelle affirmation décrit le mieux le rôle du parcours de soins coordonné ?",
 
-    correct:0,
+        options:[
+            "Organiser les soins autour du patient",
+            "Interdire les spécialistes",
+            "Supprimer les urgences",
+            "Rendre tous les soins gratuits"
+        ],
 
-    explanation:
-        "Le non-respect du parcours peut entraîner une majoration du reste à charge par une diminution du remboursement."
-},
+        correct:0,
 
-{
-    difficulty:"hard",
-    points:3,
+        explanation:
+        "Le parcours de soins coordonné cherche à améliorer l'organisation et la continuité des soins."
+    },
 
-    question:
-        "Une personne consulte directement un gynécologue dans une situation prévue par les règles d'accès direct spécifique. Quelle affirmation est la plus juste ?",
 
-    options:[
-        "Certaines consultations en accès direct spécifique permettent de consulter sans passer par le médecin traitant tout en restant dans le parcours prévu.",
-        "Toute consultation directe est forcément hors parcours.",
-        "Les spécialistes concernés ne sont jamais remboursés.",
-        "Le médecin traitant doit obligatoirement être présent."
-    ],
+    {
+        question:
+        "Pourquoi les remboursements ne correspondent-ils pas toujours exactement au prix payé ?",
 
-    correct:0,
+        options:[
+            "Parce qu'ils sont calculés à partir d'une base de remboursement et de règles précises",
+            "Parce que chaque patient choisit son taux",
+            "Parce que le médecin décide du remboursement",
+            "Parce que la mutuelle remplace toujours l'Assurance Maladie"
+        ],
 
-    explanation:
-        "Certaines spécialités et situations bénéficient de règles particulières d'accès direct."
-},
+        correct:0,
 
-{
-    difficulty:"hard",
-    points:3,
+        explanation:
+        "Le montant remboursé dépend notamment de la base de remboursement, du taux applicable et de la situation du patient."
+    },
 
-    question:
-        "Un patient a choisi un médecin traitant mais consulte régulièrement des spécialistes sans coordination avec celui-ci. Quelle conséquence est possible ?",
 
-    options:[
-        "Il peut être moins bien remboursé pour certaines consultations.",
-        "Il bénéficie automatiquement d'un remboursement supérieur.",
-        "Il n'a plus de médecin traitant.",
-        "Ses consultations deviennent gratuites."
-    ],
+    {
+        question:
+        "Quel acteur peut intervenir après une prescription médicale pour délivrer un médicament et conseiller le patient ?",
 
-    correct:0,
+        options:[
+            "Le pharmacien",
+            "Le médecin traitant uniquement",
+            "L'hôpital uniquement",
+            "L'Assurance Maladie"
+        ],
 
-    explanation:
-        "Le respect du parcours de soins coordonné peut conditionner le niveau de remboursement."
-},
+        correct:0,
 
-{
-    difficulty:"hard",
-    points:3,
+        explanation:
+        "Le pharmacien intervient notamment dans la délivrance des médicaments et le conseil."
+    },
 
-    question:
-        "Une personne souffre d'une affection de longue durée reconnue et bénéficie d'une prise en charge spécifique. Quelle affirmation est correcte ?",
 
-    options:[
-        "Les soins en rapport avec l'ALD peuvent être pris en charge à 100 % de la base de remboursement dans les conditions prévues.",
-        "Tous ses soins, quelle que soit leur nature, sont automatiquement gratuits.",
-        "Elle n'a plus besoin de professionnel de santé.",
-        "Elle n'a plus besoin de médecin traitant."
-    ],
+    {
+        question:
+        "Quelle situation correspond le moins à un parcours de soins coordonné ?",
 
-    correct:0,
+        options:[
+            "Consulter systématiquement différents spécialistes sans coordination du suivi",
+            "Déclarer un médecin traitant",
+            "Être orienté vers un spécialiste lorsque cela est nécessaire",
+            "Assurer un suivi médical régulier"
+        ],
 
-    explanation:
-        "Une ALD exonérante peut permettre une prise en charge à 100 % de la base de remboursement pour les soins en rapport avec l'affection, selon les règles applicables."
-},
+        correct:0,
 
-{
-    difficulty:"hard",
-    points:3,
-
-    question:
-        "Pourquoi la notion de 'base de remboursement' est-elle importante ?",
-
-    options:[
-        "Parce que le remboursement est calculé à partir d'un tarif de référence, et non nécessairement sur le prix réellement payé.",
-        "Parce qu'elle correspond toujours au montant payé.",
-        "Parce qu'elle indique le nombre de médecins disponibles.",
-        "Parce qu'elle remplace la carte Vitale."
-    ],
-
-    correct:0,
-
-    explanation:
-        "La base de remboursement sert de référence pour calculer la prise en charge de l'Assurance Maladie."
-},
-
-{
-    difficulty:"hard",
-    points:3,
-
-    question:
-        "Un patient respecte le parcours de soins mais le professionnel facture un dépassement d'honoraires. Que peut-il se passer ?",
-
-    options:[
-        "La base de remboursement de l'Assurance Maladie ne correspond pas nécessairement au montant du dépassement.",
-        "Le dépassement est toujours remboursé intégralement.",
-        "Le dépassement est automatiquement interdit.",
-        "La consultation n'est plus considérée comme un soin."
-    ],
-
-    correct:0,
-
-    explanation:
-        "Le remboursement de l'Assurance Maladie est calculé selon les bases prévues. Le dépassement d'honoraires peut rester à la charge du patient ou être pris en charge selon son contrat complémentaire."
-},
-
-{
-    difficulty:"hard",
-    points:3,
-
-    question:
-        "Quelle situation correspond le mieux à une bonne coordination des soins ?",
-
-    options:[
-        "Le médecin traitant connaît les consultations importantes et peut orienter le patient vers les professionnels adaptés.",
-        "Chaque patient consulte uniquement les spécialistes de son choix sans transmission d'informations.",
-        "Le patient change de médecin à chaque problème sans suivi.",
-        "Le pharmacien réalise tous les diagnostics."
-    ],
-
-    correct:0,
-
-    explanation:
-        "La coordination permet d'assurer une continuité et une cohérence du suivi."
-},
-
-{
-    difficulty:"hard",
-    points:3,
-
-    question:
-        "Pourquoi le parcours de soins peut-il avoir une conséquence financière pour le patient ?",
-
-    options:[
-        "Parce que les règles de remboursement varient notamment selon que le parcours coordonné est respecté ou non.",
-        "Parce que le médecin traitant fixe librement le remboursement.",
-        "Parce que les spécialistes choisissent eux-mêmes le taux de l'Assurance Maladie.",
-        "Parce que la carte Vitale contient le salaire du patient."
-    ],
-
-    correct:0,
-
-    explanation:
-        "Le respect du parcours fait partie des éléments pouvant influencer la prise en charge par l'Assurance Maladie."
-},
-
-{
-    difficulty:"hard",
-    points:3,
-
-    question:
-        "Quel est l'objectif général du parcours de soins coordonné ?",
-
-    options:[
-        "Améliorer la coordination, la continuité et la pertinence des soins.",
-        "Réduire le nombre de médecins.",
-        "Empêcher l'accès aux spécialistes.",
-        "Faire payer tous les soins aux patients."
-    ],
-
-    correct:0,
-
-    explanation:
-        "Le parcours de soins vise notamment à organiser et coordonner les soins autour du patient."
-}
+        explanation:
+        "L'absence de coordination entre les différents professionnels est contraire à l'objectif du parcours coordonné."
+    }
 
 ];
 
 
 /* =========================================================
-   OUTILS
+   MÉLANGE
 ========================================================= */
 
 function shuffle(array) {
@@ -2093,8 +1617,7 @@ function shuffle(array) {
         [
             array[i],
             array[j]
-        ] =
-        [
+        ] = [
             array[j],
             array[i]
         ];
@@ -2104,58 +1627,41 @@ function shuffle(array) {
 }
 
 
+/* =========================================================
+   CHANGEMENT D'ÉCRAN
+========================================================= */
+
 function showScreen(id) {
 
     document
         .querySelectorAll(".screen")
-        .forEach(screen => {
+        .forEach(
+            screen => {
 
-            screen.classList.remove(
-                "active"
-            );
+                screen.classList.remove(
+                    "active"
+                );
 
-        });
+            }
+        );
 
 
     document
         .getElementById(id)
-        .classList.add("active");
-
-
-    window.scrollTo({
-        top:0,
-        behavior:"smooth"
-    });
-}
-
-
-function showToast(message) {
-
-    const toast =
-        document.getElementById(
-            "toast"
+        .classList.add(
+            "active"
         );
 
-    toast.textContent =
-        message;
 
-    toast.classList.add(
-        "show"
+    window.scrollTo(
+        0,
+        0
     );
-
-
-    setTimeout(() => {
-
-        toast.classList.remove(
-            "show"
-        );
-
-    }, 2500);
 }
 
 
 /* =========================================================
-   DÉBUT DE PARTIE
+   DÉMARRAGE
 ========================================================= */
 
 function startGame() {
@@ -2169,26 +1675,23 @@ function startGame() {
         i++
     ) {
 
-        const input =
-            document.getElementById(
-                "player" + i
-            );
+        const value =
+            document
+                .getElementById(
+                    "player" + i
+                )
+                .value
+                .trim();
 
 
-        const name =
-            input.value.trim();
-
-
-        if(name) {
+        if(value) {
 
             players.push({
 
-                name:name,
+                name:value,
 
                 color:
-                    colors[
-                        i - 1
-                    ],
+                    colors[i - 1],
 
                 position:0,
 
@@ -2203,23 +1706,13 @@ function startGame() {
 
     if(players.length < 2) {
 
-        showToast(
-            "⚠️ Il faut au moins 2 joueurs."
+        alert(
+            "Il faut au moins 2 joueurs."
         );
 
         return;
     }
 
-
-    /*
-       Création d'une copie du paquet.
-
-       Chaque carte est retirée du paquet
-       lorsqu'elle est piochée.
-
-       Ainsi, aucune carte ne revient
-       pendant la même partie.
-    */
 
     remainingCards =
         shuffle(
@@ -2229,15 +1722,6 @@ function startGame() {
 
     currentPlayerIndex = 0;
 
-    turnNumber = 1;
-
-    gameOver = false;
-
-    currentPlayer =
-        players[
-            currentPlayerIndex
-        ];
-
 
     prepareDiceScreen();
 
@@ -2245,7 +1729,7 @@ function startGame() {
 
 
 /* =========================================================
-   PRÉPARATION ÉCRAN DÉ
+   ÉCRAN DÉ
 ========================================================= */
 
 function prepareDiceScreen() {
@@ -2256,42 +1740,39 @@ function prepareDiceScreen() {
         ];
 
 
-    document
-        .getElementById(
-            "dicePlayerName"
-        )
-        .textContent =
-            currentPlayer.name;
+    const name =
+        document
+            .getElementById(
+                "dicePlayerName"
+            );
 
 
-    document
-        .getElementById(
-            "turnBadge"
-        )
-        .textContent =
-            "TOUR " + turnNumber;
+    name.textContent =
+        currentPlayer.name;
 
 
-    const token =
-        document.getElementById(
-            "bigPlayerToken"
-        );
+    const circle =
+        document
+            .getElementById(
+                "playerCircle"
+            );
 
 
-    token.style.background =
+    circle.style.background =
         currentPlayer.color;
 
 
-    token.textContent =
+    circle.textContent =
         currentPlayer.name
             .charAt(0)
             .toUpperCase();
 
 
     const dice =
-        document.getElementById(
-            "bigDice"
-        );
+        document
+            .getElementById(
+                "dice"
+            );
 
 
     dice.textContent =
@@ -2299,9 +1780,10 @@ function prepareDiceScreen() {
 
 
     const button =
-        document.getElementById(
-            "rollButton"
-        );
+        document
+            .getElementById(
+                "rollButton"
+            );
 
 
     button.disabled = false;
@@ -2315,29 +1797,26 @@ function prepareDiceScreen() {
 
 
 /* =========================================================
-   LANCEMENT DU DÉ
+   LANCER LE DÉ
 ========================================================= */
 
 function rollDice() {
 
     const button =
-        document.getElementById(
-            "rollButton"
-        );
+        document
+            .getElementById(
+                "rollButton"
+            );
 
-
-    /*
-       Empêche un double clic
-       ou plusieurs lancers.
-    */
 
     button.disabled = true;
 
 
     const dice =
-        document.getElementById(
-            "bigDice"
-        );
+        document
+            .getElementById(
+                "dice"
+            );
 
 
     dice.classList.add(
@@ -2348,87 +1827,87 @@ function rollDice() {
     let count = 0;
 
 
-    const interval =
-        setInterval(() => {
+    const animation =
+        setInterval(
+            () => {
 
-            const random =
-                Math.floor(
-                    Math.random() * 6
-                );
-
-
-            dice.textContent =
-                diceFaces[random];
-
-
-            count++;
-
-
-            if(count >= 12) {
-
-                clearInterval(
-                    interval
-                );
-
-
-                dice.classList.remove(
-                    "rolling"
-                );
-
-
-                diceValue =
+                const value =
                     Math.floor(
                         Math.random() * 6
-                    ) + 1;
+                    );
 
 
                 dice.textContent =
-                    diceFaces[
-                        diceValue - 1
-                    ];
+                    diceFaces[value];
 
 
-                /*
-                   On pioche immédiatement
-                   une carte.
-
-                   MAIS le plateau reste caché.
-                */
-
-                drawCard();
+                count++;
 
 
-                setTimeout(() => {
+                if(count >= 12) {
 
-                    showQuestion();
+                    clearInterval(
+                        animation
+                    );
 
-                }, 600);
 
-            }
+                    dice.classList.remove(
+                        "rolling"
+                    );
 
-        }, 90);
+
+                    diceValue =
+                        Math.floor(
+                            Math.random() * 6
+                        ) + 1;
+
+
+                    dice.textContent =
+                        diceFaces[
+                            diceValue - 1
+                        ];
+
+
+                    drawCard();
+
+
+                    setTimeout(
+                        showQuestion,
+                        500
+                    );
+
+                }
+
+            },
+            90
+        );
 
 }
 
 
 /* =========================================================
-   PIOCHE
+   PIOCHER UNE CARTE
 ========================================================= */
 
 function drawCard() {
 
     /*
-       Si le paquet est vide,
-       la partie a suffisamment de cartes
-       pour normalement ne jamais arriver ici.
-
-       Par sécurité, on recrée néanmoins
-       le paquet.
+       La carte est retirée définitivement
+       du paquet pour cette partie.
     */
 
     if(
         remainingCards.length === 0
     ) {
+
+        /*
+           Sécurité :
+           si toutes les cartes ont été utilisées,
+           on remet le paquet à zéro.
+
+           Dans une partie normale, le joueur
+           devrait avoir atteint l'arrivée avant.
+        */
 
         remainingCards =
             shuffle(
@@ -2445,12 +1924,12 @@ function drawCard() {
 
 
 /* =========================================================
-   QUESTION
+   AFFICHER LA QUESTION
 ========================================================= */
 
 function showQuestion() {
 
-    hasAnswered = false;
+    answered = false;
 
 
     document
@@ -2461,59 +1940,27 @@ function showQuestion() {
             currentCard.question;
 
 
-    const difficulty =
-        document.getElementById(
-            "difficulty"
-        );
+    const options =
+        document
+            .getElementById(
+                "options"
+            );
 
 
-    if(
-        currentCard.difficulty ===
-        "easy"
-    ) {
-
-        difficulty.textContent =
-            "🟢 FACILE";
-
-    }
-    else if(
-        currentCard.difficulty ===
-        "medium"
-    ) {
-
-        difficulty.textContent =
-            "🟠 INTERMÉDIAIRE";
-
-    }
-    else {
-
-        difficulty.textContent =
-            "🔴 DIFFICILE";
-
-    }
+    options.innerHTML = "";
 
 
-    const qcm =
-        document.getElementById(
-            "qcm"
-        );
-
-
-    qcm.innerHTML = "";
-
-
-    const letters =
-        [
-            "A",
-            "B",
-            "C",
-            "D"
-        ];
+    const letters = [
+        "A",
+        "B",
+        "C",
+        "D"
+    ];
 
 
     currentCard.options
         .forEach(
-            (option,index) => {
+            (text,index) => {
 
                 const button =
                     document.createElement(
@@ -2522,17 +1969,19 @@ function showQuestion() {
 
 
                 button.className =
-                    "qcm-option";
+                    "option";
 
 
                 button.innerHTML = `
 
-                    <span class="qcm-letter">
+                    <span
+                        class="option-letter"
+                    >
                         ${letters[index]}
                     </span>
 
                     <span>
-                        ${option}
+                        ${text}
                     </span>
 
                 `;
@@ -2545,7 +1994,7 @@ function showQuestion() {
                         );
 
 
-                qcm.appendChild(
+                options.appendChild(
                     button
                 );
 
@@ -2557,8 +2006,8 @@ function showQuestion() {
         .getElementById(
             "feedback"
         )
-        .className =
-            "feedback hidden";
+        .style.display =
+            "none";
 
 
     showScreen(
@@ -2572,22 +2021,23 @@ function showQuestion() {
    RÉPONSE
 ========================================================= */
 
-function answerQuestion(selected) {
+function answerQuestion(index) {
 
-    if(hasAnswered) {
+    if(answered) {
 
         return;
 
     }
 
 
-    hasAnswered = true;
+    answered = true;
 
 
     const buttons =
-        document.querySelectorAll(
-            ".qcm-option"
-        );
+        document
+            .querySelectorAll(
+                ".option"
+            );
 
 
     buttons.forEach(
@@ -2600,8 +2050,8 @@ function answerQuestion(selected) {
     );
 
 
-    const correct =
-        selected ===
+    const isCorrect =
+        index ===
         currentCard.correct;
 
 
@@ -2612,189 +2062,130 @@ function answerQuestion(selected) {
     );
 
 
-    if(!correct) {
+    if(!isCorrect) {
 
         buttons[
-            selected
+            index
         ].classList.add(
-            "incorrect"
+            "wrong"
         );
+
+    }
+    else {
+
+        currentPlayer.points++;
 
     }
 
 
     const feedback =
-        document.getElementById(
-            "feedback"
+        document
+            .getElementById(
+                "feedback"
+            );
+
+
+    feedback.style.display =
+        "block";
+
+
+    feedback.className =
+        "feedback " +
+        (
+            isCorrect
+                ? "good"
+                : "bad"
         );
 
 
-    feedback.classList.remove(
-        "hidden"
-    );
+    feedback.innerHTML = `
 
+        <strong>
+            ${
+                isCorrect
+                    ? "✅ Bonne réponse !"
+                    : "❌ Mauvaise réponse"
+            }
+        </strong>
 
-    if(correct) {
+        <p>
+            ${
+                currentCard.explanation
+            }
+        </p>
 
-        currentPlayer.points +=
-            currentCard.points;
+        <button
+            class="main-button"
+            onclick="showBoard()"
+        >
+            CONTINUER
+        </button>
 
-
-        feedback.className =
-            "feedback correct";
-
-
-        feedback.innerHTML = `
-
-            <strong>
-                ✅ Bonne réponse !
-            </strong>
-
-            <p>
-                Tu gagnes
-                <strong>
-                    +${currentCard.points}
-                    point(s)
-                </strong>.
-            </p>
-
-            <p>
-                ${currentCard.explanation}
-            </p>
-
-            <button
-                class="game-button"
-                onclick="showBoard()"
-            >
-                🗺️ VOIR LE PLATEAU
-            </button>
-
-        `;
-
-    }
-    else {
-
-        feedback.className =
-            "feedback incorrect";
-
-
-        feedback.innerHTML = `
-
-            <strong>
-                ❌ Mauvaise réponse
-            </strong>
-
-            <p>
-                La bonne réponse était :
-            </p>
-
-            <p>
-                <strong>
-                    ${
-                        currentCard.options[
-                            currentCard.correct
-                        ]
-                    }
-                </strong>
-            </p>
-
-            <p>
-                ${currentCard.explanation}
-            </p>
-
-            <button
-                class="game-button"
-                onclick="showBoard()"
-            >
-                🗺️ VOIR LE PLATEAU
-            </button>
-
-        `;
-
-    }
+    `;
 
 }
 
 
 /* =========================================================
-   AFFICHAGE DU PLATEAU
+   PLATEAU
 ========================================================= */
 
 function showBoard() {
 
-    /*
-       Cette fonction n'est accessible
-       qu'après la réponse au QCM.
-    */
-
-    if(!hasAnswered) {
-
-        showToast(
-            "⚠️ Réponds d'abord à la question."
-        );
+    if(!answered) {
 
         return;
 
     }
 
 
-    document
-        .getElementById(
-            "boardPlayerName"
-        )
-        .textContent =
-            currentPlayer.name;
+    /*
+       Le pion avance du nombre obtenu au dé.
+    */
+
+    currentPlayer.position +=
+        diceValue;
 
 
-    document
-        .getElementById(
-            "movementNumber"
-        )
-        .textContent =
-            diceValue;
+    /*
+       Ne jamais dépasser la dernière case.
+    */
 
+    if(
+        currentPlayer.position >=
+        boardCells.length - 1
+    ) {
 
-    document
-        .getElementById(
-            "smallToken"
-        )
-        .style.background =
-            currentPlayer.color;
+        currentPlayer.position =
+            boardCells.length - 1;
+
+    }
 
 
     renderBoard();
 
 
-    const position =
-        currentPlayer.position;
-
-
     const cell =
         boardCells[
-            position
+            currentPlayer.position
         ];
 
 
     document
         .getElementById(
-            "boardMessage"
+            "boardText"
         )
-        .innerHTML = `
-
-            <strong>
-                ${currentPlayer.name}
-            </strong>
-            arrive sur la case
-            <strong>
-                ${position + 1}
-            </strong>
-            :
-            <strong>
-                ${cell.icon}
-                ${cell.label}
-            </strong>
-
-        `;
+        .textContent =
+            currentPlayer.name +
+            " avance de " +
+            diceValue +
+            " case" +
+            (
+                diceValue > 1
+                    ? "s"
+                    : ""
+            ) +
+            " !";
 
 
     showScreen(
@@ -2805,15 +2196,16 @@ function showBoard() {
 
 
 /* =========================================================
-   PLATEAU
+   RENDU DU PLATEAU
 ========================================================= */
 
 function renderBoard() {
 
     const board =
-        document.getElementById(
-            "board"
-        );
+        document
+            .getElementById(
+                "board"
+            );
 
 
     board.innerHTML = "";
@@ -2829,8 +2221,16 @@ function renderBoard() {
 
 
             element.className =
-                "cell " +
-                cell.type;
+                "cell";
+
+
+            if(cell.type) {
+
+                element.classList.add(
+                    cell.type
+                );
+
+            }
 
 
             if(
@@ -2863,11 +2263,11 @@ function renderBoard() {
                     ${cell.icon}
                 </div>
 
-                <div class="cell-label">
-                    ${cell.label}
+                <div class="cell-name">
+                    ${cell.name}
                 </div>
 
-                <div class="tokens">
+                <div class="pawns">
 
                     ${
                         playersHere
@@ -2875,12 +2275,11 @@ function renderBoard() {
                                 player => `
 
                                     <div
-                                        class="token"
+                                        class="pawn"
                                         style="
                                             background:
                                             ${player.color};
                                         "
-                                        title="${player.name}"
                                     ></div>
 
                                 `
@@ -2904,26 +2303,14 @@ function renderBoard() {
 
 
 /* =========================================================
-   FIN DU TOUR
+   FIN DU PLATEAU
 ========================================================= */
 
-function finishTurn() {
-
-    if(!hasAnswered) {
-
-        showToast(
-            "⚠️ Tu dois répondre à la carte."
-        );
-
-        return;
-
-    }
-
+function finishBoard() {
 
     /*
-       Si le joueur est arrivé
-       sur la dernière case :
-       fin de partie.
+       Si le joueur a atteint l'arrivée,
+       la partie est terminée.
     */
 
     if(
@@ -2937,6 +2324,10 @@ function finishTurn() {
 
     }
 
+
+    /*
+       Passage à l'écran de fin de tour.
+    */
 
     const nextIndex =
         (
@@ -2955,7 +2346,7 @@ function finishTurn() {
 
     document
         .getElementById(
-            "nextPlayer"
+            "nextPlayerName"
         )
         .textContent =
             players[
@@ -2964,7 +2355,7 @@ function finishTurn() {
 
 
     showScreen(
-        "nextScreen"
+        "endTurnScreen"
     );
 
 }
@@ -2974,7 +2365,7 @@ function finishTurn() {
    JOUEUR SUIVANT
 ========================================================= */
 
-function nextPlayerTurn() {
+function startNextTurn() {
 
     currentPlayerIndex++;
 
@@ -2989,39 +2380,18 @@ function nextPlayerTurn() {
     }
 
 
-    currentPlayer =
-        players[
-            currentPlayerIndex
-        ];
-
-
-    turnNumber++;
-
-
     prepareDiceScreen();
 
 }
 
 
 /* =========================================================
-   VAINQUEUR
+   FIN DE PARTIE
 ========================================================= */
 
 function showWinner() {
 
-    gameOver = true;
-
-
-    const sortedPlayers =
-        [...players]
-            .sort(
-                (a,b) =>
-                    b.points - a.points
-            );
-
-
-    const winner =
-        currentPlayer;
+    gameFinished = true;
 
 
     document
@@ -3029,52 +2399,58 @@ function showWinner() {
             "winnerName"
         )
         .textContent =
-            "🎉 " + winner.name;
+            "🎉 " +
+            currentPlayer.name;
 
 
     const scores =
-        document.getElementById(
-            "scores"
-        );
+        document
+            .getElementById(
+                "scores"
+            );
 
 
     scores.innerHTML = "";
 
 
-    sortedPlayers.forEach(
+    const sorted =
+        [...players].sort(
+            (a,b) =>
+                b.points -
+                a.points
+        );
+
+
+    sorted.forEach(
         (player,index) => {
 
-            const line =
+            const row =
                 document.createElement(
                     "div"
                 );
 
 
-            line.className =
-                "score-line";
+            row.className =
+                "score";
 
 
-            line.innerHTML = `
+            row.innerHTML = `
 
-                <span class="score-name">
-
+                <span>
                     ${index + 1}.
                     ${player.name}
-
                 </span>
 
-                <span class="score-points">
-
+                <span>
                     ${player.points}
                     point(s)
-
                 </span>
 
             `;
 
 
             scores.appendChild(
-                line
+                row
             );
 
         }
@@ -3086,30 +2462,6 @@ function showWinner() {
     );
 
 }
-
-
-/* =========================================================
-   INITIALISATION
-========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        /*
-           Aucun joueur pré-rempli :
-           l'enseignant ou les élèves
-           saisissent eux-mêmes les prénoms.
-        */
-
-        document
-            .getElementById(
-                "player1"
-            )
-            .focus();
-
-    }
-);
 
 </script>
 

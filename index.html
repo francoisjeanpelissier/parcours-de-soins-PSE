@@ -8,10 +8,6 @@
 
 <style>
 
-/* =========================================================
-   BASE
-========================================================= */
-
 * {
     box-sizing: border-box;
 }
@@ -25,15 +21,10 @@ body {
 }
 
 body {
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
+    font-family: Arial, Helvetica, sans-serif;
     background: #eef2f7;
     color: #202938;
 }
-
 
 /* =========================================================
    ÉCRANS
@@ -55,18 +46,12 @@ body {
     display: flex;
 }
 
-
 /* =========================================================
    BOUTONS
 ========================================================= */
 
-button {
-    font-family: inherit;
-}
-
 .main-button {
     border: none;
-
     background: #2457a6;
     color: white;
 
@@ -95,9 +80,8 @@ button {
     transform: none;
 }
 
-
 /* =========================================================
-   ÉCRAN 1 : JOUEURS
+   ÉCRAN INSCRIPTION
 ========================================================= */
 
 #playersScreen {
@@ -192,9 +176,8 @@ button {
 .c5 { background:#f39c12; }
 .c6 { background:#16a085; }
 
-
 /* =========================================================
-   ÉCRAN 2 : DÉ
+   ÉCRAN DÉ
 ========================================================= */
 
 #diceScreen {
@@ -208,15 +191,12 @@ button {
 
 .dice-only {
     width: min(650px, 100%);
-
     text-align: center;
 }
 
 .dice-only h1 {
     font-size: clamp(38px, 7vw, 65px);
-
     color: #173b73;
-
     margin: 20px 0 40px;
 }
 
@@ -283,9 +263,8 @@ button {
     }
 }
 
-
 /* =========================================================
-   ÉCRAN 3 : QUESTION
+   ÉCRAN QUESTION
 ========================================================= */
 
 #questionScreen {
@@ -350,7 +329,6 @@ button {
 
 .option:hover {
     border-color: #2457a6;
-
     background: #edf4ff;
 }
 
@@ -419,14 +397,12 @@ button {
     margin-top: 15px;
 }
 
-
 /* =========================================================
-   ÉCRAN 4 : PLATEAU
+   PLATEAU
 ========================================================= */
 
 #boardScreen {
     background: #eef2f7;
-
     align-items: center;
 }
 
@@ -557,13 +533,11 @@ button {
 
 .move-button-container {
     text-align: center;
-
     margin-top: 25px;
 }
 
-
 /* =========================================================
-   ÉCRAN 5 : FIN DU TOUR
+   FIN DU TOUR
 ========================================================= */
 
 #endTurnScreen {
@@ -592,7 +566,6 @@ button {
 
 .end-turn-box h1 {
     color: #173b73;
-
     font-size: 42px;
 }
 
@@ -616,9 +589,8 @@ button {
     margin: 8px 0 30px;
 }
 
-
 /* =========================================================
-   ÉCRAN FIN DE PARTIE
+   FIN DE PARTIE
 ========================================================= */
 
 #winnerScreen {
@@ -651,7 +623,6 @@ button {
 
 .winner-box h1 {
     font-size: 45px;
-
     color: #173b73;
 }
 
@@ -667,9 +638,7 @@ button {
 
 .scores {
     display: grid;
-
     gap: 10px;
-
     margin: 30px 0;
 }
 
@@ -686,7 +655,6 @@ button {
 
     font-weight: bold;
 }
-
 
 /* =========================================================
    RESPONSIVE
@@ -715,7 +683,6 @@ button {
     .cell {
         min-height: 85px;
     }
-
 }
 
 @media(max-width: 550px) {
@@ -734,18 +701,16 @@ button {
         height: 140px;
         font-size: 85px;
     }
-
 }
 
 </style>
 </head>
 
-
 <body>
 
 
 <!-- ======================================================
-     1 — INSCRIPTION DES JOUEURS
+     ÉCRAN 1 — INSCRIPTION
 ====================================================== -->
 
 <section
@@ -762,7 +727,6 @@ button {
         <p>
             Inscrivez les joueurs pour commencer la partie.
         </p>
-
 
         <div class="players-list">
 
@@ -816,7 +780,6 @@ button {
 
         </div>
 
-
         <button
             class="main-button"
             onclick="startGame()"
@@ -829,9 +792,8 @@ button {
 </section>
 
 
-
 <!-- ======================================================
-     2 — DÉ UNIQUEMENT
+     ÉCRAN 2 — DÉ
 ====================================================== -->
 
 <section
@@ -844,14 +806,11 @@ button {
         <div
             id="playerCircle"
             class="player-circle"
-        >
-        </div>
+        ></div>
 
         <h1
             id="dicePlayerName"
-        >
-        </h1>
-
+        ></h1>
 
         <div
             id="dice"
@@ -859,7 +818,6 @@ button {
         >
             ⚀
         </div>
-
 
         <button
             id="rollButton"
@@ -874,9 +832,8 @@ button {
 </section>
 
 
-
 <!-- ======================================================
-     3 — QUESTION UNIQUEMENT
+     ÉCRAN 3 — QUESTION
 ====================================================== -->
 
 <section
@@ -888,32 +845,26 @@ button {
 
         <h1
             id="questionText"
-        >
-        </h1>
-
+        ></h1>
 
         <div
             id="options"
             class="options"
-        >
-        </div>
-
+        ></div>
 
         <div
             id="feedback"
             class="feedback"
             style="display:none"
-        >
-        </div>
+        ></div>
 
     </div>
 
 </section>
 
 
-
 <!-- ======================================================
-     4 — PLATEAU UNIQUEMENT
+     ÉCRAN 4 — PLATEAU
 ====================================================== -->
 
 <section
@@ -926,16 +877,12 @@ button {
         <div
             id="boardText"
             class="board-text"
-        >
-        </div>
-
+        ></div>
 
         <div
             id="board"
             class="board"
-        >
-        </div>
-
+        ></div>
 
         <div class="move-button-container">
 
@@ -954,9 +901,8 @@ button {
 </section>
 
 
-
 <!-- ======================================================
-     5 — FIN DU TOUR UNIQUEMENT
+     ÉCRAN 5 — FIN DU TOUR
 ====================================================== -->
 
 <section
@@ -970,24 +916,18 @@ button {
             Tour terminé
         </h1>
 
-
         <div
             id="finishedPlayer"
-        >
-        </div>
-
+        ></div>
 
         <div class="next-player-label">
             Prochain joueur
         </div>
 
-
         <div
             id="nextPlayerName"
             class="next-player-name"
-        >
-        </div>
-
+        ></div>
 
         <button
             class="main-button"
@@ -1001,9 +941,8 @@ button {
 </section>
 
 
-
 <!-- ======================================================
-     6 — FIN DE PARTIE
+     ÉCRAN 6 — FIN DE PARTIE
 ====================================================== -->
 
 <section
@@ -1021,24 +960,19 @@ button {
             Partie terminée !
         </h1>
 
-
         <div
             id="winnerName"
             class="winner-name"
-        >
-        </div>
-
+        ></div>
 
         <div
             id="scores"
             class="scores"
-        >
-        </div>
-
+        ></div>
 
         <button
             class="main-button"
-            onclick="location.reload()"
+            onclick="newGame()"
         >
             NOUVELLE PARTIE
         </button>
@@ -1048,11 +982,10 @@ button {
 </section>
 
 
-
 <script>
 
 /* =========================================================
-   VARIABLES
+   VARIABLES DU JEU
 ========================================================= */
 
 let players = [];
@@ -1067,10 +1000,24 @@ let currentCard = null;
 
 let answered = false;
 
+/*
+    IMPORTANT :
+
+    remainingCards contient une copie mélangée
+    des cartes pour LA PARTIE EN COURS.
+
+    Lorsqu'une carte est tirée,
+    elle est supprimée du tableau.
+
+    Elle ne peut donc pas être tirée deux fois
+    dans la même partie.
+*/
 let remainingCards = [];
 
-let gameFinished = false;
 
+/* =========================================================
+   COULEURS DES JOUEURS
+========================================================= */
 
 const colors = [
     "#e74c3c",
@@ -1081,6 +1028,10 @@ const colors = [
     "#16a085"
 ];
 
+
+/* =========================================================
+   FACES DU DÉ
+========================================================= */
 
 const diceFaces = [
     "⚀",
@@ -1230,7 +1181,7 @@ const boardCells = [
 
 
 /* =========================================================
-   CARTES
+   BANQUE DE QUESTIONS
 ========================================================= */
 
 const cards = [
@@ -1240,13 +1191,23 @@ const cards = [
         "Quel professionnel joue généralement un rôle central dans le parcours de soins coordonné ?",
 
         options:[
-            "Le médecin traitant",
-            "Le pharmacien",
-            "L'Assurance Maladie",
-            "Le spécialiste"
+            {
+                text:"Le médecin traitant",
+                correct:true
+            },
+            {
+                text:"Le pharmacien",
+                correct:false
+            },
+            {
+                text:"L'Assurance Maladie",
+                correct:false
+            },
+            {
+                text:"Le spécialiste",
+                correct:false
+            }
         ],
-
-        correct:0,
 
         explanation:
         "Le médecin traitant joue un rôle central dans le suivi et la coordination des soins."
@@ -1258,13 +1219,23 @@ const cards = [
         "Pourquoi le médecin traitant peut-il orienter son patient vers un spécialiste ?",
 
         options:[
-            "Pour coordonner et adapter les soins aux besoins du patient",
-            "Pour rendre la consultation gratuite",
-            "Pour remplacer le spécialiste",
-            "Pour choisir le remboursement"
+            {
+                text:"Pour rendre automatiquement la consultation gratuite",
+                correct:false
+            },
+            {
+                text:"Pour coordonner et adapter les soins aux besoins du patient",
+                correct:true
+            },
+            {
+                text:"Pour remplacer le spécialiste",
+                correct:false
+            },
+            {
+                text:"Pour choisir lui-même le montant du remboursement",
+                correct:false
+            }
         ],
-
-        correct:0,
 
         explanation:
         "Il coordonne le parcours et peut orienter le patient vers le professionnel adapté."
@@ -1276,13 +1247,23 @@ const cards = [
         "Que peut-il se passer lorsqu'un patient consulte un spécialiste sans respecter le parcours de soins coordonné ?",
 
         options:[
-            "Le remboursement peut être moins favorable",
-            "La consultation est automatiquement interdite",
-            "Le patient est automatiquement hospitalisé",
-            "La consultation devient gratuite"
+            {
+                text:"La consultation est automatiquement interdite",
+                correct:false
+            },
+            {
+                text:"Le patient est automatiquement hospitalisé",
+                correct:false
+            },
+            {
+                text:"Le remboursement peut être moins favorable",
+                correct:true
+            },
+            {
+                text:"La consultation devient automatiquement gratuite",
+                correct:false
+            }
         ],
-
-        correct:0,
 
         explanation:
         "Le non-respect du parcours peut entraîner une diminution du remboursement."
@@ -1294,13 +1275,23 @@ const cards = [
         "Dans le régime général, quelle est la part habituellement prise en charge par l'Assurance Maladie pour de nombreuses consultations médicales, sur la base de remboursement, avant certaines participations ?",
 
         options:[
-            "70 %",
-            "25 %",
-            "50 %",
-            "100 %"
+            {
+                text:"25 %",
+                correct:false
+            },
+            {
+                text:"50 %",
+                correct:false
+            },
+            {
+                text:"100 %",
+                correct:false
+            },
+            {
+                text:"70 %",
+                correct:true
+            }
         ],
-
-        correct:0,
 
         explanation:
         "Le taux de remboursement de nombreuses consultations est de 70 % de la base de remboursement, avant certaines participations et hors situations particulières."
@@ -1312,13 +1303,23 @@ const cards = [
         "Qu'est-ce que la base de remboursement ?",
 
         options:[
-            "Un tarif de référence utilisé pour calculer le remboursement",
-            "Le montant toujours payé par le patient",
-            "Le salaire du médecin",
-            "Le prix fixé par la mutuelle"
+            {
+                text:"Un tarif de référence utilisé pour calculer le remboursement",
+                correct:true
+            },
+            {
+                text:"Un montant toujours payé intégralement par le patient",
+                correct:false
+            },
+            {
+                text:"Le salaire du médecin",
+                correct:false
+            },
+            {
+                text:"Le prix fixé par la mutuelle",
+                correct:false
+            }
         ],
-
-        correct:0,
 
         explanation:
         "Le remboursement est calculé à partir d'une base de remboursement définie par les règles de l'Assurance Maladie."
@@ -1330,16 +1331,26 @@ const cards = [
         "Une situation d'urgence nécessite-t-elle toujours de passer d'abord par le médecin traitant ?",
 
         options:[
-            "Non, l'urgence constitue une situation particulière",
-            "Oui, toujours",
-            "Oui, uniquement le week-end",
-            "Oui, si le patient possède une mutuelle"
+            {
+                text:"Oui, toujours",
+                correct:false
+            },
+            {
+                text:"Non, l'urgence constitue une situation particulière",
+                correct:true
+            },
+            {
+                text:"Oui, uniquement le week-end",
+                correct:false
+            },
+            {
+                text:"Oui, si le patient possède une mutuelle",
+                correct:false
+            }
         ],
 
-        correct:0,
-
         explanation:
-        "Les situations d'urgence font partie des situations particulières dans lesquelles le parcours habituel ne s'applique pas de la même manière."
+        "Les situations d'urgence constituent une situation particulière dans laquelle le parcours habituel ne s'applique pas de la même manière."
     },
 
 
@@ -1348,13 +1359,23 @@ const cards = [
         "Quel est l'objectif principal du parcours de soins coordonné ?",
 
         options:[
-            "Améliorer la coordination et la continuité des soins",
-            "Empêcher l'accès aux spécialistes",
-            "Faire payer davantage les patients",
-            "Supprimer le médecin traitant"
+            {
+                text:"Empêcher l'accès aux spécialistes",
+                correct:false
+            },
+            {
+                text:"Faire payer davantage les patients",
+                correct:false
+            },
+            {
+                text:"Améliorer la coordination et la continuité des soins",
+                correct:true
+            },
+            {
+                text:"Supprimer le médecin traitant",
+                correct:false
+            }
         ],
-
-        correct:0,
 
         explanation:
         "Le parcours vise notamment à organiser les soins autour du patient et à favoriser leur coordination."
@@ -1366,13 +1387,23 @@ const cards = [
         "Pourquoi le respect du parcours de soins peut-il avoir une conséquence financière ?",
 
         options:[
-            "Parce que les règles de remboursement peuvent être moins favorables hors parcours",
-            "Parce que le médecin fixe le remboursement",
-            "Parce que la carte Vitale change de couleur",
-            "Parce que le spécialiste décide du taux de remboursement"
+            {
+                text:"Parce que le médecin fixe le remboursement",
+                correct:false
+            },
+            {
+                text:"Parce que la carte Vitale change de couleur",
+                correct:false
+            },
+            {
+                text:"Parce que le spécialiste décide du taux de remboursement",
+                correct:false
+            },
+            {
+                text:"Parce que les règles de remboursement peuvent être moins favorables hors parcours",
+                correct:true
+            }
         ],
-
-        correct:0,
 
         explanation:
         "Le respect du parcours de soins coordonné peut avoir une incidence sur le niveau de remboursement."
@@ -1384,13 +1415,23 @@ const cards = [
         "Quelle situation correspond à une bonne coordination des soins ?",
 
         options:[
-            "Le médecin traitant oriente le patient vers le professionnel adapté",
-            "Le patient consulte uniquement les urgences",
-            "Le patient change de médecin à chaque consultation",
-            "Le pharmacien pose tous les diagnostics"
+            {
+                text:"Le médecin traitant oriente le patient vers le professionnel adapté",
+                correct:true
+            },
+            {
+                text:"Le patient consulte uniquement les urgences",
+                correct:false
+            },
+            {
+                text:"Le patient change de médecin à chaque consultation",
+                correct:false
+            },
+            {
+                text:"Le pharmacien pose tous les diagnostics",
+                correct:false
+            }
         ],
-
-        correct:0,
 
         explanation:
         "L'orientation par le médecin traitant participe à la coordination du parcours."
@@ -1402,13 +1443,23 @@ const cards = [
         "Une personne atteinte d'une affection de longue durée reconnue peut bénéficier, pour les soins en rapport avec cette affection, d'une prise en charge particulière. Laquelle ?",
 
         options:[
-            "Une prise en charge à 100 % de la base de remboursement dans les conditions prévues",
-            "Tous ses soins deviennent automatiquement gratuits",
-            "Elle n'a plus besoin de médecin",
-            "Elle n'a plus besoin de carte Vitale"
+            {
+                text:"Tous ses soins deviennent automatiquement gratuits",
+                correct:false
+            },
+            {
+                text:"Une prise en charge à 100 % de la base de remboursement dans les conditions prévues",
+                correct:true
+            },
+            {
+                text:"Elle n'a plus besoin de médecin",
+                correct:false
+            },
+            {
+                text:"Elle n'a plus besoin de carte Vitale",
+                correct:false
+            }
         ],
-
-        correct:0,
 
         explanation:
         "Pour une ALD exonérante, les soins en rapport avec l'affection peuvent être pris en charge à 100 % de la base de remboursement, selon les règles applicables."
@@ -1420,13 +1471,23 @@ const cards = [
         "Un dépassement d'honoraires est-il automatiquement remboursé intégralement par l'Assurance Maladie ?",
 
         options:[
-            "Non",
-            "Oui, toujours",
-            "Oui, si le médecin est spécialiste",
-            "Oui, uniquement aux urgences"
+            {
+                text:"Oui, toujours",
+                correct:false
+            },
+            {
+                text:"Oui, si le médecin est spécialiste",
+                correct:false
+            },
+            {
+                text:"Non",
+                correct:true
+            },
+            {
+                text:"Oui, uniquement aux urgences",
+                correct:false
+            }
         ],
-
-        correct:0,
 
         explanation:
         "L'Assurance Maladie rembourse selon les bases prévues. Un dépassement peut rester à la charge du patient ou être couvert en partie par une complémentaire."
@@ -1438,13 +1499,23 @@ const cards = [
         "Certaines spécialités bénéficient de règles d'accès direct spécifique. Que signifie cela ?",
 
         options:[
-            "Dans certaines situations prévues, le patient peut consulter directement certains spécialistes sans passer par son médecin traitant",
-            "Tous les spécialistes sont accessibles directement",
-            "Le spécialiste devient automatiquement le médecin traitant",
-            "La consultation est forcément gratuite"
+            {
+                text:"Tous les spécialistes sont accessibles directement",
+                correct:false
+            },
+            {
+                text:"Le spécialiste devient automatiquement le médecin traitant",
+                correct:false
+            },
+            {
+                text:"La consultation est forcément gratuite",
+                correct:false
+            },
+            {
+                text:"Dans certaines situations prévues, le patient peut consulter directement certains spécialistes sans passer par son médecin traitant",
+                correct:true
+            }
         ],
-
-        correct:0,
 
         explanation:
         "Certaines situations et spécialités permettent un accès direct spécifique dans le cadre prévu par les règles de l'Assurance Maladie."
@@ -1456,13 +1527,23 @@ const cards = [
         "Quel professionnel délivre généralement les médicaments prescrits ?",
 
         options:[
-            "Le pharmacien",
-            "Le médecin traitant",
-            "L'Assurance Maladie",
-            "Le spécialiste"
+            {
+                text:"Le pharmacien",
+                correct:true
+            },
+            {
+                text:"Le médecin traitant",
+                correct:false
+            },
+            {
+                text:"L'Assurance Maladie",
+                correct:false
+            },
+            {
+                text:"Le spécialiste",
+                correct:false
+            }
         ],
-
-        correct:0,
 
         explanation:
         "Le pharmacien délivre les médicaments et peut également apporter des conseils."
@@ -1474,13 +1555,23 @@ const cards = [
         "Le fait d'avoir un médecin traitant signifie-t-il qu'il est interdit de consulter un autre médecin ?",
 
         options:[
-            "Non",
-            "Oui, absolument",
-            "Oui, sauf pendant les vacances",
-            "Oui, sauf avec une mutuelle"
+            {
+                text:"Oui, absolument",
+                correct:false
+            },
+            {
+                text:"Non",
+                correct:true
+            },
+            {
+                text:"Oui, sauf pendant les vacances",
+                correct:false
+            },
+            {
+                text:"Oui, sauf avec une mutuelle",
+                correct:false
+            }
         ],
-
-        correct:0,
 
         explanation:
         "Le médecin traitant coordonne le parcours mais le patient peut consulter d'autres professionnels selon ses besoins et les règles applicables."
@@ -1492,13 +1583,23 @@ const cards = [
         "Quel peut être l'intérêt de consulter son médecin traitant avant un spécialiste ?",
 
         options:[
-            "Bénéficier d'une orientation adaptée et d'un suivi coordonné",
-            "Obtenir automatiquement un médicament",
-            "Éviter toute consultation spécialisée",
-            "Ne jamais payer de consultation"
+            {
+                text:"Obtenir automatiquement un médicament",
+                correct:false
+            },
+            {
+                text:"Éviter toute consultation spécialisée",
+                correct:false
+            },
+            {
+                text:"Bénéficier d'une orientation adaptée et d'un suivi coordonné",
+                correct:true
+            },
+            {
+                text:"Ne jamais payer de consultation",
+                correct:false
+            }
         ],
-
-        correct:0,
 
         explanation:
         "Le médecin traitant peut évaluer la situation et orienter vers le professionnel approprié."
@@ -1510,13 +1611,23 @@ const cards = [
         "Si un patient respecte le parcours de soins mais consulte un professionnel pratiquant un dépassement d'honoraires, que peut-il rester à payer ?",
 
         options:[
-            "Tout ou partie du dépassement, selon les conditions et la complémentaire",
-            "Rien dans tous les cas",
-            "La totalité de la consultation obligatoirement",
-            "Uniquement les médicaments"
+            {
+                text:"Rien dans tous les cas",
+                correct:false
+            },
+            {
+                text:"La totalité de la consultation obligatoirement",
+                correct:false
+            },
+            {
+                text:"Uniquement les médicaments",
+                correct:false
+            },
+            {
+                text:"Tout ou partie du dépassement, selon les conditions et la complémentaire",
+                correct:true
+            }
         ],
-
-        correct:0,
 
         explanation:
         "Le respect du parcours ne signifie pas que tous les dépassements d'honoraires sont remboursés."
@@ -1528,13 +1639,23 @@ const cards = [
         "Quelle affirmation décrit le mieux le rôle du parcours de soins coordonné ?",
 
         options:[
-            "Organiser les soins autour du patient",
-            "Interdire les spécialistes",
-            "Supprimer les urgences",
-            "Rendre tous les soins gratuits"
+            {
+                text:"Organiser les soins autour du patient",
+                correct:true
+            },
+            {
+                text:"Interdire les spécialistes",
+                correct:false
+            },
+            {
+                text:"Supprimer les urgences",
+                correct:false
+            },
+            {
+                text:"Rendre tous les soins gratuits",
+                correct:false
+            }
         ],
-
-        correct:0,
 
         explanation:
         "Le parcours de soins coordonné cherche à améliorer l'organisation et la continuité des soins."
@@ -1546,13 +1667,23 @@ const cards = [
         "Pourquoi les remboursements ne correspondent-ils pas toujours exactement au prix payé ?",
 
         options:[
-            "Parce qu'ils sont calculés à partir d'une base de remboursement et de règles précises",
-            "Parce que chaque patient choisit son taux",
-            "Parce que le médecin décide du remboursement",
-            "Parce que la mutuelle remplace toujours l'Assurance Maladie"
+            {
+                text:"Parce que chaque patient choisit son taux",
+                correct:false
+            },
+            {
+                text:"Parce qu'ils sont calculés à partir d'une base de remboursement et de règles précises",
+                correct:true
+            },
+            {
+                text:"Parce que le médecin décide du remboursement",
+                correct:false
+            },
+            {
+                text:"Parce que la mutuelle remplace toujours l'Assurance Maladie",
+                correct:false
+            }
         ],
-
-        correct:0,
 
         explanation:
         "Le montant remboursé dépend notamment de la base de remboursement, du taux applicable et de la situation du patient."
@@ -1564,13 +1695,23 @@ const cards = [
         "Quel acteur peut intervenir après une prescription médicale pour délivrer un médicament et conseiller le patient ?",
 
         options:[
-            "Le pharmacien",
-            "Le médecin traitant uniquement",
-            "L'hôpital uniquement",
-            "L'Assurance Maladie"
+            {
+                text:"Le médecin traitant uniquement",
+                correct:false
+            },
+            {
+                text:"L'hôpital uniquement",
+                correct:false
+            },
+            {
+                text:"Le pharmacien",
+                correct:true
+            },
+            {
+                text:"L'Assurance Maladie",
+                correct:false
+            }
         ],
-
-        correct:0,
 
         explanation:
         "Le pharmacien intervient notamment dans la délivrance des médicaments et le conseil."
@@ -1582,13 +1723,23 @@ const cards = [
         "Quelle situation correspond le moins à un parcours de soins coordonné ?",
 
         options:[
-            "Consulter systématiquement différents spécialistes sans coordination du suivi",
-            "Déclarer un médecin traitant",
-            "Être orienté vers un spécialiste lorsque cela est nécessaire",
-            "Assurer un suivi médical régulier"
+            {
+                text:"Déclarer un médecin traitant",
+                correct:false
+            },
+            {
+                text:"Être orienté vers un spécialiste lorsque cela est nécessaire",
+                correct:false
+            },
+            {
+                text:"Assurer un suivi médical régulier",
+                correct:false
+            },
+            {
+                text:"Consulter systématiquement différents spécialistes sans coordination du suivi",
+                correct:true
+            }
         ],
-
-        correct:0,
 
         explanation:
         "L'absence de coordination entre les différents professionnels est contraire à l'objectif du parcours coordonné."
@@ -1598,13 +1749,28 @@ const cards = [
 
 
 /* =========================================================
-   MÉLANGE
+   MÉLANGE DE FISHER-YATES
 ========================================================= */
+
+/*
+    Cette fonction réalise un véritable mélange
+    aléatoire du tableau.
+
+    Elle est utilisée :
+
+    1. Pour l'ordre des cartes.
+    2. Pour l'ordre des réponses.
+
+    Ainsi, une nouvelle partie donne un ordre
+    différent.
+*/
 
 function shuffle(array) {
 
+    const newArray = [...array];
+
     for (
-        let i = array.length - 1;
+        let i = newArray.length - 1;
         i > 0;
         i--
     ) {
@@ -1615,15 +1781,67 @@ function shuffle(array) {
             );
 
         [
-            array[i],
-            array[j]
+            newArray[i],
+            newArray[j]
         ] = [
-            array[j],
-            array[i]
+            newArray[j],
+            newArray[i]
         ];
     }
 
-    return array;
+    return newArray;
+}
+
+
+/* =========================================================
+   CRÉATION D'UN NOUVEAU PAQUET
+========================================================= */
+
+/*
+    C'est ici que le système mélange :
+
+    - les cartes ;
+    - les réponses de chaque carte.
+
+    On crée de nouvelles cartes afin de ne jamais
+    modifier la banque originale.
+*/
+
+function createNewDeck() {
+
+    remainingCards =
+        cards.map(card => {
+
+            return {
+
+                question:
+                    card.question,
+
+                explanation:
+                    card.explanation,
+
+                /*
+                    Chaque carte possède son propre
+                    ordre aléatoire de réponses.
+                */
+
+                options:
+                    shuffle(
+                        card.options
+                    )
+
+            };
+
+        });
+
+    /*
+        Puis on mélange l'ordre des cartes.
+    */
+
+    remainingCards =
+        shuffle(
+            remainingCards
+        );
 }
 
 
@@ -1645,13 +1863,11 @@ function showScreen(id) {
             }
         );
 
-
     document
         .getElementById(id)
         .classList.add(
             "active"
         );
-
 
     window.scrollTo(
         0,
@@ -1661,13 +1877,12 @@ function showScreen(id) {
 
 
 /* =========================================================
-   DÉMARRAGE
+   DÉMARRER UNE PARTIE
 ========================================================= */
 
 function startGame() {
 
     players = [];
-
 
     for (
         let i = 1;
@@ -1682,7 +1897,6 @@ function startGame() {
                 )
                 .value
                 .trim();
-
 
         if(value) {
 
@@ -1703,7 +1917,6 @@ function startGame() {
 
     }
 
-
     if(players.length < 2) {
 
         alert(
@@ -1713,23 +1926,28 @@ function startGame() {
         return;
     }
 
+    /*
+        IMPORTANT :
 
-    remainingCards =
-        shuffle(
-            [...cards]
-        );
+        Chaque lancement de partie
+        recrée complètement le paquet.
 
+        Donc :
+
+        - ordre des cartes = nouveau
+        - ordre des réponses = nouveau
+    */
+
+    createNewDeck();
 
     currentPlayerIndex = 0;
 
-
     prepareDiceScreen();
-
 }
 
 
 /* =========================================================
-   ÉCRAN DÉ
+   PRÉPARER LE TOUR
 ========================================================= */
 
 function prepareDiceScreen() {
@@ -1739,17 +1957,12 @@ function prepareDiceScreen() {
             currentPlayerIndex
         ];
 
-
-    const name =
-        document
-            .getElementById(
-                "dicePlayerName"
-            );
-
-
-    name.textContent =
-        currentPlayer.name;
-
+    document
+        .getElementById(
+            "dicePlayerName"
+        )
+        .textContent =
+            currentPlayer.name;
 
     const circle =
         document
@@ -1757,16 +1970,13 @@ function prepareDiceScreen() {
                 "playerCircle"
             );
 
-
     circle.style.background =
         currentPlayer.color;
-
 
     circle.textContent =
         currentPlayer.name
             .charAt(0)
             .toUpperCase();
-
 
     const dice =
         document
@@ -1774,25 +1984,18 @@ function prepareDiceScreen() {
                 "dice"
             );
 
-
     dice.textContent =
         "⚀";
 
-
-    const button =
-        document
-            .getElementById(
-                "rollButton"
-            );
-
-
-    button.disabled = false;
-
+    document
+        .getElementById(
+            "rollButton"
+        )
+        .disabled = false;
 
     showScreen(
         "diceScreen"
     );
-
 }
 
 
@@ -1808,9 +2011,7 @@ function rollDice() {
                 "rollButton"
             );
 
-
     button.disabled = true;
-
 
     const dice =
         document
@@ -1818,14 +2019,11 @@ function rollDice() {
                 "dice"
             );
 
-
     dice.classList.add(
         "rolling"
     );
 
-
     let count = 0;
-
 
     const animation =
         setInterval(
@@ -1836,13 +2034,10 @@ function rollDice() {
                         Math.random() * 6
                     );
 
-
                 dice.textContent =
                     diceFaces[value];
 
-
                 count++;
-
 
                 if(count >= 12) {
 
@@ -1850,50 +2045,52 @@ function rollDice() {
                         animation
                     );
 
-
                     dice.classList.remove(
                         "rolling"
                     );
-
 
                     diceValue =
                         Math.floor(
                             Math.random() * 6
                         ) + 1;
 
-
                     dice.textContent =
                         diceFaces[
                             diceValue - 1
                         ];
 
+                    /*
+                        Une carte est tirée
+                        après le lancer du dé.
+                    */
 
                     drawCard();
-
 
                     setTimeout(
                         showQuestion,
                         500
                     );
-
                 }
 
             },
             90
         );
-
 }
 
 
 /* =========================================================
-   PIOCHER UNE CARTE
+   TIRER UNE CARTE
 ========================================================= */
 
 function drawCard() {
 
     /*
-       La carte est retirée définitivement
-       du paquet pour cette partie.
+        On prend la première carte du paquet.
+
+        shift() la retire immédiatement du tableau.
+
+        Elle ne pourra donc plus être tirée
+        pendant cette partie.
     */
 
     if(
@@ -1901,25 +2098,20 @@ function drawCard() {
     ) {
 
         /*
-           Sécurité :
-           si toutes les cartes ont été utilisées,
-           on remet le paquet à zéro.
+            Sécurité :
 
-           Dans une partie normale, le joueur
-           devrait avoir atteint l'arrivée avant.
+            si toutes les cartes ont été utilisées,
+            on recrée un paquet.
+
+            Dans une partie normale, cela ne devrait
+            arriver qu'après avoir utilisé toutes les cartes.
         */
 
-        remainingCards =
-            shuffle(
-                [...cards]
-            );
-
+        createNewDeck();
     }
-
 
     currentCard =
         remainingCards.shift();
-
 }
 
 
@@ -1931,7 +2123,6 @@ function showQuestion() {
 
     answered = false;
 
-
     document
         .getElementById(
             "questionText"
@@ -1939,16 +2130,13 @@ function showQuestion() {
         .textContent =
             currentCard.question;
 
-
     const options =
         document
             .getElementById(
                 "options"
             );
 
-
     options.innerHTML = "";
-
 
     const letters = [
         "A",
@@ -1957,20 +2145,29 @@ function showQuestion() {
         "D"
     ];
 
+    /*
+        IMPORTANT :
+
+        currentCard.options est déjà mélangé.
+
+        On affiche donc simplement les réponses
+        dans cet ordre.
+
+        La propriété "correct" permet au jeu de
+        savoir quelle réponse est réellement bonne.
+    */
 
     currentCard.options
         .forEach(
-            (text,index) => {
+            (option,index) => {
 
                 const button =
                     document.createElement(
                         "button"
                     );
 
-
                 button.className =
                     "option";
-
 
                 button.innerHTML = `
 
@@ -1981,18 +2178,16 @@ function showQuestion() {
                     </span>
 
                     <span>
-                        ${text}
+                        ${option.text}
                     </span>
 
                 `;
-
 
                 button.onclick =
                     () =>
                         answerQuestion(
                             index
                         );
-
 
                 options.appendChild(
                     button
@@ -2001,7 +2196,6 @@ function showQuestion() {
             }
         );
 
-
     document
         .getElementById(
             "feedback"
@@ -2009,36 +2203,29 @@ function showQuestion() {
         .style.display =
             "none";
 
-
     showScreen(
         "questionScreen"
     );
-
 }
 
 
 /* =========================================================
-   RÉPONSE
+   RÉPONDRE À LA QUESTION
 ========================================================= */
 
 function answerQuestion(index) {
 
     if(answered) {
-
         return;
-
     }
 
-
     answered = true;
-
 
     const buttons =
         document
             .querySelectorAll(
                 ".option"
             );
-
 
     buttons.forEach(
         button => {
@@ -2049,18 +2236,49 @@ function answerQuestion(index) {
         }
     );
 
+    /*
+        Grâce au mélange des réponses,
+        la bonne réponse peut maintenant être
+        A, B, C ou D.
+
+        On ne regarde donc PAS une position fixe.
+
+        On vérifie la propriété "correct".
+    */
 
     const isCorrect =
-        index ===
-        currentCard.correct;
+        currentCard
+            .options[index]
+            .correct;
 
+
+    /*
+        On recherche l'index de la bonne réponse
+        dans l'ordre actuellement mélangé.
+    */
+
+    const correctIndex =
+        currentCard.options.findIndex(
+            option =>
+                option.correct === true
+        );
+
+
+    /*
+        Mise en évidence de la bonne réponse.
+    */
 
     buttons[
-        currentCard.correct
+        correctIndex
     ].classList.add(
         "correct"
     );
 
+
+    /*
+        Si l'élève s'est trompé,
+        on met également son choix en rouge.
+    */
 
     if(!isCorrect) {
 
@@ -2078,16 +2296,18 @@ function answerQuestion(index) {
     }
 
 
+    /* =====================================================
+       FEEDBACK
+    ===================================================== */
+
     const feedback =
         document
             .getElementById(
                 "feedback"
             );
 
-
     feedback.style.display =
         "block";
-
 
     feedback.className =
         "feedback " +
@@ -2096,6 +2316,17 @@ function answerQuestion(index) {
                 ? "good"
                 : "bad"
         );
+
+
+    const correctLetter =
+        [
+            "A",
+            "B",
+            "C",
+            "D"
+        ][
+            correctIndex
+        ];
 
 
     feedback.innerHTML = `
@@ -2114,6 +2345,13 @@ function answerQuestion(index) {
             }
         </p>
 
+        <p>
+            <strong>
+                Bonne réponse :
+                ${correctLetter}
+            </strong>
+        </p>
+
         <button
             class="main-button"
             onclick="showBoard()"
@@ -2122,34 +2360,21 @@ function answerQuestion(index) {
         </button>
 
     `;
-
 }
 
 
 /* =========================================================
-   PLATEAU
+   AFFICHER LE PLATEAU
 ========================================================= */
 
 function showBoard() {
 
     if(!answered) {
-
         return;
-
     }
-
-
-    /*
-       Le pion avance du nombre obtenu au dé.
-    */
 
     currentPlayer.position +=
         diceValue;
-
-
-    /*
-       Ne jamais dépasser la dernière case.
-    */
 
     if(
         currentPlayer.position >=
@@ -2161,15 +2386,7 @@ function showBoard() {
 
     }
 
-
     renderBoard();
-
-
-    const cell =
-        boardCells[
-            currentPlayer.position
-        ];
-
 
     document
         .getElementById(
@@ -2187,16 +2404,14 @@ function showBoard() {
             ) +
             " !";
 
-
     showScreen(
         "boardScreen"
     );
-
 }
 
 
 /* =========================================================
-   RENDU DU PLATEAU
+   AFFICHER LE PLATEAU
 ========================================================= */
 
 function renderBoard() {
@@ -2207,9 +2422,7 @@ function renderBoard() {
                 "board"
             );
 
-
     board.innerHTML = "";
-
 
     boardCells.forEach(
         (cell,index) => {
@@ -2219,10 +2432,8 @@ function renderBoard() {
                     "div"
                 );
 
-
             element.className =
                 "cell";
-
 
             if(cell.type) {
 
@@ -2231,7 +2442,6 @@ function renderBoard() {
                 );
 
             }
-
 
             if(
                 currentPlayer.position ===
@@ -2244,14 +2454,12 @@ function renderBoard() {
 
             }
 
-
             const playersHere =
                 players.filter(
                     player =>
                         player.position ===
                         index
                 );
-
 
             element.innerHTML = `
 
@@ -2291,14 +2499,12 @@ function renderBoard() {
 
             `;
 
-
             board.appendChild(
                 element
             );
 
         }
     );
-
 }
 
 
@@ -2308,11 +2514,6 @@ function renderBoard() {
 
 function finishBoard() {
 
-    /*
-       Si le joueur a atteint l'arrivée,
-       la partie est terminée.
-    */
-
     if(
         currentPlayer.position >=
         boardCells.length - 1
@@ -2321,13 +2522,7 @@ function finishBoard() {
         showWinner();
 
         return;
-
     }
-
-
-    /*
-       Passage à l'écran de fin de tour.
-    */
 
     const nextIndex =
         (
@@ -2335,14 +2530,12 @@ function finishBoard() {
         ) %
         players.length;
 
-
     document
         .getElementById(
             "finishedPlayer"
         )
         .textContent =
             currentPlayer.name;
-
 
     document
         .getElementById(
@@ -2353,22 +2546,19 @@ function finishBoard() {
                 nextIndex
             ].name;
 
-
     showScreen(
         "endTurnScreen"
     );
-
 }
 
 
 /* =========================================================
-   JOUEUR SUIVANT
+   TOUR SUIVANT
 ========================================================= */
 
 function startNextTurn() {
 
     currentPlayerIndex++;
-
 
     if(
         currentPlayerIndex >=
@@ -2379,9 +2569,7 @@ function startNextTurn() {
 
     }
 
-
     prepareDiceScreen();
-
 }
 
 
@@ -2391,9 +2579,6 @@ function startNextTurn() {
 
 function showWinner() {
 
-    gameFinished = true;
-
-
     document
         .getElementById(
             "winnerName"
@@ -2402,16 +2587,13 @@ function showWinner() {
             "🎉 " +
             currentPlayer.name;
 
-
     const scores =
         document
             .getElementById(
                 "scores"
             );
 
-
     scores.innerHTML = "";
-
 
     const sorted =
         [...players].sort(
@@ -2419,7 +2601,6 @@ function showWinner() {
                 b.points -
                 a.points
         );
-
 
     sorted.forEach(
         (player,index) => {
@@ -2429,10 +2610,8 @@ function showWinner() {
                     "div"
                 );
 
-
             row.className =
                 "score";
-
 
             row.innerHTML = `
 
@@ -2448,7 +2627,6 @@ function showWinner() {
 
             `;
 
-
             scores.appendChild(
                 row
             );
@@ -2456,11 +2634,86 @@ function showWinner() {
         }
     );
 
-
     showScreen(
         "winnerScreen"
     );
+}
 
+
+/* =========================================================
+   NOUVELLE PARTIE
+========================================================= */
+
+/*
+    C'est cette fonction qui est appelée lorsque
+    l'enseignant clique sur "NOUVELLE PARTIE".
+
+    Elle remet complètement le jeu à zéro
+    ET recrée un nouveau paquet aléatoire.
+
+    Résultat :
+
+    Partie 1 :
+       carte 7 → carte 14 → carte 2 → carte 19...
+
+    Partie 2 :
+       carte 3 → carte 18 → carte 1 → carte 11...
+
+    Et les réponses de chaque carte sont elles
+    aussi remélangées.
+*/
+
+function newGame() {
+
+    /*
+        Réinitialisation des joueurs.
+    */
+
+    players = [];
+
+    currentPlayer = null;
+
+    currentPlayerIndex = 0;
+
+    diceValue = 0;
+
+    currentCard = null;
+
+    answered = false;
+
+    remainingCards = [];
+
+
+    /*
+        Effacement des noms précédents.
+    */
+
+    for (
+        let i = 1;
+        i <= 6;
+        i++
+    ) {
+
+        document
+            .getElementById(
+                "player" + i
+            )
+            .value = "";
+
+    }
+
+
+    /*
+        Retour à l'écran d'inscription.
+
+        Le nouveau mélange sera effectué lorsque
+        les nouveaux joueurs cliqueront sur
+        "COMMENCER LA PARTIE".
+    */
+
+    showScreen(
+        "playersScreen"
+    );
 }
 
 </script>

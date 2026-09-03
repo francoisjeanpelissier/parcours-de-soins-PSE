@@ -1,41 +1,3053 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+    Jeu du parcours de soins
+</title>
+
+
+<style>
+
+/* =========================================================
+   RÉINITIALISATION
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: #eef2f7;
+
+    color: #202938;
+}
+
+
+/* =========================================================
+   ÉCRANS
+========================================================= */
+
+.screen {
+
+    width: 100%;
+    min-height: 100vh;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 25px;
+}
+
+.screen.active {
+    display: flex;
+}
+
+
+/* =========================================================
+   BOUTONS
+========================================================= */
+
+.main-button {
+
+    border: none;
+
+    background: #2457a6;
+
+    color: white;
+
+    padding:
+        17px
+        30px;
+
+    border-radius: 14px;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+        transform .15s,
+        background .15s,
+        box-shadow .15s;
+}
+
+.main-button:hover {
+
+    background: #173b73;
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 7px 18px
+        rgba(36,87,166,.25);
+}
+
+.main-button:disabled {
+
+    opacity: .5;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   ÉCRAN INSCRIPTION
+========================================================= */
+
+#playersScreen {
+
+    background:
+        linear-gradient(
+            135deg,
+            #edf4ff,
+            #f8fafc
+        );
+}
+
+.players-box {
+
+    width:
+        min(700px, 100%);
+
+    background: white;
+
+    border-radius: 25px;
+
+    padding: 45px;
+
+    box-shadow:
+        0 15px 45px
+        rgba(20,40,70,.15);
+
+    text-align: center;
+}
+
+.players-box h1 {
+
+    margin:
+        0 0 10px;
+
+    color: #173b73;
+
+    font-size:
+        clamp(
+            32px,
+            5vw,
+            50px
+        );
+}
+
+.players-box p {
+
+    color: #697386;
+
+    font-size: 18px;
+}
+
+.players-list {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 15px;
+
+    margin:
+        30px 0;
+}
+
+.player-field {
+
+    position: relative;
+}
+
+.player-field input {
+
+    width: 100%;
+
+    padding:
+        16px
+        16px
+        16px
+        48px;
+
+    border:
+        2px solid #dce2eb;
+
+    border-radius: 12px;
+
+    font-size: 17px;
+
+    outline: none;
+}
+
+.player-field input:focus {
+
+    border-color:
+        #2457a6;
+}
+
+.player-color {
+
+    position: absolute;
+
+    width: 20px;
+    height: 20px;
+
+    border-radius: 50%;
+
+    left: 17px;
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+}
+
+.c1 {
+    background: #e74c3c;
+}
+
+.c2 {
+    background: #2980b9;
+}
+
+.c3 {
+    background: #27ae60;
+}
+
+.c4 {
+    background: #8e44ad;
+}
+
+.c5 {
+    background: #f39c12;
+}
+
+.c6 {
+    background: #16a085;
+}
+
+
+/* =========================================================
+   ÉCRAN DU DÉ
+========================================================= */
+
+#diceScreen {
+
+    background:
+        linear-gradient(
+            135deg,
+            #edf4ff,
+            #f7f9fc
+        );
+}
+
+.dice-only {
+
+    width:
+        min(650px, 100%);
+
+    text-align: center;
+}
+
+.dice-only h1 {
+
+    font-size:
+        clamp(
+            38px,
+            7vw,
+            65px
+        );
+
+    color:
+        #173b73;
+
+    margin:
+        20px 0 40px;
+}
+
+.player-circle {
+
+    width: 100px;
+    height: 100px;
+
+    border-radius: 50%;
+
+    margin: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: white;
+
+    font-size: 38px;
+
+    font-weight: bold;
+
+    border:
+        7px solid white;
+
+    box-shadow:
+        0 10px 30px
+        rgba(0,0,0,.2);
+}
+
+.dice {
+
+    width: 180px;
+    height: 180px;
+
+    margin:
+        0 auto 40px;
+
+    background: white;
+
+    border-radius: 30px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 110px;
+
+    box-shadow:
+        0 15px 35px
+        rgba(20,40,70,.2);
+}
+
+.dice.rolling {
+
+    animation:
+        roll .1s linear infinite;
+}
+
+@keyframes roll {
+
+    0% {
+
+        transform:
+            rotate(-5deg);
+    }
+
+    50% {
+
+        transform:
+            rotate(5deg)
+            scale(1.05);
+    }
+
+    100% {
+
+        transform:
+            rotate(-5deg);
+    }
+}
+
+
+/* =========================================================
+   ÉCRAN QUESTION
+========================================================= */
+
+#questionScreen {
+
+    background:
+        #f5f7fa;
+}
+
+.question-box {
+
+    width:
+        min(900px, 100%);
+
+    background: white;
+
+    border-radius: 25px;
+
+    padding: 45px;
+
+    box-shadow:
+        0 15px 45px
+        rgba(20,40,70,.15);
+}
+
+.question-box h1 {
+
+    font-size:
+        clamp(
+            25px,
+            4vw,
+            37px
+        );
+
+    line-height: 1.35;
+
+    margin-top: 0;
+
+    color: #202938;
+}
+
+.options {
+
+    display: grid;
+
+    gap: 15px;
+
+    margin-top: 35px;
+}
+
+.option {
+
+    border:
+        2px solid #dce2eb;
+
+    background: white;
+
+    padding: 18px;
+
+    border-radius: 14px;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    font-size: 18px;
+
+    transition: .15s;
+}
+
+.option:hover {
+
+    border-color:
+        #2457a6;
+
+    background:
+        #edf4ff;
+}
+
+.option:disabled {
+
+    cursor:
+        default;
+}
+
+.option-letter {
+
+    width: 43px;
+    height: 43px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background:
+        #edf1f7;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-weight: bold;
+
+    color:
+        #173b73;
+}
+
+.option.correct {
+
+    border-color:
+        #24a06b;
+
+    background:
+        #e8f8f0;
+}
+
+.option.correct
+.option-letter {
+
+    background:
+        #24a06b;
+
+    color: white;
+}
+
+.option.wrong {
+
+    border-color:
+        #d94c4c;
+
+    background:
+        #fff0f0;
+}
+
+.option.wrong
+.option-letter {
+
+    background:
+        #d94c4c;
+
+    color: white;
+}
+
+.feedback {
+
+    margin-top: 25px;
+
+    padding: 20px;
+
+    border-radius: 14px;
+
+    line-height: 1.5;
+
+    font-size: 17px;
+}
+
+.feedback.good {
+
+    background:
+        #e8f8f0;
+
+    border:
+        2px solid #9dd9bb;
+}
+
+.feedback.bad {
+
+    background:
+        #fff0f0;
+
+    border:
+        2px solid #eab0b0;
+}
+
+.feedback button {
+
+    margin-top: 15px;
+}
+
+
+/* =========================================================
+   PLATEAU
+========================================================= */
+
+#boardScreen {
+
+    background:
+        #eef2f7;
+
+    align-items:
+        center;
+}
+
+.board-wrapper {
+
+    width:
+        min(1200px, 100%);
+}
+
+.board {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(6, 1fr);
+
+    gap: 10px;
+
+    padding: 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #dce8f8,
+            #edf3fb
+        );
+
+    border-radius: 25px;
+
+    box-shadow:
+        0 15px 40px
+        rgba(20,40,70,.15);
+}
+
+.cell {
+
+    min-height: 110px;
+
+    background: white;
+
+    border-radius: 14px;
+
+    border:
+        3px solid #dce2eb;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-align: center;
+
+    padding: 8px;
+
+    position: relative;
+}
+
+.cell.start {
+
+    background:
+        #e8f8f0;
+
+    border-color:
+        #75c99c;
+}
+
+.cell.special {
+
+    background:
+        #fff7e6;
+
+    border-color:
+        #f0c96a;
+}
+
+.cell.finish {
+
+    background:
+        #eee9ff;
+
+    border-color:
+        #ad9ae8;
+}
+
+.cell.current {
+
+    border:
+        5px solid #2457a6;
+
+    box-shadow:
+        0 0 0 5px
+        rgba(36,87,166,.15);
+}
+
+.cell-number {
+
+    font-size: 10px;
+
+    color:
+        #8792a5;
+
+    font-weight: bold;
+}
+
+.cell-icon {
+
+    font-size: 28px;
+
+    margin: 5px;
+}
+
+.cell-name {
+
+    font-size: 12px;
+
+    font-weight: bold;
+}
+
+.pawns {
+
+    position: absolute;
+
+    bottom: 5px;
+
+    display: flex;
+}
+
+.pawn {
+
+    width: 21px;
+    height: 21px;
+
+    border-radius: 50%;
+
+    border:
+        2px solid white;
+
+    margin-left: -4px;
+
+    box-shadow:
+        0 2px 5px
+        rgba(0,0,0,.2);
+}
+
+.board-text {
+
+    text-align: center;
+
+    font-size: 25px;
+
+    font-weight: bold;
+
+    margin-bottom: 20px;
+
+    color:
+        #173b73;
+}
+
+.move-button-container {
+
+    text-align: center;
+
+    margin-top: 25px;
+}
+
+
+/* =========================================================
+   FIN DU TOUR
+========================================================= */
+
+#endTurnScreen {
+
+    background:
+        linear-gradient(
+            135deg,
+            #edf4ff,
+            #f7f9fc
+        );
+}
+
+.end-turn-box {
+
+    width:
+        min(600px, 100%);
+
+    background: white;
+
+    padding:
+        50px 35px;
+
+    border-radius: 25px;
+
+    text-align: center;
+
+    box-shadow:
+        0 15px 45px
+        rgba(20,40,70,.15);
+}
+
+.end-turn-box h1 {
+
+    color:
+        #173b73;
+
+    font-size:
+        42px;
+}
+
+.next-player-label {
+
+    color:
+        #697386;
+
+    font-weight: bold;
+
+    text-transform:
+        uppercase;
+
+    margin-top: 30px;
+}
+
+.next-player-name {
+
+    font-size: 35px;
+
+    color:
+        #2457a6;
+
+    font-weight: bold;
+
+    margin:
+        8px 0 30px;
+}
+
+
+/* =========================================================
+   FIN DE PARTIE
+========================================================= */
+
+#winnerScreen {
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff8dd,
+            #edf4ff
+        );
+}
+
+.winner-box {
+
+    width:
+        min(700px, 100%);
+
+    background: white;
+
+    border-radius: 30px;
+
+    padding: 50px;
+
+    text-align: center;
+
+    box-shadow:
+        0 15px 45px
+        rgba(20,40,70,.15);
+}
+
+.trophy {
+
+    font-size: 90px;
+}
+
+.winner-box h1 {
+
+    font-size: 45px;
+
+    color:
+        #173b73;
+}
+
+.winner-name {
+
+    font-size: 35px;
+
+    font-weight: bold;
+
+    color:
+        #2457a6;
+
+    margin: 20px;
+}
+
+.scores {
+
+    display: grid;
+
+    gap: 10px;
+
+    margin: 30px 0;
+}
+
+.score {
+
+    padding: 15px;
+
+    border-radius: 12px;
+
+    background:
+        #f1f4f8;
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    font-weight: bold;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width: 800px) {
+
+    .players-list {
+
+        grid-template-columns:
+            1fr;
+    }
+
+    .players-box,
+    .question-box {
+
+        padding: 25px;
+    }
+
+    .board {
+
+        grid-template-columns:
+            repeat(4, 1fr);
+
+        gap: 6px;
+
+        padding: 10px;
+    }
+
+    .cell {
+
+        min-height: 85px;
+    }
+}
+
+
+@media(max-width: 550px) {
+
+    .screen {
+
+        padding: 15px;
+    }
+
+    .board {
+
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+
+    .dice {
+
+        width: 140px;
+        height: 140px;
+
+        font-size: 85px;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- ======================================================
+     ÉCRAN 1
+     INSCRIPTION DES JOUEURS
+====================================================== -->
+
+<section
+    id="playersScreen"
+    class="screen active"
+>
+
+    <div class="players-box">
+
+        <h1>
+            🩺 Parcours de soins
+        </h1>
+
+        <p>
+            Inscrivez les joueurs pour commencer la partie.
+        </p>
+
+
+        <div class="players-list">
+
+
+            <div class="player-field">
+
+                <span
+                    class="player-color c1"
+                ></span>
+
+                <input
+                    id="player1"
+                    placeholder="Joueur 1"
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <div class="player-field">
+
+                <span
+                    class="player-color c2"
+                ></span>
+
+                <input
+                    id="player2"
+                    placeholder="Joueur 2"
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <div class="player-field">
+
+                <span
+                    class="player-color c3"
+                ></span>
+
+                <input
+                    id="player3"
+                    placeholder="Joueur 3"
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <div class="player-field">
+
+                <span
+                    class="player-color c4"
+                ></span>
+
+                <input
+                    id="player4"
+                    placeholder="Joueur 4"
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <div class="player-field">
+
+                <span
+                    class="player-color c5"
+                ></span>
+
+                <input
+                    id="player5"
+                    placeholder="Joueur 5"
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <div class="player-field">
+
+                <span
+                    class="player-color c6"
+                ></span>
+
+                <input
+                    id="player6"
+                    placeholder="Joueur 6"
+                    autocomplete="off"
+                >
+
+            </div>
+
+        </div>
+
+
+        <button
+            class="main-button"
+            onclick="startGame()"
+        >
+            COMMENCER LA PARTIE
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     ÉCRAN 2
+     LANCER DU DÉ
+====================================================== -->
+
+<section
+    id="diceScreen"
+    class="screen"
+>
+
+    <div class="dice-only">
+
+
+        <div
+            id="playerCircle"
+            class="player-circle"
+        ></div>
+
+
+        <h1
+            id="dicePlayerName"
+        ></h1>
+
+
+        <div
+            id="dice"
+            class="dice"
+        >
+            ⚀
+        </div>
+
+
+        <button
+            id="rollButton"
+            class="main-button"
+            onclick="rollDice()"
+        >
+            🎲 LANCER LE DÉ
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     ÉCRAN 3
+     QUESTION QCM
+====================================================== -->
+
+<section
+    id="questionScreen"
+    class="screen"
+>
+
+    <div class="question-box">
+
+
+        <h1
+            id="questionText"
+        ></h1>
+
+
+        <div
+            id="options"
+            class="options"
+        ></div>
+
+
+        <div
+            id="feedback"
+            class="feedback"
+            style="display:none"
+        ></div>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     ÉCRAN 4
+     PLATEAU
+====================================================== -->
+
+<section
+    id="boardScreen"
+    class="screen"
+>
+
+    <div class="board-wrapper">
+
+
+        <div
+            id="boardText"
+            class="board-text"
+        ></div>
+
+
+        <div
+            id="board"
+            class="board"
+        ></div>
+
+
+        <div class="move-button-container">
+
+            <button
+                id="finishBoardButton"
+                class="main-button"
+                onclick="finishBoard()"
+            >
+                TERMINER LE TOUR
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     ÉCRAN 5
+     FIN DU TOUR
+====================================================== -->
+
+<section
+    id="endTurnScreen"
+    class="screen"
+>
+
+    <div class="end-turn-box">
+
+
+        <h1>
+            Tour terminé
+        </h1>
+
+
+        <div
+            id="finishedPlayer"
+        ></div>
+
+
+        <div
+            class="next-player-label"
+        >
+            Prochain joueur
+        </div>
+
+
+        <div
+            id="nextPlayerName"
+            class="next-player-name"
+        ></div>
+
+
+        <button
+            class="main-button"
+            onclick="startNextTurn()"
+        >
+            🎲 COMMENCER LE TOUR
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     ÉCRAN 6
+     FIN DE PARTIE
+====================================================== -->
+
+<section
+    id="winnerScreen"
+    class="screen"
+>
+
+    <div class="winner-box">
+
+
+        <div class="trophy">
+            🏆
+        </div>
+
+
+        <h1>
+            Partie terminée !
+        </h1>
+
+
+        <div
+            id="winnerName"
+            class="winner-name"
+        ></div>
+
+
+        <div
+            id="scores"
+            class="scores"
+        ></div>
+
+
+        <button
+            class="main-button"
+            onclick="newGame()"
+        >
+            🔄 NOUVELLE PARTIE
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<script>
+
+/* =========================================================
+   VARIABLES DU JEU
+========================================================= */
+
+
+let players = [];
+
+let currentPlayerIndex = 0;
+
+let currentPlayer = null;
+
+let diceValue = 0;
+
+let currentCard = null;
+
+let answered = false;
+
+/*
+    Cette variable indique si la réponse donnée
+    par le joueur était correcte.
+
+    Elle est utilisée au moment de déplacer
+    le pion.
+*/
+
+let lastAnswerCorrect = false;
+
+
+/*
+    Paquet de cartes disponible.
+
+    Une carte retirée du paquet ne peut plus
+    être retirée pendant la même partie.
+*/
+
+let remainingCards = [];
+
+
+/* =========================================================
+   COULEURS
+========================================================= */
+
+const colors = [
+
+    "#e74c3c",
+
+    "#2980b9",
+
+    "#27ae60",
+
+    "#8e44ad",
+
+    "#f39c12",
+
+    "#16a085"
+
+];
+
+
+/* =========================================================
+   FACES DU DÉ
+========================================================= */
+
+const diceFaces = [
+
+    "⚀",
+
+    "⚁",
+
+    "⚂",
+
+    "⚃",
+
+    "⚄",
+
+    "⚅"
+
+];
+
+
+/* =========================================================
+   PLATEAU DE JEU
+========================================================= */
+
+const boardCells = [
+
+    {
+        icon: "🏠",
+        name: "Départ",
+        type: "start"
+    },
+
+    {
+        icon: "👨‍⚕️",
+        name: "Médecin traitant"
+    },
+
+    {
+        icon: "💡",
+        name: "Prévention",
+        type: "special"
+    },
+
+    {
+        icon: "🩺",
+        name: "Consultation"
+    },
+
+    {
+        icon: "🔬",
+        name: "Spécialiste"
+    },
+
+    {
+        icon: "💊",
+        name: "Pharmacie"
+    },
+
+    {
+        icon: "💶",
+        name: "Remboursement",
+        type: "special"
+    },
+
+    {
+        icon: "👨‍⚕️",
+        name: "Médecin traitant"
+    },
+
+    {
+        icon: "🩺",
+        name: "Consultation"
+    },
+
+    {
+        icon: "🔬",
+        name: "Spécialiste"
+    },
+
+    {
+        icon: "🚑",
+        name: "Urgences",
+        type: "special"
+    },
+
+    {
+        icon: "💊",
+        name: "Pharmacie"
+    },
+
+    {
+        icon: "💶",
+        name: "Remboursement",
+        type: "special"
+    },
+
+    {
+        icon: "👨‍⚕️",
+        name: "Médecin traitant"
+    },
+
+    {
+        icon: "🩺",
+        name: "Consultation"
+    },
+
+    {
+        icon: "🔬",
+        name: "Spécialiste"
+    },
+
+    {
+        icon: "❤️",
+        name: "Prévention",
+        type: "special"
+    },
+
+    {
+        icon: "🩺",
+        name: "Consultation"
+    },
+
+    {
+        icon: "💶",
+        name: "Remboursement",
+        type: "special"
+    },
+
+    {
+        icon: "👨‍⚕️",
+        name: "Médecin traitant"
+    },
+
+    {
+        icon: "🔬",
+        name: "Spécialiste"
+    },
+
+    {
+        icon: "💊",
+        name: "Pharmacie"
+    },
+
+    {
+        icon: "🩺",
+        name: "Consultation"
+    },
+
+    {
+        icon: "🏆",
+        name: "Arrivée",
+        type: "finish"
+    }
+
+];
+
+
+/* =========================================================
+   BANQUE DE QUESTIONS
+========================================================= */
+
+const cards = [
+
+    {
+        question:
+        "Quel professionnel joue généralement un rôle central dans le parcours de soins coordonné ?",
+
+        options: [
+
+            {
+                text:
+                "Le médecin traitant",
+
+                correct:
+                true
+            },
+
+            {
+                text:
+                "Le pharmacien",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "L'Assurance Maladie",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Le spécialiste",
+
+                correct:
+                false
+            }
+
+        ],
+
+        explanation:
+        "Le médecin traitant joue un rôle central dans le suivi et la coordination des soins."
+    },
+
+
+    {
+        question:
+        "Pourquoi le médecin traitant peut-il orienter son patient vers un spécialiste ?",
+
+        options: [
+
+            {
+                text:
+                "Pour rendre automatiquement la consultation gratuite",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Pour coordonner et adapter les soins aux besoins du patient",
+
+                correct:
+                true
+            },
+
+            {
+                text:
+                "Pour remplacer le spécialiste",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Pour choisir lui-même le montant du remboursement",
+
+                correct:
+                false
+            }
+
+        ],
+
+        explanation:
+        "Il coordonne le parcours et peut orienter le patient vers le professionnel adapté."
+    },
+
+
+    {
+        question:
+        "Que peut-il se passer lorsqu'un patient consulte un spécialiste sans respecter le parcours de soins coordonné ?",
+
+        options: [
+
+            {
+                text:
+                "La consultation est automatiquement interdite",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Le patient est automatiquement hospitalisé",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Le remboursement peut être moins favorable",
+
+                correct:
+                true
+            },
+
+            {
+                text:
+                "La consultation devient automatiquement gratuite",
+
+                correct:
+                false
+            }
+
+        ],
+
+        explanation:
+        "Le non-respect du parcours peut entraîner une diminution du remboursement."
+    },
+
+
+    {
+        question:
+        "Dans le régime général, quelle est la part habituellement prise en charge par l'Assurance Maladie pour de nombreuses consultations médicales, sur la base de remboursement, avant certaines participations ?",
+
+        options: [
+
+            {
+                text:
+                "25 %",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "50 %",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "100 %",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "70 %",
+
+                correct:
+                true
+            }
+
+        ],
+
+        explanation:
+        "Le taux de remboursement de nombreuses consultations est de 70 % de la base de remboursement, avant certaines participations et hors situations particulières."
+    },
+
+
+    {
+        question:
+        "Qu'est-ce que la base de remboursement ?",
+
+        options: [
+
+            {
+                text:
+                "Un tarif de référence utilisé pour calculer le remboursement",
+
+                correct:
+                true
+            },
+
+            {
+                text:
+                "Un montant toujours payé intégralement par le patient",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Le salaire du médecin",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Le prix fixé par la mutuelle",
+
+                correct:
+                false
+            }
+
+        ],
+
+        explanation:
+        "Le remboursement est calculé à partir d'une base de remboursement définie par les règles de l'Assurance Maladie."
+    },
+
+
+    {
+        question:
+        "Une situation d'urgence nécessite-t-elle toujours de passer d'abord par le médecin traitant ?",
+
+        options: [
+
+            {
+                text:
+                "Oui, toujours",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Non, l'urgence constitue une situation particulière",
+
+                correct:
+                true
+            },
+
+            {
+                text:
+                "Oui, uniquement le week-end",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Oui, si le patient possède une mutuelle",
+
+                correct:
+                false
+            }
+
+        ],
+
+        explanation:
+        "Les situations d'urgence constituent une situation particulière dans laquelle le parcours habituel ne s'applique pas de la même manière."
+    },
+
+
+    {
+        question:
+        "Quel est l'objectif principal du parcours de soins coordonné ?",
+
+        options: [
+
+            {
+                text:
+                "Empêcher l'accès aux spécialistes",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Faire payer davantage les patients",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Améliorer la coordination et la continuité des soins",
+
+                correct:
+                true
+            },
+
+            {
+                text:
+                "Supprimer le médecin traitant",
+
+                correct:
+                false
+            }
+
+        ],
+
+        explanation:
+        "Le parcours vise notamment à organiser les soins autour du patient et à favoriser leur coordination."
+    },
+
+
+    {
+        question:
+        "Pourquoi le respect du parcours de soins peut-il avoir une conséquence financière ?",
+
+        options: [
+
+            {
+                text:
+                "Parce que le médecin fixe le remboursement",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Parce que la carte Vitale change de couleur",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Parce que le spécialiste décide du taux de remboursement",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Parce que les règles de remboursement peuvent être moins favorables hors parcours",
+
+                correct:
+                true
+            }
+
+        ],
+
+        explanation:
+        "Le respect du parcours de soins coordonné peut avoir une incidence sur le niveau de remboursement."
+    },
+
+
+    {
+        question:
+        "Quelle situation correspond à une bonne coordination des soins ?",
+
+        options: [
+
+            {
+                text:
+                "Le médecin traitant oriente le patient vers le professionnel adapté",
+
+                correct:
+                true
+            },
+
+            {
+                text:
+                "Le patient consulte uniquement les urgences",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Le patient change de médecin à chaque consultation",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Le pharmacien pose tous les diagnostics",
+
+                correct:
+                false
+            }
+
+        ],
+
+        explanation:
+        "L'orientation par le médecin traitant participe à la coordination du parcours."
+    },
+
+
+    {
+        question:
+        "Une personne atteinte d'une affection de longue durée reconnue peut bénéficier, pour les soins en rapport avec cette affection, d'une prise en charge particulière. Laquelle ?",
+
+        options: [
+
+            {
+                text:
+                "Tous ses soins deviennent automatiquement gratuits",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Une prise en charge à 100 % de la base de remboursement dans les conditions prévues",
+
+                correct:
+                true
+            },
+
+            {
+                text:
+                "Elle n'a plus besoin de médecin",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Elle n'a plus besoin de carte Vitale",
+
+                correct:
+                false
+            }
+
+        ],
+
+        explanation:
+        "Pour une ALD exonérante, les soins en rapport avec l'affection peuvent être pris en charge à 100 % de la base de remboursement, selon les règles applicables."
+    },
+
+
+    {
+        question:
+        "Un dépassement d'honoraires est-il automatiquement remboursé intégralement par l'Assurance Maladie ?",
+
+        options: [
+
+            {
+                text:
+                "Oui, toujours",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Oui, si le médecin est spécialiste",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Non",
+
+                correct:
+                true
+            },
+
+            {
+                text:
+                "Oui, uniquement aux urgences",
+
+                correct:
+                false
+            }
+
+        ],
+
+        explanation:
+        "L'Assurance Maladie rembourse selon les bases prévues. Un dépassement peut rester à la charge du patient ou être couvert en partie par une complémentaire."
+    },
+
+
+    {
+        question:
+        "Certaines spécialités bénéficient de règles d'accès direct spécifique. Que signifie cela ?",
+
+        options: [
+
+            {
+                text:
+                "Tous les spécialistes sont accessibles directement",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Le spécialiste devient automatiquement le médecin traitant",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "La consultation est forcément gratuite",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Dans certaines situations prévues, le patient peut consulter directement certains spécialistes sans passer par son médecin traitant",
+
+                correct:
+                true
+            }
+
+        ],
+
+        explanation:
+        "Certaines situations et spécialités permettent un accès direct spécifique dans le cadre prévu par les règles de l'Assurance Maladie."
+    },
+
+
+    {
+        question:
+        "Quel professionnel délivre généralement les médicaments prescrits ?",
+
+        options: [
+
+            {
+                text:
+                "Le pharmacien",
+
+                correct:
+                true
+            },
+
+            {
+                text:
+                "Le médecin traitant",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "L'Assurance Maladie",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Le spécialiste",
+
+                correct:
+                false
+            }
+
+        ],
+
+        explanation:
+        "Le pharmacien délivre les médicaments et peut également apporter des conseils."
+    },
+
+
+    {
+        question:
+        "Le fait d'avoir un médecin traitant signifie-t-il qu'il est interdit de consulter un autre médecin ?",
+
+        options: [
+
+            {
+                text:
+                "Oui, absolument",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Non",
+
+                correct:
+                true
+            },
+
+            {
+                text:
+                "Oui, sauf pendant les vacances",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Oui, sauf avec une mutuelle",
+
+                correct:
+                false
+            }
+
+        ],
+
+        explanation:
+        "Le médecin traitant coordonne le parcours mais le patient peut consulter d'autres professionnels selon ses besoins et les règles applicables."
+    },
+
+
+    {
+        question:
+        "Quel peut être l'intérêt de consulter son médecin traitant avant un spécialiste ?",
+
+        options: [
+
+            {
+                text:
+                "Obtenir automatiquement un médicament",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Éviter toute consultation spécialisée",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Bénéficier d'une orientation adaptée et d'un suivi coordonné",
+
+                correct:
+                true
+            },
+
+            {
+                text:
+                "Ne jamais payer de consultation",
+
+                correct:
+                false
+            }
+
+        ],
+
+        explanation:
+        "Le médecin traitant peut évaluer la situation et orienter vers le professionnel approprié."
+    },
+
+
+    {
+        question:
+        "Si un patient respecte le parcours de soins mais consulte un professionnel pratiquant un dépassement d'honoraires, que peut-il rester à payer ?",
+
+        options: [
+
+            {
+                text:
+                "Rien dans tous les cas",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "La totalité de la consultation obligatoirement",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Uniquement les médicaments",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Tout ou partie du dépassement, selon les conditions et la complémentaire",
+
+                correct:
+                true
+            }
+
+        ],
+
+        explanation:
+        "Le respect du parcours ne signifie pas que tous les dépassements d'honoraires sont remboursés."
+    },
+
+
+    {
+        question:
+        "Quelle affirmation décrit le mieux le rôle du parcours de soins coordonné ?",
+
+        options: [
+
+            {
+                text:
+                "Organiser les soins autour du patient",
+
+                correct:
+                true
+            },
+
+            {
+                text:
+                "Interdire les spécialistes",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Supprimer les urgences",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Rendre tous les soins gratuits",
+
+                correct:
+                false
+            }
+
+        ],
+
+        explanation:
+        "Le parcours de soins coordonné cherche à améliorer l'organisation et la continuité des soins."
+    },
+
+
+    {
+        question:
+        "Pourquoi les remboursements ne correspondent-ils pas toujours exactement au prix payé ?",
+
+        options: [
+
+            {
+                text:
+                "Parce que chaque patient choisit son taux",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Parce qu'ils sont calculés à partir d'une base de remboursement et de règles précises",
+
+                correct:
+                true
+            },
+
+            {
+                text:
+                "Parce que le médecin décide du remboursement",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Parce que la mutuelle remplace toujours l'Assurance Maladie",
+
+                correct:
+                false
+            }
+
+        ],
+
+        explanation:
+        "Le montant remboursé dépend notamment de la base de remboursement, du taux applicable et de la situation du patient."
+    },
+
+
+    {
+        question:
+        "Quel acteur peut intervenir après une prescription médicale pour délivrer un médicament et conseiller le patient ?",
+
+        options: [
+
+            {
+                text:
+                "Le médecin traitant uniquement",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "L'hôpital uniquement",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Le pharmacien",
+
+                correct:
+                true
+            },
+
+            {
+                text:
+                "L'Assurance Maladie",
+
+                correct:
+                false
+            }
+
+        ],
+
+        explanation:
+        "Le pharmacien intervient notamment dans la délivrance des médicaments et le conseil."
+    },
+
+
+    {
+        question:
+        "Quelle situation correspond le moins à un parcours de soins coordonné ?",
+
+        options: [
+
+            {
+                text:
+                "Déclarer un médecin traitant",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Être orienté vers un spécialiste lorsque cela est nécessaire",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Assurer un suivi médical régulier",
+
+                correct:
+                false
+            },
+
+            {
+                text:
+                "Consulter systématiquement différents spécialistes sans coordination du suivi",
+
+                correct:
+                true
+            }
+
+        ],
+
+        explanation:
+        "L'absence de coordination entre les différents professionnels est contraire à l'objectif du parcours coordonné."
+    }
+
+];
+
+
+/* =========================================================
+   FONCTION DE MÉLANGE
+   FISHER-YATES
+========================================================= */
+
+/*
+    Cette fonction crée une COPIE du tableau
+    puis la mélange.
+
+    Le tableau original n'est donc jamais modifié.
+*/
+
+function shuffle(array) {
+
+    const newArray =
+        [...array];
+
+
+    for (
+        let i =
+            newArray.length - 1;
+
+        i > 0;
+
+        i--
+    ) {
+
+        const j =
+            Math.floor(
+                Math.random() *
+                (i + 1)
+            );
+
+
+        [
+            newArray[i],
+            newArray[j]
+
+        ] = [
+
+            newArray[j],
+            newArray[i]
+
+        ];
+
+    }
+
+
+    return newArray;
+}
+
+
+/* =========================================================
+   CRÉER UN NOUVEAU PAQUET
+========================================================= */
+
+function createNewDeck() {
+
+    /*
+        On crée une nouvelle version de chaque carte.
+
+        Pour CHAQUE carte, les quatre réponses
+        sont mélangées.
+    */
+
+    remainingCards =
+        cards.map(card => {
+
+            return {
+
+                question:
+                    card.question,
+
+                explanation:
+                    card.explanation,
+
+                options:
+                    shuffle(
+                        card.options
+                    )
+
+            };
+
+        });
+
+
+    /*
+        Ensuite, on mélange l'ordre des cartes.
+    */
+
+    remainingCards =
+        shuffle(
+            remainingCards
+        );
+}
+
+
+/* =========================================================
+   CHANGER D'ÉCRAN
+========================================================= */
+
+function showScreen(id) {
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+
+            screen.classList.remove(
+                "active"
+            );
+
+        });
+
+
+    document
+        .getElementById(id)
+        .classList.add(
+            "active"
+        );
+
+
+    window.scrollTo(
+        0,
+        0
+    );
+}
+
+
+/* =========================================================
+   DÉMARRER UNE PARTIE
+========================================================= */
+
+function startGame() {
+
+    players = [];
+
+
+    /*
+        Récupération des joueurs.
+    */
+
+    for (
+        let i = 1;
+        i <= 6;
+        i++
+    ) {
+
+        const input =
+            document
+                .getElementById(
+                    "player" + i
+                );
+
+
+        const value =
+            input
+                .value
+                .trim();
+
+
+        if (value) {
+
+            players.push({
+
+                name:
+                    value,
+
+                color:
+                    colors[i - 1],
+
+                position:
+                    0,
+
+                points:
+                    0
+
+            });
+
+        }
+
+    }
+
+
+    /*
+        Il faut au minimum deux joueurs.
+    */
+
+    if (
+        players.length < 2
+    ) {
+
+        alert(
+            "Il faut au moins 2 joueurs pour commencer."
+        );
+
+        return;
+    }
+
+
+    /*
+        CRÉATION DU PAQUET.
+
+        C'est ici que les cartes et les réponses
+        sont mélangées pour cette nouvelle partie.
+    */
+
+    createNewDeck();
+
+
+    currentPlayerIndex = 0;
+
+    currentPlayer =
+        players[
+            currentPlayerIndex
+        ];
+
+
+    prepareDiceScreen();
+}
+
+
+/* =========================================================
+   PRÉPARER L'ÉCRAN DU DÉ
+========================================================= */
+
+function prepareDiceScreen() {
+
+    currentPlayer =
+        players[
+            currentPlayerIndex
+        ];
+
+
+    document
+        .getElementById(
+            "dicePlayerName"
+        )
+        .textContent =
+            currentPlayer.name;
+
+
+    const circle =
+        document
+            .getElementById(
+                "playerCircle"
+            );
+
+
+    circle.style.background =
+        currentPlayer.color;
+
+
+    circle.textContent =
+        currentPlayer.name
+            .charAt(0)
+            .toUpperCase();
+
+
+    const dice =
+        document
+            .getElementById(
+                "dice"
+            );
+
+
+    dice.textContent =
+        "⚀";
+
+
+    document
+        .getElementById(
+            "rollButton"
+        )
+        .disabled =
+            false;
+
+
+    showScreen(
+        "diceScreen"
+    );
+}
+
+
+/* =========================================================
+   LANCER LE DÉ
+========================================================= */
+
+function rollDice() {
+
+    const button =
+        document
+            .getElementById(
+                "rollButton"
+            );
+
+
+    /*
+        Impossible de relancer le dé.
+    */
+
+    button.disabled =
+        true;
+
+
+    const dice =
+        document
+            .getElementById(
+                "dice"
+            );
+
+
+    dice.classList.add(
+        "rolling"
+    );
+
+
+    let count = 0;
+
+
+    const animation =
+        setInterval(
+            () => {
+
+
+                const value =
+                    Math.floor(
+                        Math.random() * 6
+                    );
+
+
+                dice.textContent =
+                    diceFaces[value];
+
+
+                count++;
+
+
+                if (
+                    count >= 12
+                ) {
+
+                    clearInterval(
+                        animation
+                    );
+
+
+                    dice.classList.remove(
+                        "rolling"
+                    );
+
+
+                    /*
+                        Résultat définitif.
+                    */
+
+                    diceValue =
+                        Math.floor(
+                            Math.random() * 6
+                        ) + 1;
+
+
+                    dice.textContent =
+                        diceFaces[
+                            diceValue - 1
+                        ];
+
+
+                    /*
+                        Une carte est obligatoirement
+                        tirée après le lancer.
+                    */
+
+                    drawCard();
+
+
+                    setTimeout(
+                        showQuestion,
+                        500
+                    );
+
+                }
+
+            },
+
+            90
+        );
+}
+
+
+/* =========================================================
+   TIRER UNE CARTE
+========================================================= */
+
+function drawCard() {
+
+    /*
+        Si des cartes restent dans le paquet,
+        on prend la première.
+
+        shift() retire définitivement cette carte
+        du paquet de la partie.
+    */
+
+    if (
+        remainingCards.length === 0
+    ) {
+
+        /*
+            Sécurité si toutes les cartes ont
+            déjà été utilisées.
+        */
+
+        createNewDeck();
+    }
+
+
+    currentCard =
+        remainingCards.shift();
+}
+
+
+/* =========================================================
+   AFFICHER LA QUESTION
+========================================================= */
+
+function showQuestion() {
+
+    answered =
+        false;
+
+
+    lastAnswerCorrect =
+        false;
+
+
+    document
+        .getElementById(
+            "questionText"
+        )
+        .textContent =
+            currentCard.question;
+
+
+    const options =
+        document
+            .getElementById(
+                "options"
+            );
+
+
+    options.innerHTML =
+        "";
+
+
+    const letters = [
+
+        "A",
+
+        "B",
+
+        "C",
+
+        "D"
+
+    ];
+
+
+    /*
+        Les réponses sont déjà mélangées
+        dans createNewDeck().
+    */
+
+    currentCard.options
+        .forEach(
+            (option, index) => {
+
+
+                const button =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                button.className =
+                    "option";
+
+
+                button.innerHTML = `
+
+                    <span
+                        class="option-letter"
+                    >
+                        ${letters[index]}
+                    </span>
+
+                    <span>
+                        ${option.text}
+                    </span>
+
+                `;
+
+
+                button.onclick =
+                    () =>
+                        answerQuestion(
+                            index
+                        );
+
+
+                options.appendChild(
+                    button
+                );
+
+            }
+        );
+
+
+    const feedback =
+        document
+            .getElementById(
+                "feedback"
+            );
+
+
+    feedback.style.display =
+        "none";
+
+
+    showScreen(
+        "questionScreen"
+    );
+}
+
+
 /* =========================================================
    RÉPONDRE À LA QUESTION
 ========================================================= */
 
 function answerQuestion(index) {
 
+    /*
+        Empêche de répondre plusieurs fois.
+    */
+
     if (answered) {
+
         return;
     }
 
-    answered = true;
+
+    answered =
+        true;
+
 
     const buttons =
-        document.querySelectorAll(".option");
+        document
+            .querySelectorAll(
+                ".option"
+            );
 
-    buttons.forEach(button => {
-        button.disabled = true;
-    });
+
+    buttons.forEach(
+        button => {
+
+            button.disabled =
+                true;
+
+        }
+    );
+
 
     /*
-        On identifie la bonne réponse grâce à
-        la propriété "correct".
+        On regarde la propriété "correct".
 
-        Peu importe qu'elle soit en A, B, C ou D.
+        IMPORTANT :
+
+        La bonne réponse peut maintenant être
+        A, B, C ou D.
+
+        On ne dépend donc jamais de la lettre.
     */
 
     const isCorrect =
-        currentCard.options[index].correct;
+        currentCard
+            .options[index]
+            .correct;
 
 
     /*
-        Recherche de la position de la bonne réponse
-        dans l'ordre aléatoire actuel.
+        On mémorise le résultat.
+
+        Cette variable permettra ensuite de savoir
+        si le joueur doit avancer ou rester sur place.
+    */
+
+    lastAnswerCorrect =
+        isCorrect;
+
+
+    /*
+        Recherche de la bonne réponse
+        dans l'ordre actuellement mélangé.
     */
 
     const correctIndex =
         currentCard.options.findIndex(
-            option => option.correct === true
+            option =>
+                option.correct === true
         );
 
 
@@ -43,29 +3055,37 @@ function answerQuestion(index) {
         Mise en évidence de la bonne réponse.
     */
 
-    buttons[correctIndex].classList.add("correct");
+    buttons[
+        correctIndex
+    ].classList.add(
+        "correct"
+    );
 
 
     /*
-        Si la réponse donnée est fausse,
+        Si la réponse choisie est mauvaise,
         elle apparaît en rouge.
     */
 
     if (!isCorrect) {
 
-        buttons[index].classList.add("wrong");
+        buttons[
+            index
+        ].classList.add(
+            "wrong"
+        );
 
     }
 
 
     /*
-        Si la réponse est correcte :
-        - le joueur gagne un point ;
-        - il avancera du résultat du dé.
+        Bonne réponse :
 
-        Si elle est incorrecte :
-        - aucun point ;
-        - aucune avancée.
+        +1 point.
+
+        Mauvaise réponse :
+
+        aucun point.
     */
 
     if (isCorrect) {
@@ -76,24 +3096,42 @@ function answerQuestion(index) {
 
 
     /* =====================================================
-       MESSAGE DE FEEDBACK
+       FEEDBACK
     ===================================================== */
 
     const feedback =
-        document.getElementById("feedback");
+        document
+            .getElementById(
+                "feedback"
+            );
 
-    feedback.style.display = "block";
+
+    feedback.style.display =
+        "block";
+
 
     feedback.className =
         "feedback " +
-        (isCorrect ? "good" : "bad");
+        (
+            isCorrect
+                ? "good"
+                : "bad"
+        );
 
 
     const correctLetter =
-        ["A", "B", "C", "D"][correctIndex];
+        [
+            "A",
+            "B",
+            "C",
+            "D"
+        ][
+            correctIndex
+        ];
 
 
     if (isCorrect) {
+
 
         feedback.innerHTML = `
 
@@ -107,15 +3145,18 @@ function answerQuestion(index) {
 
             <p>
                 🎲 Tu as obtenu
-                <strong>${diceValue}</strong>
+                <strong>
+                    ${diceValue}
+                </strong>
                 au dé.
             </p>
 
             <p>
                 Tu vas avancer de
-                <strong>${diceValue} case${
-                    diceValue > 1 ? "s" : ""
-                }</strong>.
+                <strong>
+                    ${diceValue}
+                    case${diceValue > 1 ? "s" : ""}
+                </strong>.
             </p>
 
             <button
@@ -127,7 +3168,10 @@ function answerQuestion(index) {
 
         `;
 
-    } else {
+    }
+
+    else {
+
 
         feedback.innerHTML = `
 
@@ -141,11 +3185,14 @@ function answerQuestion(index) {
 
             <p>
                 La bonne réponse était :
-                <strong>${correctLetter}</strong>.
+                <strong>
+                    ${correctLetter}
+                </strong>.
             </p>
 
             <p>
-                🚫 Tu n'avances pas de case
+                🚫
+                Tu n'avances pas de case
                 pour ce tour.
             </p>
 
@@ -169,56 +3216,43 @@ function answerQuestion(index) {
 
 function showBoard() {
 
+    /*
+        Sécurité :
+        impossible d'aller au plateau sans répondre.
+    */
+
     if (!answered) {
+
         return;
     }
 
 
     /*
-        IMPORTANT :
-
-        Le déplacement dépend maintenant
-        de la réponse au QCM.
+        =====================================================
+        RÈGLE PRINCIPALE DU JEU
+        =====================================================
 
         Bonne réponse :
-            position + résultat du dé
+            déplacement = résultat du dé
 
         Mauvaise réponse :
-            position inchangée
+            déplacement = 0
+
+        La position précédente est donc conservée.
     */
 
-    const isCorrect =
-        currentCard.options.some(
-            option => option.correct
-        );
+    if (
+        lastAnswerCorrect === true
+    ) {
 
-
-    /*
-        On détermine si le joueur a répondu
-        correctement en regardant le bouton
-        marqué "correct".
-
-        On peut aussi utiliser une variable.
-        Ici, on recherche simplement si une
-        réponse sélectionnée correspondait
-        à la bonne réponse.
-    */
-
-
-    /*
-        Pour éviter toute ambiguïté, on utilise
-        la variable "lastAnswerCorrect".
-    */
-
-    if (window.lastAnswerCorrect === true) {
-
-        currentPlayer.position += diceValue;
+        currentPlayer.position +=
+            diceValue;
 
     }
 
 
     /*
-        Le joueur ne peut pas dépasser la dernière case.
+        Impossible de dépasser l'arrivée.
     */
 
     if (
@@ -232,18 +3266,27 @@ function showBoard() {
     }
 
 
+    /*
+        On actualise le plateau.
+    */
+
     renderBoard();
 
 
     /*
-        Message différent selon la réponse.
+        Message affiché au-dessus du plateau.
     */
 
-    if (window.lastAnswerCorrect === true) {
+    if (
+        lastAnswerCorrect === true
+    ) {
 
         document
-            .getElementById("boardText")
+            .getElementById(
+                "boardText"
+            )
             .textContent =
+
                 currentPlayer.name +
                 " avance de " +
                 diceValue +
@@ -255,16 +3298,393 @@ function showBoard() {
                 ) +
                 " !";
 
-    } else {
+    }
+
+    else {
 
         document
-            .getElementById("boardText")
+            .getElementById(
+                "boardText"
+            )
             .textContent =
+
                 currentPlayer.name +
                 " reste sur sa case.";
 
     }
 
 
-    showScreen("boardScreen");
+    showScreen(
+        "boardScreen"
+    );
 }
+
+
+/* =========================================================
+   CONSTRUIRE LE PLATEAU
+========================================================= */
+
+function renderBoard() {
+
+    const board =
+        document
+            .getElementById(
+                "board"
+            );
+
+
+    board.innerHTML =
+        "";
+
+
+    boardCells.forEach(
+        (cell, index) => {
+
+
+            const element =
+                document.createElement(
+                    "div"
+                );
+
+
+            element.className =
+                "cell";
+
+
+            /*
+                Ajout des classes spéciales :
+                départ / case spéciale / arrivée.
+            */
+
+            if (cell.type) {
+
+                element.classList.add(
+                    cell.type
+                );
+
+            }
+
+
+            /*
+                Mise en évidence de la position
+                actuelle du joueur.
+            */
+
+            if (
+                currentPlayer.position ===
+                index
+            ) {
+
+                element.classList.add(
+                    "current"
+                );
+
+            }
+
+
+            /*
+                Recherche des joueurs présents
+                sur cette case.
+            */
+
+            const playersHere =
+                players.filter(
+                    player =>
+                        player.position ===
+                        index
+                );
+
+
+            element.innerHTML = `
+
+                <div
+                    class="cell-number"
+                >
+                    CASE ${index + 1}
+                </div>
+
+
+                <div
+                    class="cell-icon"
+                >
+                    ${cell.icon}
+                </div>
+
+
+                <div
+                    class="cell-name"
+                >
+                    ${cell.name}
+                </div>
+
+
+                <div
+                    class="pawns"
+                >
+
+                    ${
+                        playersHere
+                            .map(
+                                player => `
+
+                                    <div
+                                        class="pawn"
+                                        style="
+                                            background:
+                                            ${player.color};
+                                        "
+                                        title="${player.name}"
+                                    ></div>
+
+                                `
+                            )
+                            .join("")
+                    }
+
+                </div>
+
+            `;
+
+
+            board.appendChild(
+                element
+            );
+
+        }
+    );
+}
+
+
+/* =========================================================
+   TERMINER LE TOUR
+========================================================= */
+
+function finishBoard() {
+
+    /*
+        Si le joueur atteint la dernière case,
+        la partie est terminée.
+    */
+
+    if (
+        currentPlayer.position >=
+        boardCells.length - 1
+    ) {
+
+        showWinner();
+
+        return;
+    }
+
+
+    /*
+        Détermination du joueur suivant.
+    */
+
+    const nextIndex =
+        (
+            currentPlayerIndex + 1
+        ) %
+        players.length;
+
+
+    document
+        .getElementById(
+            "finishedPlayer"
+        )
+        .textContent =
+            currentPlayer.name;
+
+
+    document
+        .getElementById(
+            "nextPlayerName"
+        )
+        .textContent =
+            players[
+                nextIndex
+            ].name;
+
+
+    showScreen(
+        "endTurnScreen"
+    );
+}
+
+
+/* =========================================================
+   COMMENCER LE TOUR SUIVANT
+========================================================= */
+
+function startNextTurn() {
+
+    currentPlayerIndex++;
+
+
+    if (
+        currentPlayerIndex >=
+        players.length
+    ) {
+
+        currentPlayerIndex =
+            0;
+
+    }
+
+
+    prepareDiceScreen();
+}
+
+
+/* =========================================================
+   FIN DE PARTIE
+========================================================= */
+
+function showWinner() {
+
+    /*
+        Affichage du gagnant :
+        c'est le premier joueur à atteindre
+        la case d'arrivée.
+    */
+
+    document
+        .getElementById(
+            "winnerName"
+        )
+        .textContent =
+            "🎉 " +
+            currentPlayer.name;
+
+
+    const scores =
+        document
+            .getElementById(
+                "scores"
+            );
+
+
+    scores.innerHTML =
+        "";
+
+
+    /*
+        Classement selon le nombre de points.
+    */
+
+    const sorted =
+        [...players].sort(
+            (a, b) =>
+                b.points -
+                a.points
+        );
+
+
+    sorted.forEach(
+        (player, index) => {
+
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+
+            row.className =
+                "score";
+
+
+            row.innerHTML = `
+
+                <span>
+                    ${index + 1}.
+                    ${player.name}
+                </span>
+
+                <span>
+                    ${player.points}
+                    point${player.points > 1 ? "s" : ""}
+                </span>
+
+            `;
+
+
+            scores.appendChild(
+                row
+            );
+
+        }
+    );
+
+
+    showScreen(
+        "winnerScreen"
+    );
+}
+
+
+/* =========================================================
+   NOUVELLE PARTIE
+========================================================= */
+
+function newGame() {
+
+    /*
+        Réinitialisation complète du jeu.
+    */
+
+    players = [];
+
+    currentPlayer = null;
+
+    currentPlayerIndex = 0;
+
+    diceValue = 0;
+
+    currentCard = null;
+
+    answered = false;
+
+    lastAnswerCorrect = false;
+
+    remainingCards = [];
+
+
+    /*
+        Effacement des anciens noms.
+    */
+
+    for (
+        let i = 1;
+        i <= 6;
+        i++
+    ) {
+
+        document
+            .getElementById(
+                "player" + i
+            )
+            .value =
+                "";
+
+    }
+
+
+    /*
+        Retour à l'écran d'inscription.
+
+        Lorsque les joueurs cliqueront sur
+        "COMMENCER LA PARTIE", createNewDeck()
+        sera appelé et produira un nouvel ordre
+        aléatoire des cartes ET des réponses.
+    */
+
+    showScreen(
+        "playersScreen"
+    );
+}
+
+</script>
+
+</body>
+</html>

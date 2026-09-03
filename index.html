@@ -1,0 +1,3013 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Le parcours de soins — Jeu</title>
+
+<style>
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+:root {
+    --navy: #102a43;
+    --blue: #1976a8;
+    --blue-light: #dff3fb;
+
+    --green: #3f9b61;
+    --green-light: #e5f6ea;
+
+    --orange: #f39c32;
+    --orange-light: #fff0dc;
+
+    --red: #d84b4b;
+    --red-light: #fde4e4;
+
+    --purple: #7657a8;
+    --purple-light: #eee7f8;
+
+    --yellow: #f7c948;
+    --yellow-light: #fff7d6;
+
+    --white: #ffffff;
+    --grey: #edf2f5;
+    --grey-dark: #637381;
+
+    --shadow:
+        0 10px 30px rgba(16,42,67,.12);
+
+    --radius: 18px;
+}
+
+/* =========================================================
+   GENERAL
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at top left,
+            #ffffff 0,
+            #eaf5f8 35%,
+            #d9e9ee 100%
+        );
+
+    color: var(--navy);
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+header {
+    background:
+        linear-gradient(
+            135deg,
+            #102a43,
+            #145d78,
+            #1976a8
+        );
+
+    color: white;
+
+    padding: 22px 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    box-shadow: 0 5px 20px rgba(0,0,0,.15);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-icon {
+    width: 58px;
+    height: 58px;
+
+    border-radius: 16px;
+
+    background: white;
+    color: var(--blue);
+
+    display: grid;
+    place-items: center;
+
+    font-size: 32px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: clamp(1.5rem, 3vw, 2.3rem);
+}
+
+header p {
+    margin: 4px 0 0;
+    opacity: .85;
+}
+
+/* =========================================================
+   LAYOUT
+========================================================= */
+
+.app {
+    max-width: 1450px;
+    margin: auto;
+    padding: 24px;
+}
+
+/* =========================================================
+   SETUP
+========================================================= */
+
+.setup {
+    max-width: 900px;
+    margin: 40px auto;
+
+    background: white;
+
+    border-radius: 26px;
+
+    padding: 35px;
+
+    box-shadow: var(--shadow);
+}
+
+.setup h2 {
+    margin-top: 0;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.setup-intro {
+    text-align: center;
+    color: var(--grey-dark);
+    margin-bottom: 30px;
+}
+
+.players-input {
+    display: grid;
+    gap: 12px;
+}
+
+.player-row {
+    display: grid;
+    grid-template-columns: 55px 1fr;
+    gap: 12px;
+    align-items: center;
+}
+
+.player-color {
+    width: 55px;
+    height: 55px;
+
+    border-radius: 50%;
+
+    border: 4px solid white;
+
+    box-shadow:
+        0 0 0 2px #ccd6dc;
+}
+
+.player-row input {
+    width: 100%;
+
+    border: 2px solid #d6e0e5;
+    border-radius: 12px;
+
+    padding: 14px 16px;
+
+    outline: none;
+}
+
+.player-row input:focus {
+    border-color: var(--blue);
+}
+
+.setup-actions {
+    margin-top: 30px;
+    text-align: center;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.btn {
+    border: none;
+
+    border-radius: 13px;
+
+    padding: 13px 21px;
+
+    font-weight: 800;
+
+    transition:
+        transform .15s,
+        box-shadow .15s,
+        opacity .15s;
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 18px rgba(0,0,0,.15);
+}
+
+.btn:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background: var(--blue);
+    color: white;
+}
+
+.btn-success {
+    background: var(--green);
+    color: white;
+}
+
+.btn-danger {
+    background: var(--red);
+    color: white;
+}
+
+.btn-warning {
+    background: var(--yellow);
+    color: var(--navy);
+}
+
+.btn-secondary {
+    background: var(--grey);
+    color: var(--navy);
+}
+
+/* =========================================================
+   GAME HEADER
+========================================================= */
+
+.game-top {
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        auto
+        1fr;
+
+    gap: 18px;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.turn-card,
+.dice-card,
+.score-card {
+    background: white;
+
+    border-radius: var(--radius);
+
+    box-shadow: var(--shadow);
+
+    padding: 18px;
+}
+
+.turn-card {
+    border-left: 7px solid var(--blue);
+}
+
+.turn-card small {
+    color: var(--grey-dark);
+}
+
+.turn-card strong {
+    display: block;
+    font-size: 1.4rem;
+    margin-top: 4px;
+}
+
+.dice-card {
+    text-align: center;
+    min-width: 170px;
+}
+
+.dice {
+    font-size: 4.2rem;
+
+    height: 75px;
+
+    display: grid;
+    place-items: center;
+}
+
+.dice.rolling {
+    animation: shake .45s;
+}
+
+@keyframes shake {
+    0%,100% {
+        transform: rotate(0);
+    }
+    25% {
+        transform: rotate(-15deg) scale(1.1);
+    }
+    50% {
+        transform: rotate(15deg) scale(1.1);
+    }
+    75% {
+        transform: rotate(-10deg) scale(1.1);
+    }
+}
+
+.score-card {
+    text-align: right;
+}
+
+.score-card strong {
+    font-size: 1.7rem;
+    color: var(--blue);
+}
+
+/* =========================================================
+   BOARD
+========================================================= */
+
+.board-container {
+    background: white;
+
+    border-radius: 25px;
+
+    padding: 22px;
+
+    box-shadow: var(--shadow);
+
+    margin-bottom: 20px;
+}
+
+.board-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 15px;
+}
+
+.board-title h2 {
+    margin: 0;
+}
+
+.board {
+    display: grid;
+
+    grid-template-columns:
+        repeat(6, minmax(95px, 1fr));
+
+    gap: 10px;
+
+    position: relative;
+}
+
+.cell {
+    min-height: 105px;
+
+    border-radius: 16px;
+
+    border: 3px solid #d6e1e6;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #f1f6f8
+        );
+
+    padding: 9px;
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    transition:
+        transform .2s,
+        border-color .2s,
+        box-shadow .2s;
+}
+
+.cell-number {
+    font-size: .8rem;
+    color: var(--grey-dark);
+    font-weight: 800;
+}
+
+.cell-icon {
+    font-size: 1.8rem;
+    text-align: center;
+}
+
+.cell-label {
+    font-size: .75rem;
+    text-align: center;
+    font-weight: 800;
+}
+
+.cell.start {
+    border-color: var(--green);
+    background: var(--green-light);
+}
+
+.cell.doctor {
+    border-color: var(--blue);
+    background: var(--blue-light);
+}
+
+.cell.specialist {
+    border-color: var(--purple);
+    background: var(--purple-light);
+}
+
+.cell.warning {
+    border-color: var(--red);
+    background: var(--red-light);
+}
+
+.cell.follow {
+    border-color: var(--orange);
+    background: var(--orange-light);
+}
+
+.cell.finish {
+    border-color: var(--yellow);
+    background: var(--yellow-light);
+}
+
+.cell.current {
+    box-shadow:
+        0 0 0 4px rgba(25,118,168,.2);
+
+    transform: scale(1.03);
+}
+
+/* =========================================================
+   TOKENS
+========================================================= */
+
+.tokens {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 4px;
+
+    justify-content: center;
+
+    margin-top: 5px;
+}
+
+.token {
+    width: 24px;
+    height: 24px;
+
+    border-radius: 50%;
+
+    border: 2px solid white;
+
+    box-shadow: 0 2px 5px rgba(0,0,0,.25);
+}
+
+/* =========================================================
+   LOWER GAME AREA
+========================================================= */
+
+.game-area {
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1.35fr;
+
+    gap: 20px;
+}
+
+.panel {
+    background: white;
+
+    border-radius: var(--radius);
+
+    padding: 23px;
+
+    box-shadow: var(--shadow);
+}
+
+.panel h2 {
+    margin-top: 0;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.card-area {
+    min-height: 360px;
+}
+
+.game-card {
+    min-height: 330px;
+
+    border-radius: 22px;
+
+    padding: 28px;
+
+    border:
+        4px solid var(--blue);
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #edf8fb
+        );
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    animation: cardIn .3s ease;
+}
+
+@keyframes cardIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.card-badge {
+    display: inline-block;
+
+    background: var(--blue);
+
+    color: white;
+
+    padding: 6px 11px;
+
+    border-radius: 999px;
+
+    font-size: .75rem;
+
+    font-weight: 900;
+
+    text-transform: uppercase;
+}
+
+.card-question {
+    font-size: 1.3rem;
+
+    line-height: 1.5;
+
+    margin: 22px 0;
+}
+
+.answer-box {
+    background: var(--green-light);
+
+    border-left:
+        6px solid var(--green);
+
+    padding: 17px;
+
+    border-radius: 12px;
+
+    line-height: 1.5;
+
+    margin-top: 15px;
+}
+
+.answer-box strong {
+    color: var(--green);
+}
+
+.card-actions {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 9px;
+
+    margin-top: 20px;
+}
+
+/* =========================================================
+   RULES PANEL
+========================================================= */
+
+.turn-status {
+    background: var(--blue-light);
+
+    border-radius: 14px;
+
+    padding: 15px;
+
+    margin-bottom: 15px;
+
+    font-weight: 700;
+}
+
+.turn-status.warning {
+    background: var(--yellow-light);
+}
+
+.turn-status.success {
+    background: var(--green-light);
+}
+
+.turn-status.error {
+    background: var(--red-light);
+}
+
+/* =========================================================
+   PLAYER LIST
+========================================================= */
+
+.player-list {
+    display: grid;
+
+    gap: 9px;
+
+    margin-top: 15px;
+}
+
+.player-item {
+    display: grid;
+
+    grid-template-columns:
+        34px
+        1fr
+        auto;
+
+    gap: 9px;
+
+    align-items: center;
+
+    padding: 10px;
+
+    border-radius: 12px;
+
+    background: #f5f8fa;
+}
+
+.player-item.active {
+    background: var(--blue-light);
+
+    outline:
+        3px solid rgba(25,118,168,.25);
+}
+
+.mini-token {
+    width: 26px;
+    height: 26px;
+
+    border-radius: 50%;
+}
+
+.player-points {
+    font-weight: 900;
+}
+
+/* =========================================================
+   INSTRUCTIONS
+========================================================= */
+
+.instructions {
+    margin-top: 20px;
+
+    background: white;
+
+    border-radius: var(--radius);
+
+    padding: 20px;
+
+    box-shadow: var(--shadow);
+}
+
+.instructions-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 12px;
+}
+
+.instruction {
+    border-radius: 13px;
+
+    background: #f4f7f8;
+
+    padding: 14px;
+
+    text-align: center;
+}
+
+.instruction strong {
+    display: block;
+
+    margin-bottom: 5px;
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal {
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(10,30,45,.72);
+
+    display: grid;
+
+    place-items: center;
+
+    padding: 20px;
+
+    z-index: 100;
+}
+
+.modal-content {
+    width: min(700px, 100%);
+
+    max-height: 90vh;
+
+    overflow: auto;
+
+    background: white;
+
+    border-radius: 25px;
+
+    padding: 30px;
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.35);
+}
+
+.modal-content h2 {
+    margin-top: 0;
+}
+
+/* =========================================================
+   WINNER
+========================================================= */
+
+.winner {
+    text-align: center;
+}
+
+.winner-trophy {
+    font-size: 6rem;
+}
+
+.winner h2 {
+    font-size: 2.3rem;
+}
+
+.final-ranking {
+    display: grid;
+
+    gap: 9px;
+
+    margin: 25px 0;
+}
+
+.rank {
+    display: grid;
+
+    grid-template-columns:
+        55px
+        1fr
+        auto;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 13px;
+
+    border-radius: 13px;
+
+    background: #f3f6f8;
+}
+
+.rank:first-child {
+    background: var(--yellow-light);
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast {
+    position: fixed;
+
+    left: 50%;
+
+    bottom: 25px;
+
+    transform: translateX(-50%);
+
+    background: var(--navy);
+
+    color: white;
+
+    padding: 13px 20px;
+
+    border-radius: 999px;
+
+    box-shadow: var(--shadow);
+
+    z-index: 200;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition: opacity .25s;
+}
+
+.toast.show {
+    opacity: 1;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width: 1050px) {
+
+    .board {
+        grid-template-columns:
+            repeat(4, 1fr);
+    }
+
+    .game-top {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .dice-card {
+        grid-column: span 2;
+    }
+
+    .game-area {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width: 700px) {
+
+    header {
+        padding: 15px;
+    }
+
+    .app {
+        padding: 12px;
+    }
+
+    .board {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+
+    .cell {
+        min-height: 95px;
+    }
+
+    .instructions-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .game-top {
+        grid-template-columns: 1fr;
+    }
+
+    .dice-card {
+        grid-column: auto;
+    }
+}
+
+@media(max-width: 480px) {
+
+    .board {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .instructions-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .setup {
+        padding: 20px;
+        margin: 15px auto;
+    }
+}
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+button:focus-visible,
+input:focus-visible {
+    outline:
+        4px solid rgba(25,118,168,.35);
+
+    outline-offset: 2px;
+}
+
+@media(prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            🏥
+        </div>
+
+        <div>
+
+            <h1>Le parcours de soins</h1>
+
+            <p>
+                Jeu de plateau pédagogique — PSE
+            </p>
+
+        </div>
+
+    </div>
+
+    <button
+        class="btn btn-secondary"
+        onclick="showRules()"
+    >
+        📖 Règles
+    </button>
+
+</header>
+
+
+<div class="app">
+
+<!-- ======================================================
+     ÉCRAN DE CONFIGURATION
+======================================================= -->
+
+<section
+    id="setupScreen"
+    class="setup"
+>
+
+    <h2>
+        🎲 Préparez la partie
+    </h2>
+
+    <p class="setup-intro">
+
+        Choisissez les joueurs.
+        La partie se joue chacun son tour.
+
+        <br>
+
+        <strong>
+            Attention : à chaque tour,
+            le joueur doit obligatoirement lancer le dé,
+            puis piocher une carte.
+        </strong>
+
+    </p>
+
+
+    <div class="players-input">
+
+        <div class="player-row">
+
+            <div
+                class="player-color"
+                style="background:#e74c3c"
+            ></div>
+
+            <input
+                id="player1"
+                maxlength="18"
+                placeholder="Joueur 1"
+                value="Arthur"
+            >
+
+        </div>
+
+
+        <div class="player-row">
+
+            <div
+                class="player-color"
+                style="background:#3498db"
+            ></div>
+
+            <input
+                id="player2"
+                maxlength="18"
+                placeholder="Joueur 2"
+                value="Claire"
+            >
+
+        </div>
+
+
+        <div class="player-row">
+
+            <div
+                class="player-color"
+                style="background:#27ae60"
+            ></div>
+
+            <input
+                id="player3"
+                maxlength="18"
+                placeholder="Joueur 3"
+            >
+
+        </div>
+
+
+        <div class="player-row">
+
+            <div
+                class="player-color"
+                style="background:#9b59b6"
+            ></div>
+
+            <input
+                id="player4"
+                maxlength="18"
+                placeholder="Joueur 4"
+            >
+
+        </div>
+
+
+        <div class="player-row">
+
+            <div
+                class="player-color"
+                style="background:#f39c12"
+            ></div>
+
+            <input
+                id="player5"
+                maxlength="18"
+                placeholder="Joueur 5"
+            >
+
+        </div>
+
+
+        <div class="player-row">
+
+            <div
+                class="player-color"
+                style="background:#16a085"
+            ></div>
+
+            <input
+                id="player6"
+                maxlength="18"
+                placeholder="Joueur 6"
+            >
+
+        </div>
+
+    </div>
+
+
+    <div class="setup-actions">
+
+        <button
+            class="btn btn-primary"
+            onclick="startGame()"
+        >
+            🏥 Commencer la partie
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     JEU
+======================================================= -->
+
+<section
+    id="gameScreen"
+    class="hidden"
+>
+
+
+    <!-- TOP -->
+
+    <div class="game-top">
+
+
+        <div class="turn-card">
+
+            <small>
+                TOUR DE
+            </small>
+
+            <strong id="currentPlayerName">
+                —
+            </strong>
+
+            <span id="turnInstruction">
+                Lance le dé pour commencer.
+            </span>
+
+        </div>
+
+
+        <div class="dice-card">
+
+            <div
+                id="dice"
+                class="dice"
+            >
+                ⚀
+            </div>
+
+            <button
+                id="rollButton"
+                class="btn btn-primary"
+                onclick="rollDice()"
+            >
+                🎲 Lancer le dé
+            </button>
+
+        </div>
+
+
+        <div class="score-card">
+
+            <small>
+                SCORE
+            </small>
+
+            <strong id="currentScore">
+                0
+            </strong>
+
+            <div>
+                points
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- BOARD -->
+
+    <section class="board-container">
+
+        <div class="board-title">
+
+            <h2>
+                🗺️ Parcours de soins
+            </h2>
+
+            <button
+                class="btn btn-secondary"
+                onclick="showPlayers()"
+            >
+                👥 Joueurs
+            </button>
+
+        </div>
+
+
+        <div
+            id="board"
+            class="board"
+        ></div>
+
+    </section>
+
+
+    <!-- GAME AREA -->
+
+    <div class="game-area">
+
+
+        <!-- LEFT -->
+
+        <section class="panel">
+
+            <h2>
+                🎮 Déroulement du tour
+            </h2>
+
+
+            <div
+                id="turnStatus"
+                class="turn-status"
+            >
+                🎲 Lance le dé pour commencer ton tour.
+            </div>
+
+
+            <div class="card-area">
+
+                <div
+                    id="emptyCard"
+                    class="game-card"
+                >
+
+                    <div>
+
+                        <span class="card-badge">
+                            À venir
+                        </span>
+
+                        <p class="card-question">
+
+                            Après avoir lancé le dé,
+                            le joueur devra obligatoirement
+                            piocher une carte.
+
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            👤 Rôle du lecteur
+                        </strong>
+
+                        <p>
+
+                            Le lecteur lit la carte
+                            au joueur.
+                            Le joueur répond.
+                            Puis le lecteur affiche
+                            la correction.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="cardArea"
+                    class="hidden"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RIGHT -->
+
+        <section class="panel">
+
+            <h2>
+                👥 Tableau des joueurs
+            </h2>
+
+            <div
+                id="playerList"
+                class="player-list"
+            ></div>
+
+
+            <hr style="
+                border:0;
+                border-top:1px solid #e0e7eb;
+                margin:22px 0;
+            ">
+
+
+            <h3>
+                🎯 Objectif
+            </h3>
+
+            <p>
+                Atteindre la fin du parcours en comprenant
+                comment fonctionne le parcours de soins
+                coordonné.
+            </p>
+
+
+            <h3>
+                ⭐ Points
+            </h3>
+
+            <p>
+                Bonne réponse :
+                <strong>+2 points</strong>
+            </p>
+
+            <p>
+                Réponse incorrecte :
+                <strong>0 point</strong>
+            </p>
+
+            <p>
+                Les cartes servent avant tout
+                à comprendre et à justifier la réponse.
+            </p>
+
+        </section>
+
+    </div>
+
+
+    <!-- INSTRUCTIONS -->
+
+    <section class="instructions">
+
+        <h2>
+            🧭 Les 4 grandes étapes
+        </h2>
+
+        <div class="instructions-grid">
+
+            <div class="instruction">
+
+                <div style="font-size:2rem">
+                    👨‍⚕️
+                </div>
+
+                <strong>
+                    1. Médecin traitant
+                </strong>
+
+                Le patient choisit
+                et déclare un médecin traitant.
+
+            </div>
+
+
+            <div class="instruction">
+
+                <div style="font-size:2rem">
+                    📋
+                </div>
+
+                <strong>
+                    2. Évaluation
+                </strong>
+
+                Le médecin évalue
+                la situation.
+
+            </div>
+
+
+            <div class="instruction">
+
+                <div style="font-size:2rem">
+                    🩺
+                </div>
+
+                <strong>
+                    3. Spécialiste
+                </strong>
+
+                Si nécessaire,
+                le médecin oriente
+                vers un spécialiste.
+
+            </div>
+
+
+            <div class="instruction">
+
+                <div style="font-size:2rem">
+                    🔄
+                </div>
+
+                <strong>
+                    4. Suivi coordonné
+                </strong>
+
+                Les soins sont
+                organisés autour du patient.
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+</section>
+
+</div>
+
+
+<!-- ======================================================
+     MODAL REGLES
+======================================================= -->
+
+<div
+    id="rulesModal"
+    class="modal hidden"
+>
+
+    <div class="modal-content">
+
+        <h2>
+            📖 Règles du jeu
+        </h2>
+
+        <ol>
+
+            <li>
+                Le premier joueur est désigné.
+            </li>
+
+            <li>
+                Il doit obligatoirement
+                <strong>lancer le dé</strong>.
+            </li>
+
+            <li>
+                Après le lancer,
+                il avance son pion.
+            </li>
+
+            <li>
+                Il doit ensuite
+                <strong>piocher une carte</strong>.
+            </li>
+
+            <li>
+                Le lecteur lit la situation
+                ou la question.
+            </li>
+
+            <li>
+                Le joueur répond.
+            </li>
+
+            <li>
+                Le lecteur clique sur
+                <strong>« Voir la correction »</strong>.
+            </li>
+
+            <li>
+                Le lecteur indique si la réponse
+                est correcte.
+            </li>
+
+            <li>
+                Le tour ne peut être terminé
+                qu'après cette étape.
+            </li>
+
+            <li>
+                Le joueur suivant prend ensuite
+                la main.
+            </li>
+
+        </ol>
+
+
+        <h3>
+            🏥 Objectif pédagogique
+        </h3>
+
+        <p>
+
+            Comprendre le principe du parcours
+            de soins coordonné :
+            médecin traitant,
+            évaluation,
+            orientation vers un spécialiste
+            si nécessaire et suivi coordonné.
+
+        </p>
+
+
+        <button
+            class="btn btn-primary"
+            onclick="closeRules()"
+        >
+            J'ai compris
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================================
+     MODAL FIN
+======================================================= -->
+
+<div
+    id="winnerModal"
+    class="modal hidden"
+>
+
+    <div class="modal-content winner">
+
+        <div class="winner-trophy">
+            🏆
+        </div>
+
+        <h2>
+            Fin de la partie !
+        </h2>
+
+        <p id="winnerMessage"></p>
+
+        <div
+            id="finalRanking"
+            class="final-ranking"
+        ></div>
+
+        <button
+            class="btn btn-primary"
+            onclick="restartGame()"
+        >
+            🔄 Nouvelle partie
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================================
+     TOAST
+======================================================= -->
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
+
+<script>
+
+/* =========================================================
+   DONNEES DU JEU
+========================================================= */
+
+
+/*
+   Les cartes sont volontairement centrées sur les notions
+   présentes dans le cours fourni :
+   médecin traitant,
+   évaluation,
+   orientation,
+   spécialiste,
+   parcours coordonné,
+   conséquences lorsque le parcours n'est pas respecté.
+*/
+
+const cards = [
+
+{
+    type: "Comprendre",
+    question:
+        "Louis consulte son médecin traitant. Celui-ci pense qu'une consultation spécialisée est nécessaire. Que doit-il faire ?",
+    answer:
+        "Le médecin traitant peut orienter Louis vers un spécialiste. Le médecin traitant joue ainsi son rôle de coordination du parcours.",
+    good:
+        "Il doit être orienté vers un spécialiste si cela est nécessaire."
+},
+
+{
+    type: "Situation",
+    question:
+        "Claire consulte directement un spécialiste sans passer par son médecin traitant. Le parcours de soins coordonné est-il respecté ?",
+    answer:
+        "Non. Dans la situation présentée, Claire ne suit pas le parcours coordonné décrit dans le cours : le médecin traitant doit évaluer la situation et orienter si nécessaire.",
+    good:
+        "Non, le parcours coordonné n'est pas respecté."
+},
+
+{
+    type: "Conséquence",
+    question:
+        "Arthur consulte directement un spécialiste alors qu'il aurait dû passer par son médecin traitant. Quelle conséquence peut avoir le non-respect du parcours ?",
+    answer:
+        "Le non-respect du parcours peut avoir une conséquence sur la prise en charge et le remboursement par l'Assurance Maladie.",
+    good:
+        "Le remboursement peut être moins favorable."
+},
+
+{
+    type: "Ordre",
+    question:
+        "Remets ces étapes dans le bon ordre : spécialiste → médecin traitant → évaluation.",
+    answer:
+        "Le médecin traitant intervient d'abord, puis il évalue la situation et peut orienter vers un spécialiste si nécessaire.",
+    good:
+        "Médecin traitant → évaluation → spécialiste si nécessaire."
+},
+
+{
+    type: "Comprendre",
+    question:
+        "Pourquoi le médecin traitant a-t-il un rôle important dans le parcours de soins ?",
+    answer:
+        "Il constitue le professionnel qui évalue la situation du patient et peut l'orienter vers un autre spécialiste lorsque cela est nécessaire.",
+    good:
+        "Il coordonne et oriente le parcours du patient."
+},
+
+{
+    type: "Situation",
+    question:
+        "Jeanne consulte son médecin traitant. Après l'évaluation, celui-ci lui conseille de consulter un spécialiste. Le parcours est-il coordonné ?",
+    answer:
+        "Oui. Le médecin traitant a évalué la situation puis orienté Jeanne vers un spécialiste.",
+    good:
+        "Oui."
+},
+
+{
+    type: "Vrai / Faux",
+    question:
+        "Vrai ou faux : chaque patient doit choisir un médecin traitant et le déclarer à la Sécurité sociale.",
+    answer:
+        "Vrai. C'est le principe présenté dans le document du cours sur le parcours de soins coordonné.",
+    good:
+        "Vrai."
+},
+
+{
+    type: "Vrai / Faux",
+    question:
+        "Vrai ou faux : le médecin traitant peut orienter le patient vers un spécialiste.",
+    answer:
+        "Vrai. C'est précisément l'un des rôles présentés dans le cours.",
+    good:
+        "Vrai."
+},
+
+{
+    type: "Vrai / Faux",
+    question:
+        "Vrai ou faux : consulter directement un spécialiste respecte toujours le parcours de soins coordonné.",
+    answer:
+        "Faux. Dans la situation générale présentée dans le cours, le médecin traitant doit d'abord évaluer la situation et orienter si nécessaire.",
+    good:
+        "Faux."
+},
+
+{
+    type: "Situation",
+    question:
+        "Paul pense avoir besoin d'un spécialiste. Quelle est la première personne qu'il devrait consulter dans le parcours présenté dans le cours ?",
+    answer:
+        "Il doit consulter son médecin traitant, qui évaluera sa situation et pourra l'orienter.",
+    good:
+        "Son médecin traitant."
+},
+
+{
+    type: "Conséquence",
+    question:
+        "Pourquoi est-il préférable de respecter le parcours de soins coordonné ?",
+    answer:
+        "Il permet d'organiser les soins autour du patient et d'assurer une orientation adaptée. Le non-respect peut également avoir une conséquence sur le remboursement.",
+    good:
+        "Pour coordonner les soins et bénéficier d'une prise en charge adaptée."
+},
+
+{
+    type: "Situation",
+    question:
+        "Marie consulte son médecin traitant pour un problème de santé. Le médecin estime qu'elle n'a pas besoin de spécialiste. Que peut-il faire ?",
+    answer:
+        "Le médecin traitant peut prendre en charge la situation et assurer le suivi du patient.",
+    good:
+        "Il assure la prise en charge et le suivi."
+},
+
+{
+    type: "Situation",
+    question:
+        "Thomas consulte son médecin traitant. Celui-ci l'oriente vers un spécialiste. Après cette consultation, les soins sont suivis de manière organisée. Quel principe est illustré ?",
+    answer:
+        "Il s'agit d'un parcours de soins coordonné.",
+    good:
+        "Le parcours de soins coordonné."
+},
+
+{
+    type: "Ordre",
+    question:
+        "Quel professionnel intervient en premier dans le parcours coordonné présenté dans le cours ?",
+    answer:
+        "Le médecin traitant.",
+    good:
+        "Le médecin traitant."
+},
+
+{
+    type: "Comprendre",
+    question:
+        "Que signifie « orienter un patient » ?",
+    answer:
+        "Cela signifie l'adresser à un autre professionnel de santé, notamment à un spécialiste, lorsque cela est nécessaire.",
+    good:
+        "Diriger le patient vers le professionnel adapté."
+},
+
+{
+    type: "Vrai / Faux",
+    question:
+        "Vrai ou faux : le parcours de soins coordonné concerne uniquement le spécialiste.",
+    answer:
+        "Faux. Il implique notamment le médecin traitant, l'évaluation de la situation, l'orientation éventuelle vers un spécialiste et le suivi.",
+    good:
+        "Faux."
+},
+
+{
+    type: "Situation",
+    question:
+        "Émilie déclare un médecin traitant. Lorsqu'elle est malade, elle commence par le consulter. Est-elle dans la logique du parcours coordonné ?",
+    answer:
+        "Oui. Elle commence par consulter son médecin traitant, qui pourra ensuite l'orienter si nécessaire.",
+    good:
+        "Oui."
+},
+
+{
+    type: "Conséquence",
+    question:
+        "Que peut-il se passer si un patient ne respecte pas le parcours de soins coordonné ?",
+    answer:
+        "Dans certaines situations, la prise en charge par l'Assurance Maladie peut être moins favorable.",
+    good:
+        "Le remboursement peut être moins favorable."
+},
+
+{
+    type: "Situation",
+    question:
+        "Antoine consulte directement un spécialiste alors que son médecin traitant aurait pu l'orienter. Quel élément du parcours manque ?",
+    answer:
+        "L'intervention préalable du médecin traitant et son rôle d'évaluation et d'orientation manquent.",
+    good:
+        "L'évaluation et l'orientation par le médecin traitant."
+},
+
+{
+    type: "Comprendre",
+    question:
+        "Pourquoi le médecin traitant évalue-t-il la situation avant d'orienter vers un spécialiste ?",
+    answer:
+        "Pour déterminer si une consultation auprès d'un autre professionnel est nécessaire.",
+    good:
+        "Pour déterminer si un spécialiste est nécessaire."
+},
+
+{
+    type: "Vrai / Faux",
+    question:
+        "Vrai ou faux : le parcours coordonné permet d'organiser les différentes étapes des soins.",
+    answer:
+        "Vrai. Le principe même du parcours est de coordonner les interventions autour du patient.",
+    good:
+        "Vrai."
+},
+
+{
+    type: "Situation",
+    question:
+        "Sophie consulte son médecin traitant, puis est orientée vers un spécialiste. Elle suit les étapes prévues. Comment qualifier son parcours ?",
+    answer:
+        "Son parcours respecte le principe du parcours de soins coordonné présenté dans le cours.",
+    good:
+        "Parcours coordonné."
+},
+
+{
+    type: "Ordre",
+    question:
+        "Complète : médecin traitant → __________ → spécialiste si nécessaire.",
+    answer:
+        "Le médecin traitant évalue la situation avant d'orienter le patient.",
+    good:
+        "Évaluation."
+},
+
+{
+    type: "Conséquence",
+    question:
+        "Un patient choisit directement un spécialiste sans respecter le parcours présenté. Est-ce sans conséquence ?",
+    answer:
+        "Non. Le non-respect du parcours peut notamment avoir une conséquence financière sur le remboursement.",
+    good:
+        "Non."
+},
+
+{
+    type: "Comprendre",
+    question:
+        "Quel est l'intérêt principal du parcours de soins coordonné ?",
+    answer:
+        "Il permet de mieux organiser et coordonner les soins du patient.",
+    good:
+        "Coordonner les soins."
+}
+
+];
+
+
+/* =========================================================
+   CASES DU PLATEAU
+========================================================= */
+
+const boardCells = [
+
+{
+    label: "Départ",
+    icon: "🏁",
+    type: "start"
+},
+
+{
+    label: "Médecin traitant",
+    icon: "👨‍⚕️",
+    type: "doctor"
+},
+
+{
+    label: "Évaluation",
+    icon: "📋",
+    type: "doctor"
+},
+
+{
+    label: "Bon parcours",
+    icon: "✅",
+    type: "follow"
+},
+
+{
+    label: "Situation",
+    icon: "🃏",
+    type: ""
+},
+
+{
+    label: "Spécialiste",
+    icon: "🩺",
+    type: "specialist"
+},
+
+{
+    label: "Parcours respecté",
+    icon: "⭐",
+    type: "follow"
+},
+
+{
+    label: "Question",
+    icon: "❓",
+    type: ""
+},
+
+{
+    label: "Parcours non respecté",
+    icon: "⚠️",
+    type: "warning"
+},
+
+{
+    label: "Remboursement",
+    icon: "💶",
+    type: "warning"
+},
+
+{
+    label: "Médecin traitant",
+    icon: "👨‍⚕️",
+    type: "doctor"
+},
+
+{
+    label: "Évaluation",
+    icon: "📋",
+    type: "doctor"
+},
+
+{
+    label: "Orientation",
+    icon: "➡️",
+    type: "doctor"
+},
+
+{
+    label: "Spécialiste",
+    icon: "🩺",
+    type: "specialist"
+},
+
+{
+    label: "Question",
+    icon: "❓",
+    type: ""
+},
+
+{
+    label: "Suivi",
+    icon: "🔄",
+    type: "follow"
+},
+
+{
+    label: "Parcours coordonné",
+    icon: "🏥",
+    type: "follow"
+},
+
+{
+    label: "Situation",
+    icon: "🃏",
+    type: ""
+},
+
+{
+    label: "Attention",
+    icon: "⚠️",
+    type: "warning"
+},
+
+{
+    label: "Bonne coordination",
+    icon: "🤝",
+    type: "follow"
+},
+
+{
+    label: "Question",
+    icon: "❓",
+    type: ""
+},
+
+{
+    label: "Suivi coordonné",
+    icon: "🔄",
+    type: "follow"
+},
+
+{
+    label: "Dernière étape",
+    icon: "🎯",
+    type: "follow"
+},
+
+{
+    label: "Arrivée",
+    icon: "🏆",
+    type: "finish"
+}
+
+];
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+const colors = [
+    "#e74c3c",
+    "#3498db",
+    "#27ae60",
+    "#9b59b6",
+    "#f39c12",
+    "#16a085"
+];
+
+const diceFaces = [
+    "⚀",
+    "⚁",
+    "⚂",
+    "⚃",
+    "⚄",
+    "⚅"
+];
+
+let players = [];
+
+let currentPlayerIndex = 0;
+
+let currentPlayer = null;
+
+let currentCard = null;
+
+let diceValue = null;
+
+let hasRolled = false;
+
+let hasDrawn = false;
+
+let answerRevealed = false;
+
+let gameFinished = false;
+
+
+/* =========================================================
+   DEMARRER
+========================================================= */
+
+function startGame() {
+
+    players = [];
+
+    for(let i = 1; i <= 6; i++) {
+
+        const input =
+            document.getElementById(
+                "player" + i
+            );
+
+        const name =
+            input.value.trim();
+
+        if(name) {
+
+            players.push({
+
+                id: i,
+
+                name: name,
+
+                color: colors[i - 1],
+
+                position: 0,
+
+                points: 0
+
+            });
+
+        }
+
+    }
+
+    if(players.length < 2) {
+
+        showToast(
+            "👥 Il faut au moins 2 joueurs."
+        );
+
+        return;
+
+    }
+
+    currentPlayerIndex = 0;
+
+    currentPlayer =
+        players[currentPlayerIndex];
+
+    document
+        .getElementById("setupScreen")
+        .classList.add("hidden");
+
+    document
+        .getElementById("gameScreen")
+        .classList.remove("hidden");
+
+    renderBoard();
+
+    renderPlayers();
+
+    prepareTurn();
+
+}
+
+
+/* =========================================================
+   PREPARER UN TOUR
+========================================================= */
+
+function prepareTurn() {
+
+    hasRolled = false;
+
+    hasDrawn = false;
+
+    answerRevealed = false;
+
+    diceValue = null;
+
+    currentCard = null;
+
+    document
+        .getElementById("dice")
+        .textContent = "⚀";
+
+    document
+        .getElementById("rollButton")
+        .disabled = false;
+
+    document
+        .getElementById("currentPlayerName")
+        .textContent =
+            currentPlayer.name;
+
+    document
+        .getElementById("currentScore")
+        .textContent =
+            currentPlayer.points;
+
+    document
+        .getElementById("turnInstruction")
+        .textContent =
+            "Lance le dé pour commencer ton tour.";
+
+    setStatus(
+        "🎲 C'est ton tour : lance le dé.",
+        ""
+    );
+
+    document
+        .getElementById("cardArea")
+        .classList.add("hidden");
+
+    document
+        .getElementById("emptyCard")
+        .classList.remove("hidden");
+
+    renderPlayers();
+
+    renderBoard();
+
+}
+
+
+/* =========================================================
+   LANCER LE DE
+========================================================= */
+
+function rollDice() {
+
+    if(hasRolled) {
+
+        showToast(
+            "⛔ Le dé a déjà été lancé."
+        );
+
+        return;
+
+    }
+
+    hasRolled = true;
+
+    const dice =
+        document.getElementById("dice");
+
+    dice.classList.add("rolling");
+
+    document
+        .getElementById("rollButton")
+        .disabled = true;
+
+    let count = 0;
+
+    const interval =
+        setInterval(() => {
+
+            const temporary =
+                Math.floor(
+                    Math.random() * 6
+                );
+
+            dice.textContent =
+                diceFaces[temporary];
+
+            count++;
+
+            if(count >= 8) {
+
+                clearInterval(interval);
+
+                dice.classList.remove(
+                    "rolling"
+                );
+
+                diceValue =
+                    Math.floor(
+                        Math.random() * 6
+                    ) + 1;
+
+                dice.textContent =
+                    diceFaces[
+                        diceValue - 1
+                    ];
+
+                movePlayer();
+
+            }
+
+        }, 70);
+
+}
+
+
+/* =========================================================
+   DEPLACER
+========================================================= */
+
+function movePlayer() {
+
+    const oldPosition =
+        currentPlayer.position;
+
+    currentPlayer.position +=
+        diceValue;
+
+    if(
+        currentPlayer.position >=
+        boardCells.length - 1
+    ) {
+
+        currentPlayer.position =
+            boardCells.length - 1;
+
+        gameFinished = true;
+
+    }
+
+    renderBoard();
+
+    renderPlayers();
+
+    setStatus(
+
+        "➡️ " +
+        currentPlayer.name +
+        " avance de " +
+        diceValue +
+        " case(s). " +
+        "Il faut maintenant piocher une carte.",
+
+        "warning"
+
+    );
+
+    document
+        .getElementById("turnInstruction")
+        .textContent =
+            "Pioche obligatoirement une carte.";
+
+    drawCard();
+
+}
+
+
+/* =========================================================
+   PIOCHER
+========================================================= */
+
+function drawCard() {
+
+    if(!hasRolled) {
+
+        showToast(
+            "🔒 Lance d'abord le dé."
+        );
+
+        return;
+
+    }
+
+    if(hasDrawn) {
+
+        showToast(
+            "⛔ Une carte a déjà été piochée."
+        );
+
+        return;
+
+    }
+
+    hasDrawn = true;
+
+    currentCard =
+        cards[
+            Math.floor(
+                Math.random() * cards.length
+            )
+        ];
+
+    renderCard();
+
+}
+
+
+/* =========================================================
+   AFFICHER CARTE
+========================================================= */
+
+function renderCard() {
+
+    document
+        .getElementById("emptyCard")
+        .classList.add("hidden");
+
+    const area =
+        document.getElementById("cardArea");
+
+    area.classList.remove("hidden");
+
+    area.innerHTML = `
+
+        <div class="game-card">
+
+            <div>
+
+                <span class="card-badge">
+                    ${currentCard.type}
+                </span>
+
+                <div class="card-question">
+
+                    ${currentCard.question}
+
+                </div>
+
+                <div
+                    id="answerBox"
+                    class="hidden"
+                >
+
+                    <div class="answer-box">
+
+                        <strong>
+                            💡 Correction
+                        </strong>
+
+                        <p>
+                            ${currentCard.answer}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="card-actions">
+
+                <button
+                    id="revealButton"
+                    class="btn btn-warning"
+                    onclick="revealAnswer()"
+                >
+                    👁 Voir la correction
+                </button>
+
+
+                <button
+                    id="correctButton"
+                    class="btn btn-success hidden"
+                    onclick="validateAnswer(true)"
+                >
+                    ✅ Bonne réponse
+                </button>
+
+
+                <button
+                    id="wrongButton"
+                    class="btn btn-danger hidden"
+                    onclick="validateAnswer(false)"
+                >
+                    ❌ Réponse incorrecte
+                </button>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   CORRECTION
+========================================================= */
+
+function revealAnswer() {
+
+    if(!hasDrawn) {
+
+        showToast(
+            "⛔ Il faut d'abord piocher une carte."
+        );
+
+        return;
+
+    }
+
+    answerRevealed = true;
+
+    document
+        .getElementById("answerBox")
+        .classList.remove("hidden");
+
+    document
+        .getElementById("revealButton")
+        .classList.add("hidden");
+
+    document
+        .getElementById("correctButton")
+        .classList.remove("hidden");
+
+    document
+        .getElementById("wrongButton")
+        .classList.remove("hidden");
+
+}
+
+
+/* =========================================================
+   VALIDATION
+========================================================= */
+
+function validateAnswer(correct) {
+
+    if(!answerRevealed) {
+
+        showToast(
+            "👁 Le lecteur doit d'abord afficher la correction."
+        );
+
+        return;
+
+    }
+
+    if(correct) {
+
+        currentPlayer.points += 2;
+
+        setStatus(
+
+            "⭐ Bonne réponse ! " +
+            currentPlayer.name +
+            " gagne 2 points.",
+
+            "success"
+
+        );
+
+    } else {
+
+        setStatus(
+
+            "💡 Pas de point cette fois. " +
+            "Le lecteur explique la correction.",
+
+            "error"
+
+        );
+
+    }
+
+    document
+        .getElementById("correctButton")
+        .disabled = true;
+
+    document
+        .getElementById("wrongButton")
+        .disabled = true;
+
+    const finishButton =
+        document.createElement("button");
+
+    finishButton.className =
+        "btn btn-primary";
+
+    finishButton.textContent =
+        "➡️ Terminer le tour";
+
+    finishButton.onclick =
+        finishTurn;
+
+    document
+        .querySelector(".card-actions")
+        .appendChild(
+            finishButton
+        );
+
+    document
+        .getElementById("currentScore")
+        .textContent =
+            currentPlayer.points;
+
+    renderPlayers();
+
+}
+
+
+/* =========================================================
+   FIN TOUR
+========================================================= */
+
+function finishTurn() {
+
+    if(!hasRolled) {
+
+        showToast(
+            "⛔ Le joueur doit lancer le dé."
+        );
+
+        return;
+
+    }
+
+    if(!hasDrawn) {
+
+        showToast(
+            "⛔ Le joueur doit piocher une carte."
+        );
+
+        return;
+
+    }
+
+    if(!answerRevealed) {
+
+        showToast(
+            "⛔ La correction doit être affichée."
+        );
+
+        return;
+
+    }
+
+
+    if(
+        currentPlayer.position >=
+        boardCells.length - 1
+    ) {
+
+        showWinner();
+
+        return;
+
+    }
+
+
+    currentPlayerIndex++;
+
+    if(
+        currentPlayerIndex >=
+        players.length
+    ) {
+
+        currentPlayerIndex = 0;
+
+    }
+
+    currentPlayer =
+        players[
+            currentPlayerIndex
+        ];
+
+    prepareTurn();
+
+}
+
+
+/* =========================================================
+   PLATEAU
+========================================================= */
+
+function renderBoard() {
+
+    const board =
+        document.getElementById(
+            "board"
+        );
+
+    board.innerHTML = "";
+
+
+    boardCells.forEach(
+        (cell, index) => {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+            div.className =
+                "cell " +
+                (cell.type || "");
+
+            const playersHere =
+                players.filter(
+                    p =>
+                        p.position === index
+                );
+
+
+            if(
+                currentPlayer &&
+                currentPlayer.position === index
+            ) {
+
+                div.classList.add(
+                    "current"
+                );
+
+            }
+
+
+            div.innerHTML = `
+
+                <div class="cell-number">
+                    CASE ${index + 1}
+                </div>
+
+                <div class="cell-icon">
+                    ${cell.icon}
+                </div>
+
+                <div class="cell-label">
+                    ${cell.label}
+                </div>
+
+                <div class="tokens">
+
+                    ${playersHere
+                        .map(
+                            p => `
+                                <div
+                                    class="token"
+                                    style="
+                                        background:${p.color};
+                                    "
+                                    title="${p.name}"
+                                ></div>
+                            `
+                        )
+                        .join("")
+                    }
+
+                </div>
+
+            `;
+
+            board.appendChild(div);
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   JOUEURS
+========================================================= */
+
+function renderPlayers() {
+
+    const list =
+        document.getElementById(
+            "playerList"
+        );
+
+    list.innerHTML = "";
+
+
+    players.forEach(
+        (player, index) => {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+            div.className =
+                "player-item " +
+                (
+                    index ===
+                    currentPlayerIndex
+                        ? "active"
+                        : ""
+                );
+
+
+            div.innerHTML = `
+
+                <div
+                    class="mini-token"
+                    style="
+                        background:${player.color};
+                    "
+                ></div>
+
+                <div>
+
+                    <strong>
+                        ${player.name}
+                    </strong>
+
+                    <div style="
+                        font-size:.75rem;
+                        color:#637381;
+                    ">
+
+                        Case ${player.position + 1}
+
+                    </div>
+
+                </div>
+
+                <div class="player-points">
+
+                    ⭐ ${player.points}
+
+                </div>
+
+            `;
+
+            list.appendChild(div);
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function setStatus(
+    text,
+    type
+) {
+
+    const status =
+        document.getElementById(
+            "turnStatus"
+        );
+
+    status.className =
+        "turn-status " +
+        type;
+
+    status.textContent =
+        text;
+
+}
+
+
+/* =========================================================
+   REGLES
+========================================================= */
+
+function showRules() {
+
+    document
+        .getElementById("rulesModal")
+        .classList.remove("hidden");
+
+}
+
+function closeRules() {
+
+    document
+        .getElementById("rulesModal")
+        .classList.add("hidden");
+
+}
+
+
+/* =========================================================
+   JOUEURS
+========================================================= */
+
+function showPlayers() {
+
+    const names =
+        players
+            .map(
+                p =>
+                    p.name +
+                    " — " +
+                    p.points +
+                    " points"
+            )
+            .join("\n");
+
+    alert(
+        "👥 Joueurs\n\n" +
+        names
+    );
+
+}
+
+
+/* =========================================================
+   FIN DE PARTIE
+========================================================= */
+
+function showWinner() {
+
+    const ranking =
+        [...players].sort(
+            (a,b) =>
+                b.points - a.points
+        );
+
+
+    const winner =
+        ranking[0];
+
+
+    document
+        .getElementById("winnerMessage")
+        .textContent =
+            winner.name +
+            " termine avec " +
+            winner.points +
+            " point(s) !";
+
+
+    const finalRanking =
+        document.getElementById(
+            "finalRanking"
+        );
+
+
+    finalRanking.innerHTML =
+        ranking
+            .map(
+                (p,index) => `
+
+                    <div class="rank">
+
+                        <strong>
+                            ${
+                                index === 0
+                                    ? "🥇"
+                                    : index === 1
+                                    ? "🥈"
+                                    : index === 2
+                                    ? "🥉"
+                                    : (index + 1) + "e"
+                            }
+                        </strong>
+
+                        <span>
+                            ${p.name}
+                        </span>
+
+                        <strong>
+                            ${p.points} ⭐
+                        </strong>
+
+                    </div>
+
+                `
+            )
+            .join("");
+
+
+    document
+        .getElementById("winnerModal")
+        .classList.remove("hidden");
+
+}
+
+
+/* =========================================================
+   RECOMMENCER
+========================================================= */
+
+function restartGame() {
+
+    location.reload();
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimeout;
+
+function showToast(message) {
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+    toast.textContent =
+        message;
+
+    toast.classList.add("show");
+
+    clearTimeout(
+        toastTimeout
+    );
+
+    toastTimeout =
+        setTimeout(
+            () => {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            2600
+        );
+
+}
+
+</script>
+
+</body>
+</html>

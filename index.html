@@ -747,46 +747,1095 @@ button{
      ECRAN INSCRIPTION
      ======================================================= -->
 
-<section id="setupScreen" class="screen active">
+/* ============================================================
+   INSCRIPTION DES JOUEURS — VERSION CORRIGÉE
+============================================================ */
 
-    <div class="setup-card">
+/*
+    Nombre de joueurs sélectionné.
+    Valeur par défaut : 2.
+*/
+let selectedPlayerCount = 2;
 
-        <div class="setup-header">
-            <h1>🏥 Le parcours de soins</h1>
-            <p>
-                Parcourez la ville, répondez aux questions sur le parcours
-                de soins coordonné et essayez d'atteindre la dernière case.
-                Attention : une mauvaise réponse ne permet pas d'avancer !
-            </p>
-        </div>
 
-        <div class="setup-content">
+/*
+    Retourne tous les avatars actuellement sélectionnés.
+*/
+function getAllSelectedAvatars() {
 
-            <h2 class="section-title">
-                👥 Inscription des joueurs
-            </h2>
+    const selected = [];
 
-            <div id="playersGrid" class="players-grid"></div>
+    document
+        .querySelectorAll(
+            "#playerSetup .avatar-option.selected"
+        )
+        .forEach(
+            option => {
 
-            <div id="setupError" class="error-message"></div>
+                if (
+                    option.dataset.avatar
+                ) {
 
-            <div class="setup-footer">
-                <div id="playersCount" class="players-count">
-                    2 joueurs minimum
-                </div>
+                    selected.push(
+                        option.dataset.avatar
+                    );
 
-                <button
-                    id="startButton"
-                    class="primary-button"
-                    type="button">
-                    🎮 Commencer la partie
-                </button>
-            </div>
+                }
 
-        </div>
-    </div>
+            }
+        );
 
-</section>
+    return selected;
+
+}
+
+
+/*
+    Met à jour visuellement les avatars déjà utilisés.
+
+    Un avatar choisi par un joueur ne peut pas être
+    choisi par un autre joueur.
+*/
+function refreshAvatarAvailability() {
+
+    const selected =
+        getAllSelectedAvatars();
+
+
+    document
+        .querySelectorAll(
+            "#playerSetup .player-row"
+        )
+        .forEach(
+            row => {
+
+                const current =
+                    row.querySelector(
+                        ".avatar-option.selected"
+                    );
+
+
+                row
+                    .querySelectorAll(
+                        ".avatar-option"
+                    )
+                    .forEach(
+                        option => {
+
+                            const isCurrent =
+                                option === current;
+
+
+                            const usedByAnother =
+                                selected.includes(
+                                    option.dataset.avatar
+                                ) &&
+                                !isCurrent;
+
+
+                            option.classList.toggle(
+                                "disabled",
+                                usedByAnother
+                            );
+
+
+                            option.disabled =
+                                usedByAnother;
+
+                        }
+                    );
+
+            }
+        );
+
+}
+
+
+/*
+    Retourne l'avatar choisi par un joueur.
+*/
+function getSelectedAvatar(
+    playerIndex
+) {
+
+    const row =
+        playerSetup.querySelector(
+            `.player-row[data-player="${playerIndex}"]`
+        );
+
+
+    if (
+        !row
+    ) {
+
+        return null;
+
+    }
+
+
+    const selected =
+        row.querySelector(
+            ".avatar-option.selected"
+        );
+
+
+    if (
+        !selected
+    ) {
+
+        return null;
+
+    }
+
+
+    return selected.dataset.avatar;
+
+}
+
+
+/*
+    Construit complètement le formulaire
+    d'inscription.
+*/
+function buildPlayerSetup() {
+
+    /*
+        Sécurité : le conteneur doit exister.
+    */
+    if (
+        !playerSetup
+    ) {
+
+        console.error(
+            "Erreur : #playerSetup est introuvable."
+        );
+
+        return;
+
+    }
+
+
+    /*
+        On vide l'ancien formulaire.
+    */
+    playerSetup.innerHTML =
+        "";
+
+
+    /*
+        Création des lignes joueurs.
+    */
+    for (
+        let i = 0;
+        i < selectedPlayerCount;
+        i++
+    ) {
+
+        const row =
+            document.createElement(
+                "div"
+            );
+
+
+        row.className =
+            "player-row";
+
+
+        row.dataset.player =
+            String(i);
+
+
+        /*
+            Numéro du joueur.
+        */
+        const number =
+            document.createElement(
+                "div"
+            );
+
+
+        number.className =
+            "player-number";
+
+
+        number.textContent =
+            String(i + 1);
+
+
+        /*
+            Conteneur des champs.
+        */
+        const fields =
+            document.createElement(
+                "div"
+            );
+
+
+        fields.className =
+            "player-fields";
+
+
+        /*
+            Champ prénom.
+        */
+        const input =
+            document.createElement(
+                "input"
+            );
+
+
+        input.type =
+            "text";
+
+
+        input.className =
+            "player-name-input";
+
+
+        input.maxLength =
+            22;
+
+
+        input.autocomplete =
+            "off";
+
+
+        input.placeholder =
+            `Prénom du joueur ${i + 1}`;
+
+
+        /*
+            Prénoms par défaut.
+            L'utilisateur peut naturellement
+            les modifier.
+        */
+        const defaultNames = [
+            "Joueur 1",
+            "Joueur 2",
+            "Joueur 3",
+            "Joueur 4"
+        ];
+
+
+        input.value =
+            defaultNames[i] ||
+            `Joueur ${i + 1}`;
+
+
+        /*
+            Sélecteur d'avatars.
+        */
+        const avatarSelector =
+            document.createElement(
+                "div"
+            );
+
+
+        avatarSelector.className =
+            "avatar-selector";
+
+
+        /*
+            Création des avatars.
+        */
+        AVATAR_DEFINITIONS
+            .forEach(
+                avatar => {
+
+                    const option =
+                        document.createElement(
+                            "button"
+                        );
+
+
+                    /*
+                        IMPORTANT :
+                        ces boutons ne doivent JAMAIS
+                        être des boutons submit.
+                    */
+                    option.type =
+                        "button";
+
+
+                    option.className =
+                        "avatar-option";
+
+
+                    option.dataset.avatar =
+                        avatar.id;
+
+
+                    option.title =
+                        avatar.name;
+
+
+                    option.innerHTML =
+                        `
+                        <span class="avatar-emoji">
+                            ${avatar.emoji}
+                        </span>
+
+                        <span class="avatar-name">
+                            ${avatar.name}
+                        </span>
+                        `;
+
+
+                    /*
+                        Choix de l'avatar.
+                    */
+                    option.addEventListener(
+                        "click",
+                        event => {
+
+                            event.preventDefault();
+                            event.stopPropagation();
+
+
+                            /*
+                                Vérifie si cet avatar
+                                est déjà utilisé ailleurs.
+                            */
+                            const selectedElsewhere =
+                                getAllSelectedAvatars()
+                                    .some(
+                                        avatarId =>
+                                            avatarId ===
+                                            avatar.id &&
+                                            avatarId !==
+                                            getSelectedAvatar(i)
+                                    );
+
+
+                            if (
+                                selectedElsewhere
+                            ) {
+
+                                showNotification(
+                                    "Cet avatar est déjà utilisé."
+                                );
+
+                                return;
+
+                            }
+
+
+                            /*
+                                Retire l'ancien choix
+                                du joueur.
+                            */
+                            avatarSelector
+                                .querySelectorAll(
+                                    ".avatar-option"
+                                )
+                                .forEach(
+                                    item => {
+
+                                        item.classList.remove(
+                                            "selected"
+                                        );
+
+                                    }
+                                );
+
+
+                            /*
+                                Sélectionne le nouvel avatar.
+                            */
+                            option.classList.add(
+                                "selected"
+                            );
+
+
+                            /*
+                                Met à jour les autres joueurs.
+                            */
+                            refreshAvatarAvailability();
+
+                        }
+                    );
+
+
+                    avatarSelector.appendChild(
+                        option
+                    );
+
+                }
+            );
+
+
+        /*
+            Sélection automatique d'un avatar différent
+            pour chaque joueur.
+
+            Cela évite que le bouton "Commencer"
+            soit bloqué immédiatement.
+        */
+        const defaultAvatar =
+            AVATAR_DEFINITIONS[i];
+
+
+        if (
+            defaultAvatar
+        ) {
+
+            const defaultButton =
+                avatarSelector.querySelector(
+                    `[data-avatar="${defaultAvatar.id}"]`
+                );
+
+
+            if (
+                defaultButton
+            ) {
+
+                defaultButton.classList.add(
+                    "selected"
+                );
+
+            }
+
+        }
+
+
+        /*
+            Assemblage.
+        */
+        fields.appendChild(
+            input
+        );
+
+
+        fields.appendChild(
+            avatarSelector
+        );
+
+
+        row.appendChild(
+            number
+        );
+
+
+        row.appendChild(
+            fields
+        );
+
+
+        playerSetup.appendChild(
+            row
+        );
+
+    }
+
+
+    /*
+        Mise à jour de l'état des avatars.
+    */
+    refreshAvatarAvailability();
+
+}
+
+
+/* ============================================================
+   CHOIX DU NOMBRE DE JOUEURS
+============================================================ */
+
+/*
+    On utilise une fonction dédiée afin d'éviter
+    de créer plusieurs listeners si le formulaire
+    est reconstruit.
+*/
+document
+    .querySelectorAll(
+        ".count-button"
+    )
+    .forEach(
+        button => {
+
+            button.type =
+                "button";
+
+
+            button.addEventListener(
+                "click",
+                event => {
+
+                    event.preventDefault();
+
+
+                    const count =
+                        Number(
+                            button.dataset.count
+                        );
+
+
+                    /*
+                        Sécurité.
+                    */
+                    if (
+                        !Number.isInteger(count) ||
+                        count < 2 ||
+                        count > 4
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    selectedPlayerCount =
+                        count;
+
+
+                    /*
+                        Mise à jour visuelle.
+                    */
+                    document
+                        .querySelectorAll(
+                            ".count-button"
+                        )
+                        .forEach(
+                            item => {
+
+                                item.classList.toggle(
+                                    "selected",
+                                    item === button
+                                );
+
+                            }
+                        );
+
+
+                    /*
+                        Reconstruit les joueurs.
+                    */
+                    buildPlayerSetup();
+
+                }
+            );
+
+        }
+    );
+
+
+/* ============================================================
+   DEMARRAGE DE LA PARTIE — VERSION ROBUSTE
+============================================================ */
+
+/*
+    On branche explicitement le bouton.
+*/
+if (
+    startGameButton
+) {
+
+    startGameButton.type =
+        "button";
+
+
+    startGameButton.addEventListener(
+        "click",
+        event => {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+            startGame();
+
+        }
+    );
+
+}
+
+
+/*
+    Fonction de démarrage.
+*/
+function startGame() {
+
+    /*
+        Efface les anciennes erreurs.
+    */
+    if (
+        errorMessage
+    ) {
+
+        errorMessage.textContent =
+            "";
+
+        errorMessage.className =
+            "error-message";
+
+    }
+
+
+    /*
+        Vérification fondamentale.
+    */
+    if (
+        !playerSetup
+    ) {
+
+        console.error(
+            "playerSetup introuvable."
+        );
+
+        if (
+            errorMessage
+        ) {
+
+            errorMessage.textContent =
+                "Erreur technique : zone d'inscription introuvable.";
+
+        }
+
+        return;
+
+    }
+
+
+    /*
+        Liste des joueurs.
+    */
+    const players =
+        [];
+
+
+    /*
+        Avatars déjà utilisés.
+    */
+    const usedAvatars =
+        new Set();
+
+
+    /*
+        Lecture de chaque joueur.
+    */
+    for (
+        let i = 0;
+        i < selectedPlayerCount;
+        i++
+    ) {
+
+        const row =
+            playerSetup.querySelector(
+                `.player-row[data-player="${i}"]`
+            );
+
+
+        /*
+            Vérification de la ligne.
+        */
+        if (
+            !row
+        ) {
+
+            if (
+                errorMessage
+            ) {
+
+                errorMessage.textContent =
+                    `Impossible de récupérer le joueur ${i + 1}.`;
+
+            }
+
+            return;
+
+        }
+
+
+        /*
+            Champ du nom.
+        */
+        const input =
+            row.querySelector(
+                ".player-name-input"
+            );
+
+
+        if (
+            !input
+        ) {
+
+            if (
+                errorMessage
+            ) {
+
+                errorMessage.textContent =
+                    `Le champ du joueur ${i + 1} est introuvable.`;
+
+            }
+
+            return;
+
+        }
+
+
+        /*
+            Nom.
+        */
+        const name =
+            input.value
+                .trim();
+
+
+        /*
+            Avatar.
+        */
+        const avatarId =
+            getSelectedAvatar(i);
+
+
+        /*
+            Vérification du nom.
+        */
+        if (
+            !name
+        ) {
+
+            if (
+                errorMessage
+            ) {
+
+                errorMessage.textContent =
+                    `Indique le prénom du joueur ${i + 1}.`;
+
+            }
+
+
+            input.focus();
+
+
+            return;
+
+        }
+
+
+        /*
+            Vérification avatar.
+        */
+        if (
+            !avatarId
+        ) {
+
+            if (
+                errorMessage
+            ) {
+
+                errorMessage.textContent =
+                    `Choisis un avatar pour le joueur ${i + 1}.`;
+
+            }
+
+            return;
+
+        }
+
+
+        /*
+            Vérification doublon.
+        */
+        if (
+            usedAvatars.has(
+                avatarId
+            )
+        ) {
+
+            if (
+                errorMessage
+            ) {
+
+                errorMessage.textContent =
+                    "Deux joueurs ne peuvent pas choisir le même avatar.";
+
+            }
+
+            return;
+
+        }
+
+
+        usedAvatars.add(
+            avatarId
+        );
+
+
+        /*
+            Récupération de la définition.
+        */
+        const avatar =
+            AVATAR_DEFINITIONS.find(
+                item =>
+                    item.id ===
+                    avatarId
+            );
+
+
+        if (
+            !avatar
+        ) {
+
+            if (
+                errorMessage
+            ) {
+
+                errorMessage.textContent =
+                    `L'avatar du joueur ${i + 1} est invalide.`;
+
+            }
+
+            return;
+
+        }
+
+
+        /*
+            Création du joueur.
+        */
+        players.push({
+
+            id:
+                i,
+
+            name:
+                name,
+
+            avatarId:
+                avatarId,
+
+            avatar:
+                avatar,
+
+            position:
+                0,
+
+            targetPosition:
+                0,
+
+            mesh:
+                null
+
+        });
+
+    }
+
+
+    /*
+        Vérification finale.
+    */
+    if (
+        players.length !==
+        selectedPlayerCount
+    ) {
+
+        if (
+            errorMessage
+        ) {
+
+            errorMessage.textContent =
+                "Impossible de créer tous les joueurs.";
+
+        }
+
+        return;
+
+    }
+
+
+    /*
+        ========================================================
+        INITIALISATION DE LA PARTIE
+        ========================================================
+    */
+
+    gameState.players =
+        players;
+
+
+    gameState.currentPlayerIndex =
+        0;
+
+
+    gameState.currentRoll =
+        null;
+
+
+    gameState.currentQuestion =
+        null;
+
+
+    gameState.usedQuestionIndexes =
+        new Set();
+
+
+    gameState.moving =
+        false;
+
+
+    gameState.gameOver =
+        false;
+
+
+    gameState.gameStarted =
+        true;
+
+
+    gameState.phase =
+        "dice";
+
+
+    /*
+        Mélange complet des cartes
+        à chaque nouvelle partie.
+    */
+    questionDeck =
+        shuffle(
+            QUESTION_BANK.map(
+                (_, index) =>
+                    index
+            )
+        );
+
+
+    /*
+        ========================================================
+        INITIALISATION DU PLATEAU
+        ========================================================
+    */
+
+    try {
+
+        /*
+            Selon la version du fichier,
+            l'une de ces fonctions peut être utilisée.
+        */
+        if (
+            typeof resetBoardPositions ===
+            "function"
+        ) {
+
+            resetBoardPositions();
+
+        }
+        else if (
+            typeof resetBoard ===
+            "function"
+        ) {
+
+            resetBoard();
+
+        }
+
+
+        /*
+            Création des avatars 3D.
+        */
+        if (
+            typeof createPlayerAvatars ===
+            "function"
+        ) {
+
+            createPlayerAvatars();
+
+        }
+
+
+    }
+    catch (
+        error
+    ) {
+
+        console.error(
+            "Erreur lors de l'initialisation du plateau :",
+            error
+        );
+
+
+        /*
+            La partie est malgré tout considérée
+            comme démarrée.
+        */
+    }
+
+
+    /*
+        Affichage du HUD.
+    */
+    if (
+        gameHud
+    ) {
+
+        gameHud.classList.add(
+            "visible"
+        );
+
+    }
+
+
+    /*
+        Passage à l'écran du dé.
+    */
+    if (
+        typeof showDiceScreen ===
+        "function"
+    ) {
+
+        showDiceScreen();
+
+    }
+    else {
+
+        showScreen(
+            diceScreen
+        );
+
+    }
+
+
+    /*
+        Positionnement de la caméra.
+    */
+    try {
+
+        if (
+            typeof setCameraOverview ===
+            "function"
+        ) {
+
+            setCameraOverview();
+
+        }
+        else if (
+            typeof setOverviewCamera ===
+            "function"
+        ) {
+
+            setOverviewCamera();
+
+        }
+
+    }
+    catch (
+        cameraError
+    ) {
+
+        console.warn(
+            "La caméra n'a pas pu être positionnée automatiquement.",
+            cameraError
+        );
+
+    }
+
+
+    /*
+        Message de confirmation.
+    */
+    showNotification(
+        `La partie commence ! Au tour de ${players[0].name}.`
+    );
+
+}
 
 <!-- =======================================================
      ECRAN DU DE

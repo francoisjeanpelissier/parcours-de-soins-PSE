@@ -2052,16 +2052,20 @@ button {
      THREE.JS
 ========================================================== -->
 
-<script type="importmap">
-{
-    "imports": {
-        "three":
-            "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+<script <script type="module">
 
-        "three/addons/":
-            "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
-    }
-}
+import * as THREE from
+    "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js";
+
+import {
+    OrbitControls
+} from
+    "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/controls/OrbitControls.js";
+
+import {
+    RoundedBoxGeometry
+} from
+    "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/geometries/RoundedBoxGeometry.js";
 </script>
 
 

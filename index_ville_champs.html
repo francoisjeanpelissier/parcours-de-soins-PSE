@@ -1,0 +1,9276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parcours de soins — Jeu 3D</title>
+
+<style>
+/* ============================================================
+   RESET
+============================================================ */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    background: #07111f;
+    color: #ffffff;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* ============================================================
+   APPLICATION
+============================================================ */
+
+#app {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background:
+        radial-gradient(
+            circle at 50% 30%,
+            rgba(50, 100, 170, 0.25),
+            transparent 45%
+        ),
+        #07111f;
+}
+
+/* ============================================================
+   CANVAS 3D
+============================================================ */
+
+#gameCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* ============================================================
+   UI GLOBAL
+============================================================ */
+
+.screen {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+}
+
+.screen.active {
+    display: flex;
+}
+
+/* ============================================================
+   ECRAN D'ACCUEIL
+============================================================ */
+
+#startScreen {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(3, 13, 28, 0.97),
+            rgba(7, 31, 58, 0.96)
+        );
+}
+
+.start-card {
+    width: min(900px, 95vw);
+    max-height: 94vh;
+    overflow-y: auto;
+    padding: 42px;
+    border-radius: 30px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,0.12),
+            rgba(255,255,255,0.035)
+        );
+    border: 1px solid rgba(255,255,255,0.16);
+    box-shadow:
+        0 30px 90px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.12);
+    backdrop-filter: blur(22px);
+}
+
+.logo {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 22px;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    background:
+        linear-gradient(135deg, #38bdf8, #6366f1);
+    box-shadow:
+        0 15px 40px rgba(56,189,248,0.25);
+}
+
+.start-card h1 {
+    text-align: center;
+    font-size: clamp(30px, 5vw, 58px);
+    margin-bottom: 10px;
+    letter-spacing: -2px;
+}
+
+.start-card .subtitle {
+    text-align: center;
+    color: #b9c9dd;
+    font-size: 17px;
+    margin-bottom: 32px;
+}
+
+.players-title {
+    margin-bottom: 15px;
+    color: #dbeafe;
+}
+
+.player-count {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.player-count button {
+    flex: 1;
+    min-height: 48px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 14px;
+    background: rgba(255,255,255,0.06);
+    color: white;
+    transition: 0.2s;
+}
+
+.player-count button:hover {
+    background: rgba(56,189,248,0.15);
+}
+
+.player-count button.selected {
+    background: linear-gradient(135deg,#0284c7,#4f46e5);
+    border-color: transparent;
+}
+
+.player-setup {
+    display: grid;
+    gap: 15px;
+}
+
+.player-row {
+    display: grid;
+    grid-template-columns: 55px 1fr;
+    gap: 14px;
+    padding: 15px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.055);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.player-number {
+    width: 55px;
+    height: 55px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    background: rgba(255,255,255,0.09);
+}
+
+.player-fields {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.player-fields input {
+    width: 100%;
+    height: 45px;
+    border: 1px solid rgba(255,255,255,0.12);
+    outline: none;
+    border-radius: 12px;
+    padding: 0 14px;
+    color: white;
+    background: rgba(0,0,0,0.18);
+}
+
+.player-fields input:focus {
+    border-color: #38bdf8;
+}
+
+.avatar-selector {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+}
+
+.avatar-option {
+    min-height: 60px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    color: white;
+    background: rgba(255,255,255,0.05);
+    font-size: 27px;
+    transition: 0.2s;
+}
+
+.avatar-option:hover:not(.disabled) {
+    transform: translateY(-2px);
+    background: rgba(56,189,248,0.16);
+}
+
+.avatar-option.selected {
+    border: 2px solid #38bdf8;
+    background: rgba(14,165,233,0.2);
+    box-shadow: 0 0 20px rgba(56,189,248,0.2);
+}
+
+.avatar-option.disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+}
+
+#startGameButton {
+    width: 100%;
+    min-height: 58px;
+    margin-top: 28px;
+    border: none;
+    border-radius: 17px;
+    color: white;
+    font-size: 18px;
+    font-weight: 800;
+    background:
+        linear-gradient(135deg,#06b6d4,#4f46e5);
+    box-shadow:
+        0 15px 35px rgba(37,99,235,0.3);
+    transition: 0.2s;
+}
+
+#startGameButton:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 20px 45px rgba(37,99,235,0.4);
+}
+
+#errorMessage {
+    margin-top: 14px;
+    text-align: center;
+    color: #fca5a5;
+    min-height: 22px;
+}
+
+/* ============================================================
+   TOUR / LANCER LE DE
+============================================================ */
+
+#diceScreen {
+    pointer-events: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 7vh;
+}
+
+.dice-panel {
+    pointer-events: auto;
+    width: min(520px, 92vw);
+    text-align: center;
+    padding: 32px;
+    border-radius: 28px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(8,22,40,0.94),
+            rgba(11,34,58,0.91)
+        );
+    border: 1px solid rgba(255,255,255,0.13);
+    box-shadow:
+        0 30px 90px rgba(0,0,0,0.45);
+    backdrop-filter: blur(15px);
+}
+
+.turn-label {
+    color: #7dd3fc;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.current-player-name {
+    font-size: clamp(32px, 5vw, 50px);
+    margin-bottom: 20px;
+}
+
+.dice-stage {
+    height: 210px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 800px;
+}
+
+.dice {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    transform-style: preserve-3d;
+    transform: rotateX(-20deg) rotateY(25deg);
+}
+
+.dice-face {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 5px;
+    padding: 14px;
+    border-radius: 17px;
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #dce5ef
+        );
+    border: 1px solid #b5c2cf;
+    box-shadow:
+        inset 0 0 15px rgba(0,0,0,0.08);
+    backface-visibility: hidden;
+}
+
+.dice-dot {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    align-self: center;
+    justify-self: center;
+    background: #111827;
+    opacity: 0;
+}
+
+.dice-face[data-value="1"] .dice-dot:nth-child(5),
+.dice-face[data-value="2"] .dice-dot:nth-child(1),
+.dice-face[data-value="2"] .dice-dot:nth-child(9),
+.dice-face[data-value="3"] .dice-dot:nth-child(1),
+.dice-face[data-value="3"] .dice-dot:nth-child(5),
+.dice-face[data-value="3"] .dice-dot:nth-child(9),
+.dice-face[data-value="4"] .dice-dot:nth-child(1),
+.dice-face[data-value="4"] .dice-dot:nth-child(3),
+.dice-face[data-value="4"] .dice-dot:nth-child(7),
+.dice-face[data-value="4"] .dice-dot:nth-child(9),
+.dice-face[data-value="5"] .dice-dot:nth-child(1),
+.dice-face[data-value="5"] .dice-dot:nth-child(3),
+.dice-face[data-value="5"] .dice-dot:nth-child(5),
+.dice-face[data-value="5"] .dice-dot:nth-child(7),
+.dice-face[data-value="5"] .dice-dot:nth-child(9),
+.dice-face[data-value="6"] .dice-dot:nth-child(1),
+.dice-face[data-value="6"] .dice-dot:nth-child(3),
+.dice-face[data-value="6"] .dice-dot:nth-child(4),
+.dice-face[data-value="6"] .dice-dot:nth-child(6),
+.dice-face[data-value="6"] .dice-dot:nth-child(7),
+.dice-face[data-value="6"] .dice-dot:nth-child(9) {
+    opacity: 1;
+}
+
+.face-front {
+    transform: translateZ(50px);
+}
+
+.face-back {
+    transform: rotateY(180deg) translateZ(50px);
+}
+
+.face-right {
+    transform: rotateY(90deg) translateZ(50px);
+}
+
+.face-left {
+    transform: rotateY(-90deg) translateZ(50px);
+}
+
+.face-top {
+    transform: rotateX(90deg) translateZ(50px);
+}
+
+.face-bottom {
+    transform: rotateX(-90deg) translateZ(50px);
+}
+
+.dice.rolling {
+    animation:
+        diceFall 0.45s cubic-bezier(.2,.8,.2,1),
+        diceRoll 1.35s ease-in-out 0.25s;
+}
+
+@keyframes diceFall {
+    0% {
+        transform:
+            translateY(-150px)
+            rotateX(0deg)
+            rotateY(0deg)
+            rotateZ(0deg);
+    }
+    60% {
+        transform:
+            translateY(15px)
+            rotateX(300deg)
+            rotateY(250deg)
+            rotateZ(170deg);
+    }
+    100% {
+        transform:
+            translateY(0)
+            rotateX(360deg)
+            rotateY(360deg)
+            rotateZ(360deg);
+    }
+}
+
+@keyframes diceRoll {
+    0% {
+        transform:
+            rotateX(0deg)
+            rotateY(0deg)
+            rotateZ(0deg);
+    }
+
+    100% {
+        transform:
+            rotateX(760deg)
+            rotateY(1090deg)
+            rotateZ(680deg);
+    }
+}
+
+#rollDiceButton {
+    width: 100%;
+    min-height: 55px;
+    border: none;
+    border-radius: 15px;
+    color: white;
+    font-size: 17px;
+    font-weight: 800;
+    background:
+        linear-gradient(135deg,#f97316,#ef4444);
+    box-shadow:
+        0 12px 30px rgba(239,68,68,0.25);
+}
+
+#rollDiceButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.dice-result {
+    min-height: 30px;
+    margin-top: 18px;
+    color: #bae6fd;
+    font-weight: 700;
+}
+
+/* ============================================================
+   QCM
+============================================================ */
+
+#questionScreen {
+    background: rgba(3,10,20,0.72);
+    backdrop-filter: blur(10px);
+}
+
+.question-card {
+    width: min(900px, 94vw);
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: 38px;
+    border-radius: 30px;
+    background:
+        linear-gradient(
+            145deg,
+            #10263d,
+            #0b1a2c
+        );
+    border: 1px solid rgba(255,255,255,0.13);
+    box-shadow:
+        0 30px 90px rgba(0,0,0,0.55);
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.question-badge {
+    display: inline-flex;
+    padding: 8px 13px;
+    border-radius: 100px;
+    background: rgba(56,189,248,0.12);
+    color: #7dd3fc;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.question-number {
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.question-text {
+    font-size: clamp(23px, 3vw, 34px);
+    line-height: 1.25;
+    margin-bottom: 27px;
+}
+
+.answers {
+    display: grid;
+    gap: 12px;
+}
+
+.answer-button {
+    width: 100%;
+    padding: 18px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.12);
+    color: white;
+    background: rgba(255,255,255,0.045);
+    text-align: left;
+    transition:
+        transform .18s,
+        background .18s,
+        border-color .18s;
+}
+
+.answer-button:hover:not(:disabled) {
+    transform: translateX(4px);
+    background: rgba(56,189,248,0.12);
+    border-color: rgba(56,189,248,0.5);
+}
+
+.answer-button.correct {
+    background: rgba(34,197,94,0.2);
+    border-color: #22c55e;
+}
+
+.answer-button.wrong {
+    background: rgba(239,68,68,0.2);
+    border-color: #ef4444;
+}
+
+.answer-letter {
+    display: inline-flex;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    background: rgba(255,255,255,0.08);
+    font-weight: 900;
+}
+
+.feedback {
+    display: none;
+    margin-top: 20px;
+    padding: 17px;
+    border-radius: 15px;
+    line-height: 1.5;
+}
+
+.feedback.visible {
+    display: block;
+}
+
+.feedback.good {
+    background: rgba(34,197,94,0.13);
+    border: 1px solid rgba(34,197,94,0.35);
+}
+
+.feedback.bad {
+    background: rgba(239,68,68,0.13);
+    border: 1px solid rgba(239,68,68,0.35);
+}
+
+#continueButton {
+    width: 100%;
+    min-height: 52px;
+    margin-top: 15px;
+    border: none;
+    border-radius: 14px;
+    background: #2563eb;
+    color: white;
+    font-weight: 800;
+}
+
+/* ============================================================
+   ECRAN FIN DE TOUR
+============================================================ */
+
+#endTurnScreen {
+    background: rgba(3,10,20,0.78);
+    backdrop-filter: blur(9px);
+}
+
+.end-turn-card {
+    width: min(520px, 92vw);
+    text-align: center;
+    padding: 40px;
+    border-radius: 28px;
+    background:
+        linear-gradient(145deg,#10263d,#0a1727);
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.end-turn-icon {
+    font-size: 64px;
+    margin-bottom: 15px;
+}
+
+.end-turn-card h2 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.end-turn-card p {
+    color: #a9bbcf;
+    margin-bottom: 25px;
+}
+
+#nextTurnButton {
+    width: 100%;
+    min-height: 55px;
+    border: none;
+    border-radius: 15px;
+    background: linear-gradient(135deg,#0891b2,#4f46e5);
+    color: white;
+    font-weight: 800;
+}
+
+/* ============================================================
+   HUD 3D
+============================================================ */
+
+#gameHud {
+    position: absolute;
+    z-index: 10;
+    inset: 0;
+    pointer-events: none;
+    display: none;
+}
+
+#gameHud.visible {
+    display: block;
+}
+
+.hud-top {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    right: 18px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.hud-card {
+    min-width: 210px;
+    padding: 13px 17px;
+    border-radius: 16px;
+    background: rgba(5,16,29,0.78);
+    border: 1px solid rgba(255,255,255,0.11);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.22);
+}
+
+.hud-label {
+    font-size: 10px;
+    color: #7dd3fc;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 800;
+}
+
+.hud-value {
+    font-size: 18px;
+    font-weight: 800;
+    margin-top: 4px;
+}
+
+.hud-progress {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(520px,80vw);
+    height: 10px;
+    padding: 2px;
+    border-radius: 100px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.hud-progress-inner {
+    width: 0%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg,#22d3ee,#6366f1);
+    transition: width .4s;
+}
+
+/* ============================================================
+   VICTOIRE
+============================================================ */
+
+#victoryScreen {
+    pointer-events: none;
+    background: radial-gradient(
+        circle,
+        rgba(14,165,233,0.15),
+        rgba(0,0,0,0.45)
+    );
+}
+
+.victory-card {
+    pointer-events: auto;
+    text-align: center;
+    width: min(650px,92vw);
+    padding: 45px;
+    border-radius: 32px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(13,43,69,0.96),
+            rgba(18,25,54,0.96)
+        );
+    border: 1px solid rgba(255,255,255,0.16);
+    box-shadow:
+        0 40px 100px rgba(0,0,0,0.55);
+}
+
+.victory-trophy {
+    font-size: 82px;
+    animation: trophyBounce 1.4s infinite alternate;
+}
+
+@keyframes trophyBounce {
+    from {
+        transform: translateY(0) rotate(-3deg);
+    }
+    to {
+        transform: translateY(-10px) rotate(3deg);
+    }
+}
+
+.victory-card h1 {
+    font-size: clamp(38px,6vw,62px);
+    margin: 8px 0;
+}
+
+.victory-card p {
+    color: #bdd0e4;
+    font-size: 18px;
+    margin-bottom: 26px;
+}
+
+#restartButton {
+    width: 100%;
+    min-height: 55px;
+    border: none;
+    border-radius: 15px;
+    color: white;
+    background: linear-gradient(135deg,#10b981,#2563eb);
+    font-weight: 800;
+}
+
+/* ============================================================
+   NOTIFICATION
+============================================================ */
+
+#notification {
+    position: absolute;
+    z-index: 100;
+    left: 50%;
+    bottom: 55px;
+    transform: translate(-50%,30px);
+    padding: 13px 20px;
+    border-radius: 100px;
+    background: rgba(4,15,28,0.94);
+    border: 1px solid rgba(255,255,255,0.15);
+    opacity: 0;
+    pointer-events: none;
+    transition: .3s;
+    white-space: nowrap;
+}
+
+#notification.show {
+    opacity: 1;
+    transform: translate(-50%,0);
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+
+@media (max-width: 700px) {
+
+    .start-card,
+    .question-card {
+        padding: 24px;
+    }
+
+    .avatar-selector {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .avatar-option {
+        min-height: 48px;
+        font-size: 22px;
+    }
+
+    .hud-card {
+        min-width: 0;
+        padding: 10px 12px;
+    }
+
+    .hud-card:last-child {
+        display: none;
+    }
+
+    .hud-value {
+        font-size: 15px;
+    }
+
+    .dice-panel {
+        padding: 24px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- =====================================================
+         ECRAN INSCRIPTION
+    ====================================================== -->
+
+    <section id="startScreen" class="screen active">
+
+        <div class="start-card">
+
+            <div class="logo">🏥</div>
+
+            <h1>Parcours de soins</h1>
+
+            <p class="subtitle">
+                Un jeu de plateau 3D pour comprendre le parcours de soins coordonné.
+            </p>
+
+            <h3 class="players-title">
+                Combien de joueurs ?
+            </h3>
+
+            <div class="player-count">
+
+                <button
+                    type="button"
+                    class="count-button selected"
+                    data-count="2">
+                    2 joueurs
+                </button>
+
+                <button
+                    type="button"
+                    class="count-button"
+                    data-count="3">
+                    3 joueurs
+                </button>
+
+                <button
+                    type="button"
+                    class="count-button"
+                    data-count="4">
+                    4 joueurs
+                </button>
+
+            </div>
+
+            <div id="playerSetup" class="player-setup"></div>
+
+            <button id="startGameButton">
+                🎮 Commencer la partie
+            </button>
+
+            <div id="errorMessage"></div>
+
+        </div>
+
+    </section>
+
+    <!-- =====================================================
+         ECRAN DE
+    ====================================================== -->
+
+    <section id="diceScreen" class="screen">
+
+        <div class="dice-panel">
+
+            <div class="turn-label">
+                C'est au tour de
+            </div>
+
+            <div
+                id="currentPlayerName"
+                class="current-player-name">
+                Joueur
+            </div>
+
+            <div class="dice-stage">
+
+                <div id="dice" class="dice">
+
+                    <div
+                        class="dice-face face-front"
+                        data-value="1">
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                    </div>
+
+                    <div
+                        class="dice-face face-back"
+                        data-value="6">
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                    </div>
+
+                    <div
+                        class="dice-face face-right"
+                        data-value="3">
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                    </div>
+
+                    <div
+                        class="dice-face face-left"
+                        data-value="4">
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                    </div>
+
+                    <div
+                        class="dice-face face-top"
+                        data-value="2">
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                    </div>
+
+                    <div
+                        class="dice-face face-bottom"
+                        data-value="5">
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                        <span class="dice-dot"></span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button id="rollDiceButton">
+                🎲 Lancer le dé
+            </button>
+
+            <div
+                id="diceResult"
+                class="dice-result">
+                Lance le dé pour commencer ton tour.
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- =====================================================
+         ECRAN QUESTION
+    ====================================================== -->
+
+    <section id="questionScreen" class="screen">
+
+        <div class="question-card">
+
+            <div class="question-header">
+
+                <span class="question-badge">
+                    🧠 Question
+                </span>
+
+                <span
+                    id="questionNumber"
+                    class="question-number">
+                </span>
+
+            </div>
+
+            <h2
+                id="questionText"
+                class="question-text">
+            </h2>
+
+            <div
+                id="answers"
+                class="answers">
+            </div>
+
+            <div
+                id="feedback"
+                class="feedback">
+            </div>
+
+            <button
+                id="continueButton"
+                style="display:none;">
+                Continuer
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- =====================================================
+         ECRAN FIN DE TOUR
+    ====================================================== -->
+
+    <section id="endTurnScreen" class="screen">
+
+        <div class="end-turn-card">
+
+            <div class="end-turn-icon">
+                🔄
+            </div>
+
+            <h2 id="endTurnTitle">
+                Fin du tour
+            </h2>
+
+            <p id="endTurnText">
+                Prépare-toi à passer au joueur suivant.
+            </p>
+
+            <button id="nextTurnButton">
+                Joueur suivant →
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- =====================================================
+         HUD
+    ====================================================== -->
+
+    <div id="gameHud">
+
+        <div class="hud-top">
+
+            <div class="hud-card">
+
+                <div class="hud-label">
+                    Joueur actuel
+                </div>
+
+                <div
+                    id="hudPlayer"
+                    class="hud-value">
+                    —
+                </div>
+
+            </div>
+
+            <div class="hud-card">
+
+                <div class="hud-label">
+                    Position
+                </div>
+
+                <div
+                    id="hudPosition"
+                    class="hud-value">
+                    1 / 30
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="hud-progress">
+            <div
+                id="hudProgress"
+                class="hud-progress-inner">
+            </div>
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         VICTOIRE
+    ====================================================== -->
+
+    <section id="victoryScreen" class="screen">
+
+        <div class="victory-card">
+
+            <div class="victory-trophy">
+                🏆
+            </div>
+
+            <h1 id="victoryName">
+                Victoire !
+            </h1>
+
+            <p>
+                a atteint la dernière case du parcours de soins !
+            </p>
+
+            <button id="restartButton">
+                🔁 Nouvelle partie
+            </button>
+
+        </div>
+
+    </section>
+
+    <div id="notification"></div>
+
+</div>
+
+<!-- ============================================================
+     THREE.JS
+============================================================ -->
+
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    }
+}
+</script>
+
+<script type="module">
+
+import * as THREE from "three";
+
+import {
+    OrbitControls
+} from "three/addons/controls/OrbitControls.js";
+
+import {
+    RoundedBoxGeometry
+} from "three/addons/geometries/RoundedBoxGeometry.js";
+
+
+/* ============================================================
+   CONSTANTES DU JEU
+============================================================ */
+
+const BOARD_SIZE = 30;
+
+const START_POSITION = 0;
+
+const FINISH_POSITION = BOARD_SIZE - 1;
+
+const CELL_SIZE = 5;
+
+const BOARD_WIDTH = 150;
+
+const BOARD_DEPTH = 150;
+
+
+/*
+    Réglages du déplacement des avatars.
+    Une case prend suffisamment de temps pour que le mouvement
+    soit clairement visible, avec une courte pause entre les cases.
+*/
+const AVATAR_STEP_DURATION = 850;
+const AVATAR_STEP_PAUSE = 220;
+const END_TURN_DELAY = 900;
+
+
+/* ============================================================
+   AVATARS DISPONIBLES
+============================================================ */
+
+const AVATAR_DEFINITIONS = [
+
+    {
+        id: "robot",
+        name: "Robot",
+        emoji: "🤖",
+        color: 0x38bdf8
+    },
+
+    {
+        id: "alien",
+        name: "Extraterrestre",
+        emoji: "👽",
+        color: 0x84cc16
+    },
+
+    {
+        id: "astronaut",
+        name: "Astronaute",
+        emoji: "👨‍🚀",
+        color: 0xf8fafc
+    },
+
+    {
+        id: "wizard",
+        name: "Magicien",
+        emoji: "🧙",
+        color: 0xa855f7
+    },
+
+    {
+        id: "ninja",
+        name: "Ninja",
+        emoji: "🥷",
+        color: 0x334155
+    },
+
+    {
+        id: "detective",
+        name: "Détective",
+        emoji: "🕵️",
+        color: 0xf59e0b
+    },
+
+    {
+        id: "scientist",
+        name: "Scientifique",
+        emoji: "🧑‍🔬",
+        color: 0x22c55e
+    },
+
+    {
+        id: "explorer",
+        name: "Explorateur",
+        emoji: "🧑‍🚀",
+        color: 0xef4444
+    }
+
+];
+
+
+/* ============================================================
+   QUESTIONS
+============================================================ */
+
+const QUESTION_BANK = [
+
+    {
+        question:
+            "Dans le parcours de soins coordonné, vers quel professionnel se tourne-t-on généralement en premier pour un problème de santé courant ?",
+
+        answers: [
+            "Le médecin traitant",
+            "Le spécialiste sans passer par le médecin traitant",
+            "L'hôpital dans tous les cas",
+            "Le pharmacien pour toutes les maladies"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Le médecin traitant joue un rôle central dans l'organisation et la coordination du parcours de soins."
+    },
+
+    {
+        question:
+            "Quel est le rôle principal du médecin traitant dans le parcours de soins ?",
+
+        answers: [
+            "Coordonner les soins et orienter si nécessaire",
+            "Réaliser toutes les interventions médicales",
+            "Remplacer tous les spécialistes",
+            "Décider seul des traitements de tous les patients"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Le médecin traitant coordonne le parcours et peut orienter le patient vers un spécialiste lorsque cela est nécessaire."
+    },
+
+    {
+        question:
+            "Que peut-il se passer lorsque l'on consulte directement certains spécialistes sans respecter le parcours de soins coordonné ?",
+
+        answers: [
+            "Le remboursement peut être moins important",
+            "La consultation devient toujours gratuite",
+            "Le spécialiste ne peut jamais recevoir le patient",
+            "La Sécurité sociale rembourse systématiquement 100 %"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Le non-respect du parcours peut entraîner une diminution de la prise en charge dans certaines situations."
+    },
+
+    {
+        question:
+            "Quelle personne est généralement considérée comme le médecin traitant lorsqu'elle est déclarée auprès de l'Assurance Maladie ?",
+
+        answers: [
+            "Le médecin choisi par le patient et déclaré comme médecin traitant",
+            "Toujours le médecin de l'hôpital le plus proche",
+            "Toujours le dernier médecin consulté",
+            "Le pharmacien"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Le patient choisit son médecin traitant et le fait déclarer auprès de l'Assurance Maladie."
+    },
+
+    {
+        question:
+            "Pourquoi le médecin traitant peut-il orienter un patient vers un spécialiste ?",
+
+        answers: [
+            "Parce qu'une expertise particulière peut être nécessaire",
+            "Parce qu'il ne peut jamais soigner une maladie",
+            "Parce que le spécialiste est toujours moins cher",
+            "Parce que le patient doit obligatoirement consulter un spécialiste"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "L'orientation vers un spécialiste permet d'adapter les soins au besoin de santé du patient."
+    },
+
+    {
+        question:
+            "Le parcours de soins coordonné sert notamment à :",
+
+        answers: [
+            "Mieux organiser les soins entre les professionnels",
+            "Interdire les consultations médicales",
+            "Supprimer le médecin traitant",
+            "Faire consulter systématiquement plusieurs médecins"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Le parcours de soins vise notamment à assurer une meilleure coordination et une meilleure continuité des soins."
+    },
+
+    {
+        question:
+            "Quel professionnel peut délivrer un médicament prescrit sur une ordonnance ?",
+
+        answers: [
+            "Le pharmacien",
+            "Le dentiste uniquement",
+            "Le kinésithérapeute uniquement",
+            "Le patient lui-même"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Le pharmacien délivre les médicaments prescrits et peut également donner des conseils concernant leur utilisation."
+    },
+
+    {
+        question:
+            "Une consultation chez un médecin peut-elle être remboursée à 100 % par l'Assurance Maladie dans toutes les situations ?",
+
+        answers: [
+            "Non, le niveau de remboursement dépend de la situation",
+            "Oui, toujours",
+            "Oui, si le patient possède une carte Vitale",
+            "Oui, si la consultation dure moins de trente minutes"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Le taux de remboursement dépend notamment du type de soins, de la situation du patient et du respect du parcours de soins."
+    },
+
+    {
+        question:
+            "Quel est l'intérêt de déclarer un médecin traitant ?",
+
+        answers: [
+            "Participer à la coordination du parcours de soins",
+            "Obtenir automatiquement tous les médicaments gratuitement",
+            "Ne plus avoir besoin de consulter un spécialiste",
+            "Être dispensé de toute avance de frais"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "La déclaration du médecin traitant permet d'inscrire le patient dans le parcours de soins coordonné."
+    },
+
+    {
+        question:
+            "Un patient peut-il avoir besoin de consulter un spécialiste après une consultation chez son médecin traitant ?",
+
+        answers: [
+            "Oui, lorsque son état de santé le justifie",
+            "Non, jamais",
+            "Uniquement après une hospitalisation",
+            "Uniquement s'il change de médecin traitant"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Le médecin traitant peut orienter vers un spécialiste lorsque la situation nécessite une expertise particulière."
+    },
+
+    {
+        question:
+            "Quel est l'un des objectifs d'un parcours de soins bien coordonné ?",
+
+        answers: [
+            "Éviter les soins inutiles et assurer une meilleure continuité",
+            "Multiplier les consultations sans raison",
+            "Empêcher l'accès aux spécialistes",
+            "Remplacer tous les professionnels par un seul médecin"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "La coordination permet notamment d'éviter des actes inutiles et de favoriser la continuité des soins."
+    },
+
+    {
+        question:
+            "Que signifie principalement être 'hors parcours de soins coordonné' ?",
+
+        answers: [
+            "Consulter certains professionnels sans passer par le médecin traitant lorsque cette orientation est attendue",
+            "Ne jamais consulter de professionnel de santé",
+            "Être hospitalisé",
+            "Ne pas posséder de carte Vitale"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Le parcours de soins coordonné repose notamment sur le rôle du médecin traitant pour orienter vers certains spécialistes."
+    },
+
+    {
+        question:
+            "Dans quelle situation l'accès direct à certains professionnels peut-il être prévu ?",
+
+        answers: [
+            "Dans certaines situations définies par les règles de l'Assurance Maladie",
+            "Toujours et pour tous les spécialistes",
+            "Uniquement pour les enfants",
+            "Uniquement lorsque le patient n'a pas de médecin traitant"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Il existe des situations dans lesquelles l'accès direct à certains professionnels est possible selon les règles en vigueur."
+    },
+
+    {
+        question:
+            "Quelle affirmation concernant le remboursement est la plus juste ?",
+
+        answers: [
+            "Le montant remboursé dépend notamment des règles de prise en charge et de la situation du patient",
+            "Toutes les consultations sont remboursées au même montant",
+            "Toutes les consultations sont remboursées intégralement",
+            "Le remboursement dépend uniquement de la durée du rendez-vous"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "La prise en charge varie selon plusieurs paramètres : type de soin, situation du patient et règles applicables."
+    },
+
+    {
+        question:
+            "Pourquoi est-il important de transmettre les informations utiles entre professionnels de santé ?",
+
+        answers: [
+            "Pour améliorer la continuité et la coordination des soins",
+            "Pour empêcher le patient de poser des questions",
+            "Pour remplacer le dossier médical",
+            "Pour éviter toute consultation médicale"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Le partage des informations utiles contribue à la continuité et à la coordination des soins."
+    },
+
+    {
+        question:
+            "Quel professionnel peut notamment orienter un patient vers un spécialiste dans le cadre du parcours coordonné ?",
+
+        answers: [
+            "Le médecin traitant",
+            "Le patient uniquement",
+            "Le caissier d'une pharmacie",
+            "Un voisin"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Le médecin traitant est un acteur central de l'orientation dans le parcours de soins."
+    },
+
+    {
+        question:
+            "Si un patient respecte le parcours de soins coordonné, que cherche-t-on notamment à favoriser ?",
+
+        answers: [
+            "Une prise en charge organisée et coordonnée",
+            "Une multiplication des consultations",
+            "Une absence totale de suivi",
+            "Une consultation systématique à l'hôpital"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Le parcours coordonné vise à organiser les différentes étapes de la prise en charge."
+    },
+
+    {
+        question:
+            "Quelle situation correspond le mieux à un parcours coordonné ?",
+
+        answers: [
+            "Un patient consulte son médecin traitant, puis est orienté vers un spécialiste lorsque cela est nécessaire",
+            "Un patient choisit au hasard plusieurs spécialistes sans coordination",
+            "Un patient consulte uniquement Internet",
+            "Un patient ne consulte personne"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "La coordination implique une organisation des différentes étapes de la prise en charge."
+    },
+
+    {
+        question:
+            "Quel peut être l'effet financier du non-respect du parcours de soins coordonné dans certaines situations ?",
+
+        answers: [
+            "Une diminution du remboursement",
+            "Une augmentation automatique du remboursement",
+            "Une gratuité automatique",
+            "Aucun effet possible dans toutes les situations"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Dans certaines situations, le remboursement peut être moins favorable lorsque le parcours n'est pas respecté."
+    },
+
+    {
+        question:
+            "Le médecin traitant est-il nécessairement le seul professionnel que le patient peut consulter ?",
+
+        answers: [
+            "Non, il peut être orienté vers d'autres professionnels selon ses besoins",
+            "Oui, toujours",
+            "Oui, jusqu'à l'âge de 18 ans seulement",
+            "Oui, sauf à l'hôpital"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Le médecin traitant coordonne le parcours mais ne remplace pas les autres professionnels de santé."
+    },
+
+    {
+        question:
+            "Quel est l'intérêt d'un spécialiste dans le parcours de soins ?",
+
+        answers: [
+            "Apporter une expertise dans un domaine particulier",
+            "Remplacer systématiquement le médecin traitant",
+            "Décider de toutes les dépenses de santé",
+            "Éviter toute consultation de suivi"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Le spécialiste intervient lorsqu'une expertise particulière est nécessaire."
+    },
+
+    {
+        question:
+            "Quelle affirmation est correcte concernant le parcours de soins ?",
+
+        answers: [
+            "Il existe des exceptions permettant certaines consultations sans passer par le médecin traitant",
+            "Il n'existe aucune exception",
+            "Il est obligatoire de consulter un spécialiste avant le médecin traitant",
+            "Il concerne uniquement les hospitalisations"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Le parcours de soins comporte des règles générales mais aussi certaines situations d'accès direct prévues par les dispositifs de santé."
+    },
+
+    {
+        question:
+            "Quel acteur connaît généralement l'organisation globale du parcours de soins du patient ?",
+
+        answers: [
+            "Le médecin traitant",
+            "Le vendeur d'une pharmacie",
+            "Le laboratoire uniquement",
+            "Le patient d'un autre foyer"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Le médecin traitant est le professionnel qui coordonne généralement le parcours du patient."
+    },
+
+    {
+        question:
+            "Pourquoi ne faut-il pas considérer le parcours de soins comme une simple succession de rendez-vous ?",
+
+        answers: [
+            "Parce qu'il repose aussi sur la coordination et la continuité des soins",
+            "Parce qu'il ne nécessite aucun professionnel de santé",
+            "Parce que tous les rendez-vous sont facultatifs",
+            "Parce qu'il concerne uniquement les remboursements"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "Le parcours de soins concerne l'organisation globale de la prise en charge et pas seulement l'enchaînement de rendez-vous."
+    },
+
+    {
+        question:
+            "Dans une situation où le médecin traitant estime qu'un spécialiste est nécessaire, que fait-il généralement ?",
+
+        answers: [
+            "Il oriente le patient vers le professionnel adapté",
+            "Il interdit au patient de consulter",
+            "Il remplace le spécialiste",
+            "Il annule automatiquement le rendez-vous"
+        ],
+
+        correct: 0,
+
+        explanation:
+            "L'orientation fait partie du rôle de coordination du médecin traitant."
+    }
+
+];
+
+
+/* ============================================================
+   ETAT DU JEU
+============================================================ */
+
+const gameState = {
+
+    players: [],
+
+    currentPlayerIndex: 0,
+
+    currentRoll: null,
+
+    currentQuestion: null,
+
+    usedQuestionIndexes: new Set(),
+
+    phase: "start",
+
+    moving: false,
+
+    gameOver: false,
+
+    cameraMode: "overview",
+
+    gameStarted: false
+
+};
+
+
+/* ============================================================
+   DOM
+============================================================ */
+
+const startScreen =
+    document.getElementById("startScreen");
+
+const diceScreen =
+    document.getElementById("diceScreen");
+
+const questionScreen =
+    document.getElementById("questionScreen");
+
+const endTurnScreen =
+    document.getElementById("endTurnScreen");
+
+const victoryScreen =
+    document.getElementById("victoryScreen");
+
+const gameHud =
+    document.getElementById("gameHud");
+
+const playerSetup =
+    document.getElementById("playerSetup");
+
+const startGameButton =
+    document.getElementById("startGameButton");
+
+const rollDiceButton =
+    document.getElementById("rollDiceButton");
+
+const nextTurnButton =
+    document.getElementById("nextTurnButton");
+
+const continueButton =
+    document.getElementById("continueButton");
+
+const restartButton =
+    document.getElementById("restartButton");
+
+const dice =
+    document.getElementById("dice");
+
+const diceResult =
+    document.getElementById("diceResult");
+
+const currentPlayerName =
+    document.getElementById("currentPlayerName");
+
+const questionText =
+    document.getElementById("questionText");
+
+const answersContainer =
+    document.getElementById("answers");
+
+const questionNumber =
+    document.getElementById("questionNumber");
+
+const feedback =
+    document.getElementById("feedback");
+
+const hudPlayer =
+    document.getElementById("hudPlayer");
+
+const hudPosition =
+    document.getElementById("hudPosition");
+
+const hudProgress =
+    document.getElementById("hudProgress");
+
+const notification =
+    document.getElementById("notification");
+
+const errorMessage =
+    document.getElementById("errorMessage");
+
+const victoryName =
+    document.getElementById("victoryName");
+
+
+/* ============================================================
+   GESTION DES ECRANS
+============================================================ */
+
+function showScreen(screen) {
+
+    [
+        startScreen,
+        diceScreen,
+        questionScreen,
+        endTurnScreen,
+        victoryScreen
+    ].forEach(s => {
+        s.classList.remove("active");
+    });
+
+    if (screen) {
+        screen.classList.add("active");
+    }
+
+}
+
+
+function showDiceScreen() {
+
+    showScreen(diceScreen);
+
+    const player =
+        gameState.players[
+            gameState.currentPlayerIndex
+        ];
+
+    currentPlayerName.textContent =
+        player.name;
+
+    hudPlayer.textContent =
+        player.name;
+
+    hudPosition.textContent =
+        `${player.position + 1} / ${BOARD_SIZE}`;
+
+    updateProgress();
+
+    diceResult.textContent =
+        "Lance le dé pour commencer ton tour.";
+
+    rollDiceButton.disabled = false;
+
+}
+
+
+function showQuestionScreen() {
+
+    showScreen(questionScreen);
+
+}
+
+
+function showEndTurnScreen() {
+
+    const current =
+        gameState.players[
+            gameState.currentPlayerIndex
+        ];
+
+    const nextIndex =
+        (gameState.currentPlayerIndex + 1)
+        % gameState.players.length;
+
+    const next =
+        gameState.players[nextIndex];
+
+    document.getElementById("endTurnTitle")
+        .textContent =
+        `Tour de ${current.name} terminé`;
+
+    document.getElementById("endTurnText")
+        .textContent =
+        `Le prochain tour sera celui de ${next.name}.`;
+
+    showScreen(endTurnScreen);
+
+}
+
+
+function showVictoryScreen(player) {
+
+    gameState.gameOver = true;
+
+    victoryName.textContent =
+        `${player.emoji} ${player.name}`;
+
+    showScreen(victoryScreen);
+
+    playVictoryAnimation();
+
+}
+
+
+/* ============================================================
+   UTILITAIRES
+============================================================ */
+
+function shuffle(array) {
+
+    const copy =
+        [...array];
+
+    for (
+        let i = copy.length - 1;
+        i > 0;
+        i--
+    ) {
+
+        const j =
+            Math.floor(
+                Math.random() * (i + 1)
+            );
+
+        [
+            copy[i],
+            copy[j]
+        ] = [
+            copy[j],
+            copy[i]
+        ];
+
+    }
+
+    return copy;
+
+}
+
+
+function randomInt(min, max) {
+
+    return Math.floor(
+        Math.random() *
+        (max - min + 1)
+    ) + min;
+
+}
+
+
+function showNotification(message) {
+
+    notification.textContent =
+        message;
+
+    notification.classList.add("show");
+
+    clearTimeout(
+        showNotification.timeout
+    );
+
+    showNotification.timeout =
+        setTimeout(() => {
+
+            notification.classList.remove(
+                "show"
+            );
+
+        }, 2400);
+
+}
+
+
+/* ============================================================
+   INSCRIPTION
+============================================================ */
+
+let selectedPlayerCount = 2;
+
+
+/*
+    Chaque ligne possède son propre avatar.
+*/
+
+function buildPlayerSetup() {
+
+    playerSetup.innerHTML = "";
+
+    for (
+        let i = 0;
+        i < selectedPlayerCount;
+        i++
+    ) {
+
+        const row =
+            document.createElement("div");
+
+        row.className =
+            "player-row";
+
+        row.dataset.player =
+            String(i);
+
+        const number =
+            document.createElement("div");
+
+        number.className =
+            "player-number";
+
+        number.textContent =
+            i + 1;
+
+        const fields =
+            document.createElement("div");
+
+        fields.className =
+            "player-fields";
+
+        const input =
+            document.createElement("input");
+
+        input.type =
+            "text";
+
+        input.maxLength =
+            22;
+
+        input.placeholder =
+            `Prénom du joueur ${i + 1}`;
+
+        input.value =
+            [
+                "Pierre",
+                "Jeanne",
+                "Louis",
+                "Claire"
+            ][i];
+
+        input.className =
+            "player-name-input";
+
+        const avatarSelector =
+            document.createElement("div");
+
+        avatarSelector.className =
+            "avatar-selector";
+
+        AVATAR_DEFINITIONS.forEach(
+            avatar => {
+
+                const button =
+                    document.createElement("button");
+
+                button.type =
+                    "button";
+
+                button.className =
+                    "avatar-option";
+
+                button.dataset.avatar =
+                    avatar.id;
+
+                button.title =
+                    avatar.name;
+
+                button.textContent =
+                    avatar.emoji;
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        const alreadyUsed =
+                            getSelectedAvatars()
+                                .some(
+                                    item =>
+                                        item === avatar.id &&
+                                        item !==
+                                        getSelectedAvatar(
+                                            i
+                                        )
+                                );
+
+                        if (alreadyUsed) {
+
+                            showNotification(
+                                "Cet avatar est déjà utilisé."
+                            );
+
+                            return;
+                        }
+
+                        row.querySelectorAll(
+                            ".avatar-option"
+                        ).forEach(
+                            b =>
+                                b.classList.remove(
+                                    "selected"
+                                )
+                        );
+
+                        button.classList.add(
+                            "selected"
+                        );
+
+                        updateAvatarAvailability();
+
+                    }
+                );
+
+                avatarSelector.appendChild(
+                    button
+                );
+
+            }
+        );
+
+        /*
+            Sélection initiale.
+        */
+
+        const initialAvatar =
+            AVATAR_DEFINITIONS[i];
+
+        const initialButton =
+            avatarSelector.querySelector(
+                `[data-avatar="${initialAvatar.id}"]`
+            );
+
+        if (initialButton) {
+            initialButton.classList.add(
+                "selected"
+            );
+        }
+
+        fields.appendChild(
+            input
+        );
+
+        fields.appendChild(
+            avatarSelector
+        );
+
+        row.appendChild(
+            number
+        );
+
+        row.appendChild(
+            fields
+        );
+
+        playerSetup.appendChild(
+            row
+        );
+
+    }
+
+    updateAvatarAvailability();
+
+}
+
+
+function getSelectedAvatar(index) {
+
+    const row =
+        playerSetup.querySelector(
+            `.player-row[data-player="${index}"]`
+        );
+
+    if (!row) {
+        return null;
+    }
+
+    const selected =
+        row.querySelector(
+            ".avatar-option.selected"
+        );
+
+    return selected
+        ? selected.dataset.avatar
+        : null;
+
+}
+
+
+function getSelectedAvatars() {
+
+    const result = [];
+
+    for (
+        let i = 0;
+        i < selectedPlayerCount;
+        i++
+    ) {
+
+        const avatar =
+            getSelectedAvatar(i);
+
+        if (avatar) {
+            result.push(avatar);
+        }
+
+    }
+
+    return result;
+
+}
+
+
+function updateAvatarAvailability() {
+
+    const selected =
+        getSelectedAvatars();
+
+    document
+        .querySelectorAll(
+            ".player-row"
+        )
+        .forEach(row => {
+
+            const current =
+                row.querySelector(
+                    ".avatar-option.selected"
+                );
+
+            row.querySelectorAll(
+                ".avatar-option"
+            ).forEach(button => {
+
+                const isSelected =
+                    button === current;
+
+                const usedElsewhere =
+                    selected.includes(
+                        button.dataset.avatar
+                    ) &&
+                    !isSelected;
+
+                button.classList.toggle(
+                    "disabled",
+                    usedElsewhere
+                );
+
+            });
+
+        });
+
+}
+
+
+/* ============================================================
+   BOUTONS NOMBRE DE JOUEURS
+============================================================ */
+
+document
+    .querySelectorAll(".count-button")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                document
+                    .querySelectorAll(
+                        ".count-button"
+                    )
+                    .forEach(
+                        b =>
+                            b.classList.remove(
+                                "selected"
+                            )
+                    );
+
+                button.classList.add(
+                    "selected"
+                );
+
+                selectedPlayerCount =
+                    Number(
+                        button.dataset.count
+                    );
+
+                buildPlayerSetup();
+
+            }
+        );
+
+    });
+
+
+/* ============================================================
+   DEMARRAGE
+============================================================ */
+
+startGameButton.addEventListener(
+    "click",
+    startGame
+);
+
+
+function startGame() {
+
+    errorMessage.textContent =
+        "";
+
+    const players = [];
+
+    for (
+        let i = 0;
+        i < selectedPlayerCount;
+        i++
+    ) {
+
+        const row =
+            playerSetup.querySelector(
+                `.player-row[data-player="${i}"]`
+            );
+
+        const input =
+            row.querySelector(
+                ".player-name-input"
+            );
+
+        const name =
+            input.value.trim();
+
+        const avatarId =
+            getSelectedAvatar(i);
+
+        if (!name) {
+
+            errorMessage.textContent =
+                `Indique le prénom du joueur ${i + 1}.`;
+
+            return;
+        }
+
+        if (!avatarId) {
+
+            errorMessage.textContent =
+                `Choisis un avatar pour le joueur ${i + 1}.`;
+
+            return;
+        }
+
+        players.push({
+
+            id: i,
+
+            name,
+
+            avatarId,
+
+            avatar:
+                AVATAR_DEFINITIONS.find(
+                    avatar =>
+                        avatar.id === avatarId
+                ),
+
+            position: 0,
+
+            mesh: null,
+
+            targetPosition: 0
+
+        });
+
+    }
+
+    const avatars =
+        players.map(
+            player =>
+                player.avatarId
+        );
+
+    if (
+        new Set(avatars).size !==
+        avatars.length
+    ) {
+
+        errorMessage.textContent =
+            "Deux joueurs ne peuvent pas avoir le même avatar.";
+
+        return;
+    }
+
+    gameState.players =
+        players;
+
+    gameState.currentPlayerIndex =
+        0;
+
+    gameState.currentRoll =
+        null;
+
+    gameState.currentQuestion =
+        null;
+
+    gameState.usedQuestionIndexes =
+        new Set();
+
+    gameState.gameOver =
+        false;
+
+    gameState.gameStarted =
+        true;
+
+    gameState.phase =
+        "dice";
+
+    /*
+        Mélange du paquet pour cette partie.
+    */
+
+    questionDeck =
+        shuffle(
+            QUESTION_BANK.map(
+                (_, index) => index
+            )
+        );
+
+    /*
+        Réinitialisation de la scène.
+    */
+
+    resetBoardPositions();
+
+    createPlayerAvatars();
+
+    gameHud.classList.add(
+        "visible"
+    );
+
+    showDiceScreen();
+
+    setCameraOverview(true);
+
+    showNotification(
+        `La partie commence ! Au tour de ${players[0].name}.`
+    );
+
+}
+
+
+/* ============================================================
+   PAQUET DE CARTES
+============================================================ */
+
+let questionDeck = [];
+
+
+function drawQuestion() {
+
+    /*
+        On ne remet jamais une carte utilisée
+        dans le paquet pendant la partie.
+    */
+
+    while (
+        questionDeck.length > 0
+    ) {
+
+        const index =
+            questionDeck.shift();
+
+        if (
+            !gameState.usedQuestionIndexes
+                .has(index)
+        ) {
+
+            gameState.usedQuestionIndexes
+                .add(index);
+
+            return QUESTION_BANK[index];
+
+        }
+
+    }
+
+    /*
+        Si toutes les cartes sont épuisées,
+        on utilise une nouvelle carte seulement
+        en dernier recours.
+    */
+
+    const remaining =
+        QUESTION_BANK
+            .map((_, index) => index)
+            .filter(
+                index =>
+                    !gameState
+                        .usedQuestionIndexes
+                        .has(index)
+            );
+
+    if (remaining.length > 0) {
+
+        const index =
+            remaining[
+                randomInt(
+                    0,
+                    remaining.length - 1
+                )
+            ];
+
+        gameState.usedQuestionIndexes
+            .add(index);
+
+        return QUESTION_BANK[index];
+
+    }
+
+    return null;
+
+}
+
+
+/* ============================================================
+   LANCER DE
+============================================================ */
+
+rollDiceButton.addEventListener(
+    "click",
+    rollDice
+);
+
+
+function rollDice() {
+
+    if (
+        gameState.phase !== "dice"
+    ) {
+        return;
+    }
+
+    if (
+        gameState.moving ||
+        gameState.gameOver
+    ) {
+        return;
+    }
+
+    rollDiceButton.disabled =
+        true;
+
+    diceResult.textContent =
+        "Le dé roule...";
+
+    dice.classList.remove(
+        "rolling"
+    );
+
+    /*
+        Force le navigateur à recalculer
+        l'animation.
+    */
+
+    void dice.offsetWidth;
+
+    dice.classList.add(
+        "rolling"
+    );
+
+    const result =
+        randomInt(1, 6);
+
+    gameState.currentRoll =
+        result;
+
+    /*
+        On laisse l'animation CSS
+        se terminer avant d'afficher
+        le résultat.
+    */
+
+    setTimeout(
+        () => {
+
+            dice.classList.remove(
+                "rolling"
+            );
+
+            setDiceVisual(
+                result
+            );
+
+            diceResult.textContent =
+                `🎲 Tu as obtenu ${result}.`;
+
+            /*
+                Petit délai pour laisser
+                le résultat être visible.
+            */
+
+            setTimeout(
+                () => {
+
+                    gameState.phase =
+                        "question";
+
+                    openQuestion();
+
+                },
+                850
+            );
+
+        },
+        1750
+    );
+
+}
+
+
+/*
+    Oriente le dé vers une combinaison
+    cohérente avec la face obtenue.
+*/
+
+function setDiceVisual(value) {
+
+    const rotations = {
+
+        1: {
+            x: 0,
+            y: 0,
+            z: 0
+        },
+
+        2: {
+            x: -90,
+            y: 0,
+            z: 0
+        },
+
+        3: {
+            x: 0,
+            y: -90,
+            z: 0
+        },
+
+        4: {
+            x: 0,
+            y: 90,
+            z: 0
+        },
+
+        5: {
+            x: 90,
+            y: 0,
+            z: 0
+        },
+
+        6: {
+            x: 0,
+            y: 180,
+            z: 0
+        }
+
+    };
+
+    const rotation =
+        rotations[value];
+
+    dice.style.transform =
+        `
+        rotateX(${rotation.x}deg)
+        rotateY(${rotation.y}deg)
+        rotateZ(${rotation.z}deg)
+        `;
+
+}
+
+
+/* ============================================================
+   QUESTION
+============================================================ */
+
+function openQuestion() {
+
+    const question =
+        drawQuestion();
+
+    if (!question) {
+
+        /*
+            Sécurité.
+        */
+
+        gameState.phase =
+            "end";
+
+        showEndTurnScreen();
+
+        return;
+    }
+
+    /*
+        Copie indépendante.
+    */
+
+    const answers =
+        question.answers.map(
+            (text, index) => ({
+                text,
+                originalIndex: index
+            })
+        );
+
+    /*
+        Mélange des réponses à CHAQUE carte.
+    */
+
+    const shuffledAnswers =
+        shuffle(answers);
+
+    gameState.currentQuestion = {
+
+        ...question,
+
+        displayedAnswers:
+            shuffledAnswers
+
+    };
+
+    questionText.textContent =
+        question.question;
+
+    questionNumber.textContent =
+        `Carte ${gameState.usedQuestionIndexes.size}`;
+
+    answersContainer.innerHTML =
+        "";
+
+    feedback.className =
+        "feedback";
+
+    feedback.textContent =
+        "";
+
+    continueButton.style.display =
+        "none";
+
+    shuffledAnswers.forEach(
+        (answer, displayIndex) => {
+
+            const button =
+                document.createElement("button");
+
+            button.type =
+                "button";
+
+            button.className =
+                "answer-button";
+
+            button.dataset.originalIndex =
+                String(
+                    answer.originalIndex
+                );
+
+            const letter =
+                String.fromCharCode(
+                    65 + displayIndex
+                );
+
+            button.innerHTML =
+                `
+                <span class="answer-letter">
+                    ${letter}
+                </span>
+                ${escapeHTML(answer.text)}
+                `;
+
+            button.addEventListener(
+                "click",
+                () =>
+                    answerQuestion(
+                        answer.originalIndex,
+                        button
+                    )
+            );
+
+            answersContainer.appendChild(
+                button
+            );
+
+        }
+    );
+
+    showQuestionScreen();
+
+}
+
+
+/* ============================================================
+   REPONSE QCM
+============================================================ */
+
+function answerQuestion(
+    selectedIndex,
+    clickedButton
+) {
+
+    const question =
+        gameState.currentQuestion;
+
+    if (!question) {
+        return;
+    }
+
+    const buttons =
+        answersContainer.querySelectorAll(
+            ".answer-button"
+        );
+
+    buttons.forEach(
+        button =>
+            button.disabled = true
+    );
+
+    const correct =
+        selectedIndex ===
+        question.correct;
+
+    if (correct) {
+
+        clickedButton.classList.add(
+            "correct"
+        );
+
+        feedback.className =
+            "feedback visible good";
+
+        feedback.innerHTML =
+            `
+            <strong>✅ Bonne réponse !</strong><br>
+            ${escapeHTML(question.explanation)}
+            `;
+
+        gameState.phase =
+            "move";
+
+    } else {
+
+        clickedButton.classList.add(
+            "wrong"
+        );
+
+        buttons.forEach(
+            button => {
+
+                if (
+                    Number(
+                        button.dataset.originalIndex
+                    ) === question.correct
+                ) {
+
+                    button.classList.add(
+                        "correct"
+                    );
+
+                }
+
+            }
+        );
+
+        feedback.className =
+            "feedback visible bad";
+
+        feedback.innerHTML =
+            `
+            <strong>❌ Mauvaise réponse.</strong><br>
+            ${escapeHTML(question.explanation)}
+            <br><br>
+            <strong>Ton avatar ne se déplace pas.</strong>
+            `;
+
+        gameState.phase =
+            "end";
+
+    }
+
+    continueButton.style.display =
+        "block";
+
+}
+
+
+/* ============================================================
+   CONTINUER APRES QUESTION
+============================================================ */
+
+continueButton.addEventListener(
+    "click",
+    () => {
+
+        if (
+            gameState.phase === "move"
+        ) {
+
+            moveCurrentPlayer();
+
+        } else {
+
+            showEndTurnScreen();
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   DEPLACEMENT
+============================================================ */
+
+async function moveCurrentPlayer() {
+
+    const player =
+        gameState.players[
+            gameState.currentPlayerIndex
+        ];
+
+    const roll =
+        gameState.currentRoll;
+
+    if (
+        !player ||
+        !roll
+    ) {
+        return;
+    }
+
+    gameState.moving =
+        true;
+
+    gameState.phase =
+        "moving";
+
+    showScreen(null);
+
+    gameHud.classList.add(
+        "visible"
+    );
+
+    /*
+        On effectue le déplacement
+        case par case.
+    */
+
+    for (
+        let step = 0;
+        step < roll;
+        step++
+    ) {
+
+        if (
+            player.position >=
+            FINISH_POSITION
+        ) {
+            break;
+        }
+
+        player.position++;
+
+        hudPosition.textContent =
+            `${player.position + 1} / ${BOARD_SIZE}`;
+
+        updateProgress();
+
+        await animatePlayerToPosition(
+            player,
+            player.position
+        );
+
+        /*
+            Petite pause après chaque case pour bien distinguer
+            les étapes du déplacement.
+        */
+        if (
+            step < roll - 1 &&
+            player.position < FINISH_POSITION
+        ) {
+            await wait(
+                AVATAR_STEP_PAUSE
+            );
+        }
+
+    }
+
+    gameState.moving =
+        false;
+
+    if (
+        player.position >=
+        FINISH_POSITION
+    ) {
+
+        gameState.phase =
+            "victory";
+
+        showVictoryScreen(
+            player
+        );
+
+        return;
+
+    }
+
+    gameState.phase =
+        "end";
+
+    /*
+        On laisse un court temps d'arrêt après l'arrivée sur
+        la dernière case avant d'afficher le bouton du joueur suivant.
+    */
+    await wait(
+        END_TURN_DELAY
+    );
+
+    showEndTurnScreen();
+
+}
+
+
+/* ============================================================
+   ANIMATION AVATAR
+============================================================ */
+
+function wait(duration) {
+
+    return new Promise(
+        resolve => {
+
+            setTimeout(
+                resolve,
+                duration
+            );
+
+        }
+    );
+
+}
+
+
+function animatePlayerToPosition(
+    player,
+    position
+) {
+
+    return new Promise(
+        resolve => {
+
+            if (!player.mesh) {
+
+                resolve();
+
+                return;
+
+            }
+
+            const target =
+                getPathPosition(
+                    position
+                );
+
+            const start =
+                player.mesh.position.clone();
+
+            const duration =
+                AVATAR_STEP_DURATION;
+
+            const startTime =
+                performance.now();
+
+            const hopHeight =
+                0.9;
+
+            function animate(now) {
+
+                const elapsed =
+                    now - startTime;
+
+                const t =
+                    Math.min(
+                        elapsed / duration,
+                        1
+                    );
+
+                const eased =
+                    easeInOutCubic(t);
+
+                player.mesh.position.lerpVectors(
+                    start,
+                    target,
+                    eased
+                );
+
+                player.mesh.position.y +=
+                    Math.sin(
+                        Math.PI * eased
+                    ) *
+                    hopHeight;
+
+                player.mesh.rotation.y +=
+                    0.08;
+
+                if (
+                    t < 1
+                ) {
+
+                    /*
+                        Caméra de suivi.
+                    */
+
+                    cameraFollowPlayer(
+                        player,
+                        target
+                    );
+
+                    requestAnimationFrame(
+                        animate
+                    );
+
+                } else {
+
+                    player.mesh.position.copy(
+                        target
+                    );
+
+                    player.mesh.position.y =
+                        target.y;
+
+                    resolve();
+
+                }
+
+            }
+
+            requestAnimationFrame(
+                animate
+            );
+
+        }
+    );
+
+}
+
+
+function easeInOutCubic(t) {
+
+    return t < 0.5
+        ? 4 * t * t * t
+        : 1 -
+            Math.pow(
+                -2 * t + 2,
+                3
+            ) / 2;
+
+}
+
+
+/* ============================================================
+   FIN DE TOUR
+============================================================ */
+
+nextTurnButton.addEventListener(
+    "click",
+    nextTurn
+);
+
+
+function nextTurn() {
+
+    gameState.currentPlayerIndex =
+        (
+            gameState.currentPlayerIndex + 1
+        ) %
+        gameState.players.length;
+
+    gameState.currentRoll =
+        null;
+
+    gameState.currentQuestion =
+        null;
+
+    gameState.phase =
+        "dice";
+
+    setCameraOverview(
+        true
+    );
+
+    showDiceScreen();
+
+}
+
+
+/* ============================================================
+   PROGRESSION
+============================================================ */
+
+function updateProgress() {
+
+    const player =
+        gameState.players[
+            gameState.currentPlayerIndex
+        ];
+
+    if (!player) {
+        return;
+    }
+
+    const percentage =
+        (
+            player.position /
+            FINISH_POSITION
+        ) *
+        100;
+
+    hudProgress.style.width =
+        `${Math.max(
+            0,
+            Math.min(
+                percentage,
+                100
+            )
+        )}%`;
+
+}
+
+
+/* ============================================================
+   ECHAPPEMENT HTML
+============================================================ */
+
+function escapeHTML(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        text;
+
+    return div.innerHTML;
+
+}
+
+
+/* ============================================================
+   THREE.JS
+============================================================ */
+
+let renderer;
+
+let scene;
+
+let camera;
+
+let controls;
+
+let clock;
+
+let boardGroup;
+
+let cityGroup;
+
+let pathGroup;
+
+let decorativeGroup;
+
+let avatarGroup;
+
+let animalGroup;
+
+let movingDecorGroup;
+
+let finishGroup;
+
+let buildings = [];
+
+let pathCells = [];
+
+let streetLights = [];
+
+let clouds = [];
+
+let victoryMode = false;
+
+let victoryStartTime = 0;
+
+
+/* ============================================================
+   INITIALISATION 3D
+============================================================ */
+
+function initThree() {
+
+    const canvas =
+        document.getElementById(
+            "gameCanvas"
+        );
+
+    renderer =
+        new THREE.WebGLRenderer({
+
+            canvas,
+
+            antialias: true,
+
+            alpha: false,
+
+            powerPreference:
+                "high-performance"
+
+        });
+
+    renderer.setPixelRatio(
+        Math.min(
+            window.devicePixelRatio,
+            2
+        )
+    );
+
+    renderer.setSize(
+        window.innerWidth,
+        window.innerHeight
+    );
+
+    renderer.shadowMap.enabled =
+        true;
+
+    renderer.shadowMap.type =
+        THREE.PCFSoftShadowMap;
+
+    renderer.outputColorSpace =
+        THREE.SRGBColorSpace;
+
+    renderer.toneMapping =
+        THREE.ACESFilmicToneMapping;
+
+    renderer.toneMappingExposure =
+        1.15;
+
+
+    scene =
+        new THREE.Scene();
+
+    scene.background =
+        new THREE.Color(
+            0x87bce8
+        );
+
+    scene.fog =
+        new THREE.Fog(
+            0x87bce8,
+            100,
+            380
+        );
+
+
+    camera =
+        new THREE.PerspectiveCamera(
+
+            48,
+
+            window.innerWidth /
+            window.innerHeight,
+
+            0.1,
+
+            1000
+
+        );
+
+    camera.position.set(
+        34,
+        43,
+        50
+    );
+
+
+    controls =
+        new OrbitControls(
+            camera,
+            renderer.domElement
+        );
+
+    controls.enableDamping =
+        true;
+
+    controls.dampingFactor =
+        0.08;
+
+    controls.maxPolarAngle =
+        Math.PI * 0.47;
+
+    controls.minDistance =
+        18;
+
+    controls.maxDistance =
+        190;
+
+    controls.target.set(
+        0,
+        0,
+        -40
+    );
+
+
+    clock =
+        new THREE.Clock();
+
+
+    boardGroup =
+        new THREE.Group();
+
+    scene.add(
+        boardGroup
+    );
+
+
+    cityGroup =
+        new THREE.Group();
+
+    boardGroup.add(
+        cityGroup
+    );
+
+
+    pathGroup =
+        new THREE.Group();
+
+    boardGroup.add(
+        pathGroup
+    );
+
+
+    decorativeGroup =
+        new THREE.Group();
+
+    boardGroup.add(
+        decorativeGroup
+    );
+
+
+    animalGroup =
+        new THREE.Group();
+
+    boardGroup.add(
+        animalGroup
+    );
+
+
+    movingDecorGroup =
+        new THREE.Group();
+
+    boardGroup.add(
+        movingDecorGroup
+    );
+
+
+    avatarGroup =
+        new THREE.Group();
+
+    boardGroup.add(
+        avatarGroup
+    );
+
+
+    finishGroup =
+        new THREE.Group();
+
+    boardGroup.add(
+        finishGroup
+    );
+
+
+    createLighting();
+
+    createWorld();
+
+    createRoad();
+
+    createFields();
+
+    createPath();
+
+    createCity();
+
+    createTrees();
+
+    createAnimals();
+
+    createMovingDecorations();
+
+    createStreetLights();
+
+    createStart();
+
+    createFinish();
+
+    createClouds();
+
+    window.addEventListener(
+        "resize",
+        onResize
+    );
+
+    renderer.setAnimationLoop(
+        render
+    );
+
+}
+
+
+/* ============================================================
+   LUMIERES
+============================================================ */
+
+function createLighting() {
+
+    const hemisphere =
+        new THREE.HemisphereLight(
+            0xc7e8ff,
+            0x425466,
+            2.2
+        );
+
+    scene.add(
+        hemisphere
+    );
+
+
+    const sun =
+        new THREE.DirectionalLight(
+            0xfff4d6,
+            4.5
+        );
+
+    sun.position.set(
+        -70,
+        100,
+        50
+    );
+
+    sun.castShadow =
+        true;
+
+    sun.shadow.mapSize.width =
+        2048;
+
+    sun.shadow.mapSize.height =
+        2048;
+
+    sun.shadow.camera.left =
+        -120;
+
+    sun.shadow.camera.right =
+        120;
+
+    sun.shadow.camera.top =
+        160;
+
+    sun.shadow.camera.bottom =
+        -160;
+
+    sun.shadow.camera.near =
+        1;
+
+    sun.shadow.camera.far =
+        400;
+
+    sun.shadow.bias =
+        -0.0005;
+
+    scene.add(
+        sun
+    );
+
+
+    const fill =
+        new THREE.DirectionalLight(
+            0x7dd3fc,
+            0.8
+        );
+
+    fill.position.set(
+        80,
+        45,
+        -80
+    );
+
+    scene.add(
+        fill
+    );
+
+}
+
+
+/* ============================================================
+   MONDE
+============================================================ */
+
+function createWorld() {
+
+    /*
+        Grande base 3D.
+    */
+
+    const groundMaterial =
+        new THREE.MeshStandardMaterial({
+
+            color: 0x527c50,
+
+            roughness: 0.92,
+
+            metalness: 0
+
+        });
+
+
+    const ground =
+        new THREE.Mesh(
+
+            new THREE.BoxGeometry(
+                230,
+                4,
+                230
+            ),
+
+            groundMaterial
+
+        );
+
+    ground.position.y =
+        -3;
+
+    ground.position.z =
+        -40;
+
+    ground.receiveShadow =
+        true;
+
+    boardGroup.add(
+        ground
+    );
+
+
+    /*
+        Base du plateau.
+    */
+
+    const baseMaterial =
+        new THREE.MeshStandardMaterial({
+
+            color: 0x28394a,
+
+            roughness: 0.78,
+
+            metalness: 0.15
+
+        });
+
+
+    const base =
+        new THREE.Mesh(
+
+            new RoundedBoxGeometry(
+                BOARD_WIDTH,
+                2.8,
+                BOARD_DEPTH,
+                5,
+                1.2
+            ),
+
+            baseMaterial
+
+        );
+
+    base.position.set(
+        0,
+        -0.5,
+        -40
+    );
+
+    base.receiveShadow =
+        true;
+
+    base.castShadow =
+        true;
+
+    boardGroup.add(
+        base
+    );
+
+
+    /*
+        Deux rebords surélevés.
+    */
+
+    const sideMaterial =
+        new THREE.MeshStandardMaterial({
+
+            color: 0x34495e,
+
+            roughness: 0.65,
+
+            metalness: 0.25
+
+        });
+
+
+    const leftEdge =
+        new THREE.Mesh(
+
+            new RoundedBoxGeometry(
+                4,
+                4,
+                BOARD_DEPTH,
+                4,
+                0.7
+            ),
+
+            sideMaterial
+
+        );
+
+    leftEdge.position.set(
+        -73,
+        1.5,
+        -40
+    );
+
+    leftEdge.castShadow =
+        true;
+
+    leftEdge.receiveShadow =
+        true;
+
+    boardGroup.add(
+        leftEdge
+    );
+
+
+    const rightEdge =
+        leftEdge.clone();
+
+    rightEdge.position.x =
+        73;
+
+    boardGroup.add(
+        rightEdge
+    );
+
+
+    /*
+        Petites plaques métalliques.
+    */
+
+    for (
+        let i = 0;
+        i < 22;
+        i++
+    ) {
+
+        const plate =
+            new THREE.Mesh(
+
+                new THREE.BoxGeometry(
+                    1.5,
+                    0.15,
+                    5
+                ),
+
+                new THREE.MeshStandardMaterial({
+                    color: 0x8b9baa,
+                    metalness: 0.75,
+                    roughness: 0.3
+                })
+
+            );
+
+        plate.position.set(
+            i % 2 === 0
+                ? -17.6
+                : 17.6,
+            3.55,
+            -12 - i * 13
+        );
+
+        decorativeGroup.add(
+            plate
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   ROUTE
+============================================================ */
+
+function createRoad() {
+
+    const roadMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0x2d3436,
+            roughness: 0.9,
+            metalness: 0.03
+        });
+
+    const roadY = 1.05;
+    const roadWidth = 8;
+    const cityRoadLeft = -34;
+    const cityRoadRight = 34;
+    const cityRoadTop = 8;
+    const cityRoadBottom = -88;
+
+    const horizontalRoads = [
+        8, -8, -24, -40, -56, -72, -88
+    ];
+
+    const verticalRoads = [
+        -28, -9, 12, 31
+    ];
+
+    horizontalRoads.forEach(z => {
+
+        const road = new THREE.Mesh(
+            new BoxGeometrySafe(
+                cityRoadRight - cityRoadLeft,
+                0.28,
+                roadWidth
+            ),
+            roadMaterial
+        );
+
+        road.position.set(
+            (cityRoadLeft + cityRoadRight) / 2,
+            roadY,
+            z
+        );
+
+        road.receiveShadow = true;
+        boardGroup.add(road);
+
+        for (let x = cityRoadLeft + 4; x <= cityRoadRight - 4; x += 8) {
+
+            const line = new THREE.Mesh(
+                new THREE.BoxGeometry(3.2, 0.045, 0.16),
+                new THREE.MeshStandardMaterial({
+                    color: 0xf4d35e,
+                    roughness: 0.8
+                })
+            );
+
+            line.position.set(
+                x,
+                roadY + 0.18,
+                z
+            );
+
+            boardGroup.add(line);
+
+        }
+
+    });
+
+    verticalRoads.forEach(x => {
+
+        const road = new THREE.Mesh(
+            new BoxGeometrySafe(
+                roadWidth,
+                0.29,
+                cityRoadBottom - cityRoadTop
+            ),
+            roadMaterial
+        );
+
+        road.position.set(
+            x,
+            roadY + 0.01,
+            (cityRoadTop + cityRoadBottom) / 2
+        );
+
+        road.receiveShadow = true;
+        boardGroup.add(road);
+
+        for (let z = cityRoadTop - 4; z >= cityRoadBottom + 4; z -= 8) {
+
+            const line = new THREE.Mesh(
+                new THREE.BoxGeometry(0.16, 0.045, 3.2),
+                new THREE.MeshStandardMaterial({
+                    color: 0xf4d35e,
+                    roughness: 0.8
+                })
+            );
+
+            line.position.set(
+                x,
+                roadY + 0.19,
+                z
+            );
+
+            boardGroup.add(line);
+
+        }
+
+    });
+
+    /* Petits trottoirs et places aux intersections. */
+    const sidewalkMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0xaeb6bd,
+            roughness: 0.88
+        });
+
+    horizontalRoads.forEach(z => {
+
+        [-34, 34].forEach(x => {
+
+            const sidewalk = new THREE.Mesh(
+                new BoxGeometrySafe(2.2, 0.18, 8.8),
+                sidewalkMaterial
+            );
+
+            sidewalk.position.set(
+                x,
+                roadY + 0.03,
+                z
+            );
+
+            sidewalk.receiveShadow = true;
+            boardGroup.add(sidewalk);
+
+        });
+
+    });
+
+    verticalRoads.forEach(x => {
+
+        horizontalRoads.forEach(z => {
+
+            const crossing = new THREE.Mesh(
+                new RoundedBoxGeometry(8.8, 0.12, 8.8, 4, 0.25),
+                new THREE.MeshStandardMaterial({
+                    color: 0x3b4248,
+                    roughness: 0.92
+                })
+            );
+
+            crossing.position.set(
+                x,
+                roadY + 0.05,
+                z
+            );
+
+            boardGroup.add(crossing);
+
+        });
+
+    });
+
+}
+
+
+/* ============================================================
+   CHAMPS ET CAMPAGNE
+============================================================ */
+
+function createFields() {
+
+    const fieldZones = [
+        { x: -67, z: -4, w: 43, d: 42, rot: -0.08 },
+        { x: 68, z: -8, w: 40, d: 48, rot: 0.06 },
+        { x: -68, z: -60, w: 42, d: 45, rot: 0.04 },
+        { x: 67, z: -63, w: 43, d: 47, rot: -0.07 },
+        { x: -8, z: -111, w: 72, d: 28, rot: 0.02 },
+        { x: 52, z: -108, w: 27, d: 25, rot: -0.03 }
+    ];
+
+    fieldZones.forEach((field, index) => {
+
+        const base = new THREE.Mesh(
+            new BoxGeometrySafe(field.w, 0.35, field.d),
+            new THREE.MeshStandardMaterial({
+                color: index % 2 === 0 ? 0x9b8a4b : 0xa8944f,
+                roughness: 1
+            })
+        );
+
+        base.position.set(
+            field.x,
+            0.05,
+            field.z
+        );
+
+        base.rotation.y = field.rot;
+        base.receiveShadow = true;
+        boardGroup.add(base);
+
+        const furrowMaterial =
+            new THREE.MeshStandardMaterial({
+                color: 0x6f5a35,
+                roughness: 1
+            });
+
+        for (let i = -field.w / 2 + 3; i < field.w / 2 - 2; i += 4) {
+
+            const furrow = new THREE.Mesh(
+                new BoxGeometrySafe(0.48, 0.07, field.d - 4),
+                furrowMaterial
+            );
+
+            furrow.position.set(
+                field.x + i,
+                0.27,
+                field.z
+            );
+
+            furrow.rotation.y = field.rot;
+            boardGroup.add(furrow);
+
+        }
+
+        /* Quelques bottes de paille. */
+        for (let i = 0; i < 3; i++) {
+
+            const bale = new THREE.Mesh(
+                new CylinderGeometrySafe(0.8, 0.8, 1.35, 12),
+                new THREE.MeshStandardMaterial({
+                    color: 0xd4ad55,
+                    roughness: 0.95
+                })
+            );
+
+            bale.rotation.z = Math.PI / 2;
+            bale.position.set(
+                field.x - field.w / 3 + i * 2.1,
+                0.9,
+                field.z + field.d / 3
+            );
+            bale.castShadow = true;
+            decorativeGroup.add(bale);
+
+        }
+
+    });
+
+    createBarn(-72, 25, 1.0);
+    createBarn(73, 28, 0.9);
+    createBarn(-72, -95, 0.95);
+    createBarn(67, -97, 0.9);
+
+    createFieldWindmill(-54, 25, 1.0);
+    createFieldWindmill(55, 24, 0.9);
+    createFieldWindmill(-55, -101, 0.95);
+
+}
+
+
+function createBarn(x, z, scale) {
+
+    const barn = new THREE.Group();
+
+    const body = new THREE.Mesh(
+        new BoxGeometrySafe(6.5, 4.5, 5.5),
+        new THREE.MeshStandardMaterial({
+            color: 0x9f3f35,
+            roughness: 0.9
+        })
+    );
+
+    body.position.y = 2.25;
+    body.castShadow = true;
+    barn.add(body);
+
+    const roof = new THREE.Mesh(
+        new ConeGeometrySafe(4.7, 2.4, 4),
+        new THREE.MeshStandardMaterial({
+            color: 0x3e4a50,
+            roughness: 0.86
+        })
+    );
+
+    roof.rotation.y = Math.PI / 4;
+    roof.position.y = 5.7;
+    roof.castShadow = true;
+    barn.add(roof);
+
+    const door = new THREE.Mesh(
+        new BoxGeometrySafe(2.1, 2.8, 0.18),
+        new THREE.MeshStandardMaterial({
+            color: 0x4a251b,
+            roughness: 0.8
+        })
+    );
+
+    door.position.set(0, 1.4, 2.82);
+    barn.add(door);
+
+    barn.position.set(x, 0, z);
+    barn.scale.setScalar(scale);
+    decorativeGroup.add(barn);
+
+}
+
+
+function createFieldWindmill(x, z, scale) {
+
+    const group = new THREE.Group();
+
+    const tower = new THREE.Mesh(
+        new ConeGeometrySafe(1.1, 7.5, 8),
+        new THREE.MeshStandardMaterial({
+            color: 0xe5e7eb,
+            roughness: 0.72
+        })
+    );
+
+    tower.position.y = 3.75;
+    tower.castShadow = true;
+    group.add(tower);
+
+    const hub = new THREE.Group();
+    hub.position.set(0, 6.8, 1.05);
+
+    const hubSphere = new THREE.Mesh(
+        new THREE.SphereGeometry(0.5, 12, 8),
+        new THREE.MeshStandardMaterial({
+            color: 0x64748b,
+            metalness: 0.45,
+            roughness: 0.4
+        })
+    );
+    hub.add(hubSphere);
+
+    for (let i = 0; i < 4; i++) {
+
+        const blade = new THREE.Mesh(
+            new BoxGeometrySafe(0.28, 3.6, 0.18),
+            new THREE.MeshStandardMaterial({
+                color: 0xf8fafc,
+                roughness: 0.7
+            })
+        );
+
+        blade.position.y = 1.8;
+        blade.rotation.z = i * Math.PI / 2;
+        hub.add(blade);
+
+    }
+
+    group.add(hub);
+    group.position.set(x, 0, z);
+    group.scale.setScalar(scale);
+    group.userData.windmillHub = hub;
+    movingDecorGroup.add(group);
+
+}
+
+
+/* ============================================================
+   CASES
+============================================================ */
+
+function createPath() {
+
+    pathCells = [];
+
+    for (
+        let i = 0;
+        i < BOARD_SIZE;
+        i++
+    ) {
+
+        const position =
+            getPathPosition(i);
+
+        const material =
+            new THREE.MeshStandardMaterial({
+
+                color:
+                    i === 0
+                        ? 0x22c55e
+                        : i === FINISH_POSITION
+                            ? 0xf59e0b
+                            : i % 5 === 0
+                                ? 0x38bdf8
+                                : 0xe2e8f0,
+
+                roughness:
+                    0.75,
+
+                metalness:
+                    0.06
+
+            });
+
+
+        const cell =
+            new THREE.Mesh(
+
+                new RoundedBoxGeometry(
+                    3.4,
+                    0.5,
+                    3.8,
+                    5,
+                    0.18
+                ),
+
+                material
+
+            );
+
+        cell.position.copy(
+            position
+        );
+
+        cell.position.y =
+            2.05;
+
+        cell.castShadow =
+            true;
+
+        cell.receiveShadow =
+            true;
+
+        pathGroup.add(
+            cell
+        );
+
+        pathCells.push(
+            cell
+        );
+
+
+        /*
+            Numéro de case.
+        */
+
+        const label =
+            createTextSprite(
+                String(i + 1),
+                i === FINISH_POSITION
+                    ? "#ffffff"
+                    : "#172033",
+                26
+            );
+
+        label.position.set(
+            position.x,
+            2.38,
+            position.z
+        );
+
+        label.scale.set(
+            1.25,
+            0.62,
+            1
+        );
+
+        pathGroup.add(
+            label
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   POSITION DES CASES
+============================================================ */
+
+function getPathPosition(index) {
+
+    /*
+        Parcours urbain en boucle ouverte : les cases sont placées
+        sur plusieurs rues et le trajet change de direction à chaque
+        rangée. Les transitions verticales se font sur les axes
+        -28 et 31, ce qui donne un vrai parcours à travers la ville.
+    */
+
+    const route = [
+        [-28, 8], [-9, 8], [12, 8], [31, 8], [31, -8],
+        [12, -8], [-9, -8], [-28, -8], [-28, -24], [-9, -24],
+        [12, -24], [31, -24], [31, -40], [12, -40], [-9, -40],
+        [-28, -40], [-28, -56], [-9, -56], [12, -56], [31, -56],
+        [31, -72], [12, -72], [-9, -72], [-28, -72], [-28, -88],
+        [-9, -88], [12, -88], [31, -88], [12, -88], [-9, -88]
+    ];
+
+    const point = route[
+        Math.max(0, Math.min(index, route.length - 1))
+    ];
+
+    return new THREE.Vector3(
+        point[0],
+        2.35,
+        point[1]
+    );
+}
+
+
+/* ============================================================
+   VILLE
+============================================================ */
+
+function createCity() {
+
+    buildings = [];
+
+    const buildingColors = [
+        0x6b7280,
+        0x7c8794,
+        0x566575,
+        0x8b7f70,
+        0x5c7080,
+        0x747c83,
+        0x8a8f91
+    ];
+
+    const addBuilding = (x, z, width, depth, height, colorIndex = null) => {
+
+        createBuilding(
+            x,
+            z,
+            width,
+            depth,
+            height,
+            colorIndex === null
+                ? buildingColors[randomInt(0, buildingColors.length - 1)]
+                : buildingColors[colorIndex % buildingColors.length]
+        );
+
+    };
+
+    /*
+        Ville plus compacte et irrégulière : quelques rues bordées
+        de maisons, une petite place centrale, un café et une école.
+        Les bâtiments ne forment volontairement pas un carré parfait.
+    */
+
+    const buildingsList = [
+        [-24, 3, 7, 6, 5],
+        [-4, 3, 9, 6, 7],
+        [18, 3, 7, 7, 5],
+        [28, -4, 6, 6, 8],
+
+        [-22, -13, 8, 6, 6],
+        [-4, -13, 6, 7, 4],
+        [17, -13, 9, 6, 8],
+        [28, -20, 6, 7, 5],
+
+        [-23, -29, 7, 7, 8],
+        [-4, -29, 8, 6, 5],
+        [17, -29, 6, 7, 6],
+        [27, -36, 7, 6, 9],
+
+        [-23, -45, 8, 6, 5],
+        [-5, -45, 6, 7, 7],
+        [17, -45, 8, 6, 5],
+        [27, -52, 6, 7, 7],
+
+        [-22, -61, 7, 6, 8],
+        [-4, -61, 9, 6, 5],
+        [17, -61, 7, 7, 6],
+
+        [-22, -77, 9, 6, 6],
+        [-3, -77, 7, 6, 8],
+        [18, -77, 9, 7, 5],
+
+        [-21, -94, 8, 5, 5],
+        [0, -94, 7, 6, 7],
+        [19, -94, 8, 5, 6]
+    ];
+
+    buildingsList.forEach((b, index) => {
+        addBuilding(
+            b[0],
+            b[1],
+            b[2],
+            b[3],
+            b[4],
+            index
+        );
+    });
+
+    /* Petite place arborée au cœur de la ville. */
+    const plaza = new THREE.Mesh(
+        new RoundedBoxGeometry(13, 0.22, 11, 5, 0.35),
+        new THREE.MeshStandardMaterial({
+            color: 0xb7a889,
+            roughness: 0.95
+        })
+    );
+
+    plaza.position.set(2, 1.35, -39);
+    plaza.receiveShadow = true;
+    decorativeGroup.add(plaza);
+
+    createTree(-2, -35);
+    createTree(7, -42);
+    createTree(-5, -43);
+
+    /* Équipement public un peu décalé pour éviter la symétrie. */
+    createSmallCivicBuilding(-17, -21, 1.0);
+    createSmallCivicBuilding(20, -66, 0.9);
+
+}
+
+
+function createSmallCivicBuilding(x, z, scale) {
+
+    const group = new THREE.Group();
+
+    const body = new THREE.Mesh(
+        new BoxGeometrySafe(9, 4.2, 6.5),
+        new THREE.MeshStandardMaterial({
+            color: 0xc9b79c,
+            roughness: 0.86
+        })
+    );
+
+    body.position.y = 2.1;
+    body.castShadow = true;
+    group.add(body);
+
+    const roof = new THREE.Mesh(
+        new ConeGeometrySafe(5.8, 2.2, 4),
+        new THREE.MeshStandardMaterial({
+            color: 0x59636e,
+            roughness: 0.82
+        })
+    );
+
+    roof.rotation.y = Math.PI / 4;
+    roof.position.y = 5.25;
+    roof.castShadow = true;
+    group.add(roof);
+
+    group.position.set(x, 1.8, z);
+    group.scale.setScalar(scale);
+    cityGroup.add(group);
+
+}
+
+
+function createBuilding(
+    x,
+    z,
+    width,
+    depth,
+    height,
+    color
+) {
+
+    const group =
+        new THREE.Group();
+
+    group.position.set(
+        x,
+        2,
+        z
+    );
+
+
+    /*
+        Corps du bâtiment.
+    */
+
+    const bodyMaterial =
+        new THREE.MeshStandardMaterial({
+
+            color,
+
+            roughness: 0.75,
+
+            metalness: 0.08
+
+        });
+
+
+    const body =
+        new THREE.Mesh(
+
+            new BoxGeometrySafe(
+                width,
+                height,
+                depth
+            ),
+
+            bodyMaterial
+
+        );
+
+    body.position.y =
+        height / 2;
+
+    body.castShadow =
+        true;
+
+    body.receiveShadow =
+        true;
+
+    group.add(
+        body
+    );
+
+
+    /*
+        Toit.
+    */
+
+    const roofMaterial =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0x263442,
+
+            roughness:
+                0.8
+
+        });
+
+
+    const roof =
+        new THREE.Mesh(
+
+            new BoxGeometrySafe(
+                width + 0.35,
+                0.45,
+                depth + 0.35
+            ),
+
+            roofMaterial
+
+        );
+
+    roof.position.y =
+        height + 0.25;
+
+    roof.castShadow =
+        true;
+
+    group.add(
+        roof
+    );
+
+
+    /*
+        Fenêtres.
+    */
+
+    const windowMaterial =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0x9ee8ff,
+
+            emissive:
+                0x164e63,
+
+            emissiveIntensity:
+                0.45,
+
+            metalness:
+                0.2,
+
+            roughness:
+                0.25
+
+        });
+
+
+    const rows =
+        Math.max(
+            1,
+            Math.floor(
+                height / 3
+            )
+        );
+
+    const columns =
+        Math.max(
+            1,
+            Math.floor(
+                width / 2.2
+            )
+        );
+
+
+    for (
+        let floor = 0;
+        floor < rows;
+        floor++
+    ) {
+
+        for (
+            let col = 0;
+            col < columns;
+            col++
+        ) {
+
+            [-1,1].forEach(side => {
+
+                const window =
+                    new THREE.Mesh(
+
+                        new RoundedBoxGeometry(
+                            0.72,
+                            0.95,
+                            0.12,
+                            3,
+                            0.04
+                        ),
+
+                        windowMaterial
+
+                    );
+
+                window.position.set(
+
+                    (
+                        col -
+                        (
+                            columns - 1
+                        ) / 2
+                    ) *
+                    2.0,
+
+                    2.0 +
+                    floor *
+                    2.5,
+
+                    side *
+                    (
+                        depth / 2 +
+                        0.07
+                    )
+
+                );
+
+                group.add(
+                    window
+                );
+
+            });
+
+        }
+
+    }
+
+
+    /*
+        Porte.
+    */
+
+    const door =
+        new THREE.Mesh(
+
+            new BoxGeometrySafe(
+                1.15,
+                2.1,
+                0.12
+            ),
+
+            new THREE.MeshStandardMaterial({
+                color: 0x172033,
+                roughness: 0.55
+            })
+
+        );
+
+    door.position.set(
+        0,
+        1.05,
+        depth / 2 + 0.08
+    );
+
+    group.add(
+        door
+    );
+
+
+    cityGroup.add(
+        group
+    );
+
+    buildings.push(
+        group
+    );
+
+}
+
+
+/* ============================================================
+   ARBRES
+============================================================ */
+
+function createTrees() {
+
+    for (
+        let row = 0;
+        row < 22;
+        row++
+    ) {
+
+        const z =
+            -3 -
+            row *
+            8.5;
+
+        createTree(
+            -7.8,
+            z
+        );
+
+        createTree(
+            7.8,
+            z - 3
+        );
+
+    }
+
+}
+
+
+function createTree(x, z) {
+
+    const group =
+        new THREE.Group();
+
+    group.position.set(
+        x,
+        2,
+        z
+    );
+
+
+    const trunk =
+        new THREE.Mesh(
+
+            new THREE.CylinderGeometry(
+                0.28,
+                0.4,
+                3,
+                10
+            ),
+
+            new THREE.MeshStandardMaterial({
+                color: 0x704214,
+                roughness: 0.95
+            })
+
+        );
+
+    trunk.position.y =
+        1.5;
+
+    trunk.castShadow =
+        true;
+
+    group.add(
+        trunk
+    );
+
+
+    const crownMaterial =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0x15803d,
+
+            roughness:
+                0.95
+
+        });
+
+
+    const crown1 =
+        new THREE.Mesh(
+
+            new THREE.SphereGeometry(
+                1.45,
+                16,
+                12
+            ),
+
+            crownMaterial
+
+        );
+
+    crown1.position.y =
+        3.6;
+
+    crown1.castShadow =
+        true;
+
+    group.add(
+        crown1
+    );
+
+
+    const crown2 =
+        new THREE.Mesh(
+
+            new THREE.SphereGeometry(
+                1.05,
+                16,
+                12
+            ),
+
+            new THREE.MeshStandardMaterial({
+                color: 0x22c55e,
+                roughness: 0.95
+            })
+
+        );
+
+    crown2.position.set(
+        0.55,
+        4.4,
+        0.15
+    );
+
+    crown2.castShadow =
+        true;
+
+    group.add(
+        crown2
+    );
+
+
+    decorativeGroup.add(
+        group
+    );
+
+}
+
+
+/* ============================================================
+   ANIMAUX AUTOUR DE LA VILLE
+============================================================ */
+
+/*
+    Petits animaux 3D stylisés placés en dehors du parcours.
+*/
+
+function createAnimals() {
+
+    const definitions = [
+        ["sheep", -68, 16, 1.05, 0.15],
+        ["sheep", 68, 12, 0.95, -0.25],
+        ["cow", -70, -10, 1.15, 0.4],
+        ["cow", 70, -24, 1.1, -0.35],
+        ["deer", -69, -45, 1.0, 0.5],
+        ["deer", 69, -60, 0.95, -0.5],
+        ["dog", -68, -84, 0.9, 0.25],
+        ["dog", 68, -92, 0.88, -0.3],
+        ["sheep", -67, -111, 1.0, 0.2],
+        ["sheep", 66, -112, 0.92, -0.2],
+        ["deer", -67, 4, 0.9, 0.8],
+        ["deer", 67, -75, 0.88, -0.7],
+        ["cow", -72, -38, 0.95, 0.2],
+        ["cow", 72, -50, 0.98, -0.2],
+        ["dog", -70, -66, 0.8, 0.4],
+        ["dog", 70, -8, 0.82, -0.4],
+        ["sheep", -62, -101, 0.86, 0.6],
+        ["sheep", 62, 2, 0.9, -0.6],
+        ["sheep", -82, -30, 0.82, 0.25],
+        ["sheep", 84, -42, 0.84, -0.3],
+        ["cow", -84, -72, 0.92, 0.2],
+        ["cow", 84, -80, 0.9, -0.25],
+        ["deer", -82, 18, 0.82, 0.4],
+        ["deer", 84, -18, 0.85, -0.4],
+        ["dog", -81, -53, 0.78, 0.2],
+        ["dog", 82, -58, 0.8, -0.2],
+        ["sheep", -37, -111, 0.8, 0.5],
+        ["sheep", 32, -111, 0.84, -0.5]
+    ];
+
+    definitions.forEach(
+        definition => {
+
+            const animal =
+                createAnimal(
+                    definition[0]
+                );
+
+            animal.position.set(
+                definition[1],
+                1.05,
+                definition[2]
+            );
+
+            animal.scale.setScalar(
+                definition[3]
+            );
+
+            animal.rotation.y =
+                definition[4];
+
+            animal.userData.baseY =
+                animal.position.y;
+
+            animal.userData.phase =
+                Math.random() *
+                Math.PI *
+                2;
+
+            animalGroup.add(
+                animal
+            );
+
+        }
+    );
+
+}
+
+
+function createAnimal(type) {
+
+    const group =
+        new THREE.Group();
+
+    if (type === "sheep") {
+        createSheep(group);
+    } else if (type === "cow") {
+        createCow(group);
+    } else if (type === "deer") {
+        createDeer(group);
+    } else {
+        createDog(group);
+    }
+
+    return group;
+
+}
+
+
+function createSheep(group) {
+
+    const wool =
+        new THREE.MeshStandardMaterial({
+            color: 0xf5f5f4,
+            roughness: 0.95
+        });
+
+    const dark =
+        new THREE.MeshStandardMaterial({
+            color: 0x292524,
+            roughness: 0.85
+        });
+
+    const body =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                1.15,
+                12,
+                8
+            ),
+            wool
+        );
+
+    body.scale.set(
+        1.25,
+        0.9,
+        0.8
+    );
+
+    body.position.y =
+        1.35;
+
+    body.castShadow =
+        true;
+
+    group.add(body);
+
+    const head =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                0.52,
+                12,
+                8
+            ),
+            dark
+        );
+
+    head.position.set(
+        1.05,
+        1.5,
+        0
+    );
+
+    head.castShadow =
+        true;
+
+    group.add(head);
+
+    [
+        [-0.65, 0.55, -0.45],
+        [0.65, 0.55, -0.45],
+        [-0.65, 0.55, 0.45],
+        [0.65, 0.55, 0.45]
+    ].forEach(
+        position => {
+
+            const leg =
+                new THREE.Mesh(
+                    new THREE.CylinderGeometry(
+                        0.11,
+                        0.14,
+                        1.05,
+                        8
+                    ),
+                    dark
+                );
+
+            leg.position.set(
+                position[0],
+                position[1],
+                position[2]
+            );
+
+            leg.castShadow =
+                true;
+
+            group.add(leg);
+
+        }
+    );
+
+}
+
+
+function createCow(group) {
+
+    const black =
+        new THREE.MeshStandardMaterial({
+            color: 0x1f2937,
+            roughness: 0.9
+        });
+
+    const white =
+        new THREE.MeshStandardMaterial({
+            color: 0xf8fafc,
+            roughness: 0.95
+        });
+
+    const pink =
+        new THREE.MeshStandardMaterial({
+            color: 0xf0a5a5,
+            roughness: 0.9
+        });
+
+    const body =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                2.4,
+                1.55,
+                1.25
+            ),
+            white
+        );
+
+    body.position.y =
+        1.5;
+
+    body.castShadow =
+        true;
+
+    group.add(body);
+
+    const patch =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                0.55,
+                10,
+                8
+            ),
+            black
+        );
+
+    patch.scale.set(
+        1,
+        0.75,
+        0.45
+    );
+
+    patch.position.set(
+        0.25,
+        1.75,
+        0.55
+    );
+
+    group.add(patch);
+
+    const head =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                0.7,
+                12,
+                8
+            ),
+            white
+        );
+
+    head.position.set(
+        1.45,
+        1.75,
+        0
+    );
+
+    head.castShadow =
+        true;
+
+    group.add(head);
+
+    const muzzle =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                0.34,
+                10,
+                8
+            ),
+            pink
+        );
+
+    muzzle.scale.set(
+        1.2,
+        0.7,
+        0.8
+    );
+
+    muzzle.position.set(
+        1.98,
+        1.55,
+        0
+    );
+
+    group.add(muzzle);
+
+    [
+        [-0.75, 0.6, -0.42],
+        [0.75, 0.6, -0.42],
+        [-0.75, 0.6, 0.42],
+        [0.75, 0.6, 0.42]
+    ].forEach(
+        position => {
+
+            const leg =
+                new THREE.Mesh(
+                    new THREE.CylinderGeometry(
+                        0.14,
+                        0.16,
+                        1.2,
+                        8
+                    ),
+                    black
+                );
+
+            leg.position.set(
+                position[0],
+                position[1],
+                position[2]
+            );
+
+            leg.castShadow =
+                true;
+
+            group.add(leg);
+
+        }
+    );
+
+    const hornMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0xf5e6c8,
+            roughness: 0.85
+        });
+
+    [-0.32, 0.32].forEach(
+        z => {
+
+            const horn =
+                new THREE.Mesh(
+                    new THREE.ConeGeometry(
+                        0.11,
+                        0.48,
+                        8
+                    ),
+                    hornMaterial
+                );
+
+            horn.position.set(
+                1.65,
+                2.35,
+                z
+            );
+
+            horn.rotation.z =
+                -0.45;
+
+            group.add(horn);
+
+        }
+    );
+
+}
+
+
+function createDeer(group) {
+
+    const brown =
+        new THREE.MeshStandardMaterial({
+            color: 0x92400e,
+            roughness: 0.9
+        });
+
+    const darkBrown =
+        new THREE.MeshStandardMaterial({
+            color: 0x451a03,
+            roughness: 0.9
+        });
+
+    const body =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                1.15,
+                12,
+                8
+            ),
+            brown
+        );
+
+    body.scale.set(
+        1.35,
+        0.85,
+        0.72
+    );
+
+    body.position.y =
+        1.65;
+
+    body.castShadow =
+        true;
+
+    group.add(body);
+
+    const neck =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                0.34,
+                0.48,
+                1.35,
+                10
+            ),
+            brown
+        );
+
+    neck.position.set(
+        0.8,
+        2.25,
+        0
+    );
+
+    neck.rotation.z =
+        -0.25;
+
+    group.add(neck);
+
+    const head =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                0.5,
+                12,
+                8
+            ),
+            brown
+        );
+
+    head.position.set(
+        1.28,
+        2.95,
+        0
+    );
+
+    head.scale.set(
+        1.1,
+        1.2,
+        0.85
+    );
+
+    head.castShadow =
+        true;
+
+    group.add(head);
+
+    [
+        [-0.72, 0.65, -0.4],
+        [0.65, 0.65, -0.4],
+        [-0.72, 0.65, 0.4],
+        [0.65, 0.65, 0.4]
+    ].forEach(
+        position => {
+
+            const leg =
+                new THREE.Mesh(
+                    new THREE.CylinderGeometry(
+                        0.09,
+                        0.12,
+                        1.7,
+                        8
+                    ),
+                    darkBrown
+                );
+
+            leg.position.set(
+                position[0],
+                position[1],
+                position[2]
+            );
+
+            leg.castShadow =
+                true;
+
+            group.add(leg);
+
+        }
+    );
+
+    const antlerMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0x78350f,
+            roughness: 0.9
+        });
+
+    [-0.22, 0.22].forEach(
+        z => {
+
+            const antler =
+                new THREE.Group();
+
+            const main =
+                new THREE.Mesh(
+                    new THREE.CylinderGeometry(
+                        0.055,
+                        0.08,
+                        0.9,
+                        7
+                    ),
+                    antlerMaterial
+                );
+
+            main.position.y =
+                0.45;
+
+            main.rotation.z =
+                -0.12;
+
+            antler.add(main);
+
+            const branch =
+                new THREE.Mesh(
+                    new THREE.CylinderGeometry(
+                        0.045,
+                        0.06,
+                        0.5,
+                        7
+                    ),
+                    antlerMaterial
+                );
+
+            branch.position.set(
+                0.08,
+                0.65,
+                0
+            );
+
+            branch.rotation.z =
+                -0.75;
+
+            antler.add(branch);
+
+            antler.position.set(
+                1.32,
+                3.25,
+                z
+            );
+
+            group.add(antler);
+
+        }
+    );
+
+}
+
+
+function createDog(group) {
+
+    const fur =
+        new THREE.MeshStandardMaterial({
+            color: 0xb45309,
+            roughness: 0.95
+        });
+
+    const dark =
+        new THREE.MeshStandardMaterial({
+            color: 0x292524,
+            roughness: 0.85
+        });
+
+    const body =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                0.95,
+                12,
+                8
+            ),
+            fur
+        );
+
+    body.scale.set(
+        1.35,
+        0.9,
+        0.8
+    );
+
+    body.position.y =
+        1.2;
+
+    body.castShadow =
+        true;
+
+    group.add(body);
+
+    const head =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                0.58,
+                12,
+                8
+            ),
+            fur
+        );
+
+    head.position.set(
+        1.0,
+        1.65,
+        0
+    );
+
+    head.castShadow =
+        true;
+
+    group.add(head);
+
+    const snout =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                0.25,
+                10,
+                8
+            ),
+            dark
+        );
+
+    snout.scale.set(
+        1.2,
+        0.8,
+        0.8
+    );
+
+    snout.position.set(
+        1.48,
+        1.52,
+        0
+    );
+
+    group.add(snout);
+
+    [
+        [-0.62, 0.45, -0.35],
+        [0.62, 0.45, -0.35],
+        [-0.62, 0.45, 0.35],
+        [0.62, 0.45, 0.35]
+    ].forEach(
+        position => {
+
+            const leg =
+                new THREE.Mesh(
+                    new THREE.CylinderGeometry(
+                        0.1,
+                        0.13,
+                        0.9,
+                        8
+                    ),
+                    fur
+                );
+
+            leg.position.set(
+                position[0],
+                position[1],
+                position[2]
+            );
+
+            leg.castShadow =
+                true;
+
+            group.add(leg);
+
+        }
+    );
+
+    [-0.32, 0.32].forEach(
+        z => {
+
+            const ear =
+                new THREE.Mesh(
+                    new THREE.ConeGeometry(
+                        0.22,
+                        0.65,
+                        8
+                    ),
+                    dark
+                );
+
+            ear.position.set(
+                0.88,
+                2.18,
+                z
+            );
+
+            ear.rotation.z =
+                -0.35;
+
+            group.add(ear);
+
+        }
+    );
+
+    const tail =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                0.08,
+                0.12,
+                0.95,
+                8
+            ),
+            fur
+        );
+
+    tail.position.set(
+        -1.25,
+        1.7,
+        0
+    );
+
+    tail.rotation.z =
+        -0.9;
+
+    group.add(tail);
+
+}
+
+
+/* ============================================================
+   LAMPADAIRES
+============================================================ */
+
+function createStreetLights() {
+
+    for (
+        let i = 0;
+        i < 25;
+        i++
+    ) {
+
+        const z =
+            -5 -
+            i *
+            7.3;
+
+        createStreetLight(
+            -9.3,
+            z
+        );
+
+        createStreetLight(
+            9.3,
+            z - 3
+        );
+
+    }
+
+}
+
+
+function createStreetLight(
+    x,
+    z
+) {
+
+    const group =
+        new THREE.Group();
+
+    group.position.set(
+        x,
+        2,
+        z
+    );
+
+
+    const pole =
+        new THREE.Mesh(
+
+            new THREE.CylinderGeometry(
+                0.12,
+                0.16,
+                4.6,
+                10
+            ),
+
+            new THREE.MeshStandardMaterial({
+                color: 0x1e293b,
+                metalness: 0.7,
+                roughness: 0.35
+            })
+
+        );
+
+    pole.position.y =
+        2.3;
+
+    pole.castShadow =
+        true;
+
+    group.add(
+        pole
+    );
+
+
+    const arm =
+        new THREE.Mesh(
+
+            new THREE.BoxGeometry(
+                1.1,
+                0.12,
+                0.12
+            ),
+
+            pole.material
+
+        );
+
+    arm.position.set(
+        0.5,
+        4.45,
+        0
+    );
+
+    group.add(
+        arm
+    );
+
+
+    const lamp =
+        new THREE.Mesh(
+
+            new THREE.SphereGeometry(
+                0.23,
+                12,
+                8
+            ),
+
+            new THREE.MeshStandardMaterial({
+
+                color:
+                    0xfff7c2,
+
+                emissive:
+                    0xffd166,
+
+                emissiveIntensity:
+                    1.7
+
+            })
+
+        );
+
+    lamp.position.set(
+        1.05,
+        4.32,
+        0
+    );
+
+    group.add(
+        lamp
+    );
+
+
+    const light =
+        new THREE.PointLight(
+            0xffd88a,
+            1.1,
+            10
+        );
+
+    light.position.set(
+        1.05,
+        4.2,
+        0
+    );
+
+    group.add(
+        light
+    );
+
+
+    decorativeGroup.add(
+        group
+    );
+
+    streetLights.push(
+        light
+    );
+
+}
+
+
+/* ============================================================
+   DEPART
+============================================================ */
+
+function createStart() {
+
+    const position = getPathPosition(START_POSITION);
+
+    const group = new THREE.Group();
+
+    const platform = new THREE.Mesh(
+        new RoundedBoxGeometry(7.5, 0.55, 7.2, 5, 0.3),
+        new THREE.MeshStandardMaterial({
+            color: 0x16a34a,
+            roughness: 0.62,
+            metalness: 0.12
+        })
+    );
+
+    platform.position.set(
+        position.x,
+        2.55,
+        position.z
+    );
+    platform.castShadow = true;
+    platform.receiveShadow = true;
+    group.add(platform);
+
+    const archMaterial = new THREE.MeshStandardMaterial({
+        color: 0xf8fafc,
+        roughness: 0.7
+    });
+
+    const postLeft = new THREE.Mesh(
+        new BoxGeometrySafe(0.65, 4.6, 0.65),
+        archMaterial
+    );
+    postLeft.position.set(position.x - 2.7, 5.0, position.z);
+    postLeft.castShadow = true;
+    group.add(postLeft);
+
+    const postRight = postLeft.clone();
+    postRight.position.x = position.x + 2.7;
+    group.add(postRight);
+
+    const top = new THREE.Mesh(
+        new RoundedBoxGeometry(6.0, 0.75, 0.75, 4, 0.15),
+        archMaterial
+    );
+    top.position.set(position.x, 7.0, position.z);
+    top.castShadow = true;
+    group.add(top);
+
+    const label = createTextSprite(
+        "DÉPART",
+        "#ffffff",
+        34
+    );
+    label.position.set(position.x, 7.75, position.z);
+    label.scale.set(3.1, 0.95, 1);
+    group.add(label);
+
+    const arrow = createTextSprite(
+        "⬇",
+        "#ffffff",
+        34
+    );
+    arrow.position.set(position.x, 3.65, position.z);
+    arrow.scale.set(1.4, 1.0, 1);
+    group.add(arrow);
+
+    finishGroup.add(group);
+
+}
+
+
+/* ============================================================
+   ARRIVEE / COFFRE
+============================================================ */
+
+function createFinish() {
+
+    const position =
+        getPathPosition(
+            FINISH_POSITION
+        );
+
+
+    /*
+        Plateforme surélevée.
+    */
+
+    const platform =
+        new THREE.Mesh(
+
+            new RoundedBoxGeometry(
+                7.2,
+                0.65,
+                7,
+                5,
+                0.25
+            ),
+
+            new THREE.MeshStandardMaterial({
+                color: 0xf59e0b,
+                roughness: 0.55,
+                metalness: 0.25
+            })
+
+        );
+
+    platform.position.set(
+        position.x,
+        2.55,
+        position.z
+    );
+
+    platform.castShadow =
+        true;
+
+    platform.receiveShadow =
+        true;
+
+    finishGroup.add(
+        platform
+    );
+
+
+    /*
+        Socle du coffre.
+    */
+
+    const chestBase =
+        new THREE.Mesh(
+
+            new RoundedBoxGeometry(
+                3.4,
+                1.6,
+                2.4,
+                5,
+                0.2
+            ),
+
+            new THREE.MeshStandardMaterial({
+
+                color:
+                    0x92400e,
+
+                roughness:
+                    0.55,
+
+                metalness:
+                    0.35
+
+            })
+
+        );
+
+    chestBase.position.set(
+        position.x,
+        4.15,
+        position.z
+    );
+
+    chestBase.castShadow =
+        true;
+
+    finishGroup.add(
+        chestBase
+    );
+
+
+    /*
+        Couvercle.
+    */
+
+    const lid =
+        new THREE.Mesh(
+
+            new RoundedBoxGeometry(
+                3.5,
+                0.8,
+                2.5,
+                5,
+                0.2
+            ),
+
+            new THREE.MeshStandardMaterial({
+
+                color:
+                    0xb45309,
+
+                roughness:
+                    0.48,
+
+                metalness:
+                    0.4
+
+            })
+
+        );
+
+    lid.position.set(
+        position.x,
+        5.25,
+        position.z
+    );
+
+    lid.rotation.x =
+        -0.28;
+
+    lid.castShadow =
+        true;
+
+    finishGroup.add(
+        lid
+    );
+
+
+    /*
+        Serrure dorée.
+    */
+
+    const lock =
+        new THREE.Mesh(
+
+            new BoxGeometrySafe(
+                0.48,
+                0.62,
+                0.18
+            ),
+
+            new THREE.MeshStandardMaterial({
+
+                color:
+                    0xffd700,
+
+                metalness:
+                    0.9,
+
+                roughness:
+                    0.2
+
+            })
+
+        );
+
+    lock.position.set(
+        position.x,
+        4.65,
+        position.z + 1.28
+    );
+
+    finishGroup.add(
+        lock
+    );
+
+
+    /*
+        Billets.
+    */
+
+    for (
+        let i = 0;
+        i < 12;
+        i++
+    ) {
+
+        const bill =
+            new THREE.Mesh(
+
+                new BoxGeometrySafe(
+                    0.9,
+                    0.06,
+                    0.45
+                ),
+
+                new THREE.MeshStandardMaterial({
+
+                    color:
+                        i % 2 === 0
+                            ? 0x22c55e
+                            : 0x16a34a,
+
+                    roughness:
+                        0.72
+
+                })
+
+            );
+
+        bill.position.set(
+
+            position.x +
+            (
+                Math.random() -
+                0.5
+            ) *
+            2.3,
+
+            5.5 +
+            Math.random() *
+            1.0,
+
+            position.z +
+            (
+                Math.random() -
+                0.5
+            ) *
+            1.3
+
+        );
+
+        bill.rotation.set(
+            Math.random() * 0.5,
+            Math.random() * 3,
+            Math.random() * 0.5
+        );
+
+        finishGroup.add(
+            bill
+        );
+
+    }
+
+
+    /*
+        Panneau FINAL.
+    */
+
+    const sign =
+        createTextSprite(
+            "ARRIVÉE",
+            "#ffffff",
+            34
+        );
+
+    sign.position.set(
+        position.x,
+        7.8,
+        position.z
+    );
+
+    sign.scale.set(
+        3.4,
+        1.1,
+        1
+    );
+
+    finishGroup.add(
+        sign
+    );
+
+
+    /*
+        Lumière du coffre.
+    */
+
+    const treasureLight =
+        new THREE.PointLight(
+            0xffc107,
+            4,
+            18
+        );
+
+    treasureLight.position.set(
+        position.x,
+        7,
+        position.z
+    );
+
+    finishGroup.add(
+        treasureLight
+    );
+
+    const finishLabel = createTextSprite(
+        "ARRIVÉE",
+        "#ffffff",
+        34
+    );
+
+    finishLabel.position.set(
+        position.x,
+        9.2,
+        position.z
+    );
+
+    finishLabel.scale.set(
+        3.0,
+        0.9,
+        1
+    );
+
+    finishGroup.add(
+        finishLabel
+    );
+
+}
+
+
+/* ============================================================
+   DECORS ANIMÉS
+============================================================ */
+
+function createMovingDecorations() {
+
+    /* Voitures qui circulent sur les grands axes */
+    const carDefinitions = [
+        [-10, 10, 0, 1.0],
+        [30, -30, Math.PI, 0.9],
+        [10, -70, 0, 0.85],
+        [-30, -90, Math.PI, 0.95]
+    ];
+
+    carDefinitions.forEach((definition, index) => {
+        const car = createMovingCar(index % 2 === 0);
+        car.position.set(
+            definition[0],
+            1.65,
+            definition[1]
+        );
+        car.rotation.y = definition[2];
+        car.scale.setScalar(definition[3]);
+        car.userData.axis = "x";
+        car.userData.speed = index % 2 === 0 ? 4.0 : -3.2;
+        car.userData.min = -53;
+        car.userData.max = 53;
+        movingDecorGroup.add(car);
+    });
+
+    /* Oiseaux qui traversent lentement le ciel de la ville */
+    for (let i = 0; i < 8; i++) {
+        const bird = createBird();
+        bird.position.set(
+            -55 + Math.random() * 110,
+            22 + Math.random() * 12,
+            -100 + Math.random() * 120
+        );
+        bird.scale.setScalar(0.65 + Math.random() * 0.35);
+        bird.userData.speed = 2.0 + Math.random() * 1.5;
+        bird.userData.phase = Math.random() * Math.PI * 2;
+        movingDecorGroup.add(bird);
+    }
+
+    /* Quelques moulins dont les pales tournent en permanence */
+    [-48, 48].forEach((x, index) => {
+        const windmill = createWindmill();
+        windmill.position.set(x, 1.0, -92 - index * 4);
+        windmill.userData.blades = windmill.userData.blades || [];
+        movingDecorGroup.add(windmill);
+    });
+
+}
+
+function createMovingCar(lightCar) {
+
+    const group = new THREE.Group();
+
+    const bodyMaterial = new THREE.MeshStandardMaterial({
+        color: lightCar ? 0x38bdf8 : 0xef4444,
+        roughness: 0.55,
+        metalness: 0.2
+    });
+
+    const body = new THREE.Mesh(
+        new BoxGeometrySafe(3.4, 0.9, 1.65),
+        bodyMaterial
+    );
+    body.position.y = 0.65;
+    body.castShadow = true;
+    group.add(body);
+
+    const roof = new THREE.Mesh(
+        new BoxGeometrySafe(1.8, 0.75, 1.35),
+        new THREE.MeshStandardMaterial({
+            color: 0xdbeafe,
+            roughness: 0.35,
+            metalness: 0.15
+        })
+    );
+    roof.position.set(-0.15, 1.28, 0);
+    roof.castShadow = true;
+    group.add(roof);
+
+    [-1.15, 1.15].forEach(x => {
+        [-0.82, 0.82].forEach(z => {
+            const wheel = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.38, 0.38, 0.22, 12),
+                new THREE.MeshStandardMaterial({
+                    color: 0x111827,
+                    roughness: 0.9
+                })
+            );
+            wheel.rotation.z = Math.PI / 2;
+            wheel.position.set(x, 0.35, z * 0.75);
+            group.add(wheel);
+        });
+    });
+
+    return group;
+}
+
+function createBird() {
+
+    const group = new THREE.Group();
+    const material = new THREE.MeshStandardMaterial({
+        color: 0x1e293b,
+        roughness: 0.8
+    });
+
+    const body = new THREE.Mesh(
+        new THREE.SphereGeometry(0.42, 10, 8),
+        material
+    );
+    body.scale.set(1.5, 0.7, 0.7);
+    group.add(body);
+
+    const wing1 = new THREE.Mesh(
+        new THREE.SphereGeometry(0.65, 10, 6),
+        material
+    );
+    wing1.scale.set(1.2, 0.15, 0.55);
+    wing1.position.set(0, 0.05, 0.48);
+    group.add(wing1);
+
+    const wing2 = wing1.clone();
+    wing2.position.z = -0.48;
+    group.add(wing2);
+
+    group.userData.wings = [wing1, wing2];
+    return group;
+}
+
+function createWindmill() {
+
+    const group = new THREE.Group();
+
+    const pole = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.18, 0.28, 7, 10),
+        new THREE.MeshStandardMaterial({
+            color: 0xe5e7eb,
+            roughness: 0.8
+        })
+    );
+    pole.position.y = 3.5;
+    pole.castShadow = true;
+    group.add(pole);
+
+    const hub = new THREE.Group();
+    hub.position.set(0, 6.7, 0);
+
+    for (let i = 0; i < 4; i++) {
+        const blade = new THREE.Mesh(
+            new BoxGeometrySafe(0.18, 2.4, 0.28),
+            new THREE.MeshStandardMaterial({
+                color: 0xf8fafc,
+                roughness: 0.75
+            })
+        );
+        blade.position.y = 1.25;
+        blade.rotation.z = i * Math.PI / 2;
+        hub.add(blade);
+    }
+
+    group.add(hub);
+    group.userData.blades = [hub];
+    return group;
+}
+
+
+/* ============================================================
+   NUAGES
+============================================================ */
+
+function createClouds() {
+
+    for (
+        let i = 0;
+        i < 14;
+        i++
+    ) {
+
+        const cloud =
+            new THREE.Group();
+
+        cloud.position.set(
+
+            (
+                Math.random() -
+                0.5
+            ) *
+            200,
+
+            48 +
+            Math.random() *
+            25,
+
+            -120 +
+            Math.random() *
+            170
+
+        );
+
+
+        for (
+            let j = 0;
+            j < 5;
+            j++
+        ) {
+
+            const puff =
+                new THREE.Mesh(
+
+                    new THREE.SphereGeometry(
+                        4 +
+                        Math.random() *
+                        2,
+                        16,
+                        10
+                    ),
+
+                    new THREE.MeshStandardMaterial({
+
+                        color:
+                            0xffffff,
+
+                        roughness:
+                            1,
+
+                        transparent:
+                            true,
+
+                        opacity:
+                            0.82
+
+                    })
+
+                );
+
+            puff.position.set(
+                (
+                    j -
+                    2
+                ) *
+                4,
+                Math.random() * 2,
+                Math.random() * 2
+            );
+
+            cloud.add(
+                puff
+            );
+
+        }
+
+        scene.add(
+            cloud
+        );
+
+        clouds.push(
+            cloud
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   AVATARS
+============================================================ */
+
+function createPlayerAvatars() {
+
+    /*
+        Suppression des anciens avatars.
+    */
+
+    while (
+        avatarGroup.children.length
+    ) {
+
+        avatarGroup.remove(
+            avatarGroup.children[0]
+        );
+
+    }
+
+
+    gameState.players.forEach(
+        (player, index) => {
+
+            const avatar =
+                createAvatar(
+                    player.avatarId
+                );
+
+            avatar.userData.playerId =
+                player.id;
+
+            avatar.position.copy(
+                getPathPosition(
+                    player.position
+                )
+            );
+
+            avatar.position.y +=
+                0.1;
+
+            /*
+                Décalage pour éviter que les
+                joueurs soient exactement
+                superposés.
+            */
+
+            const offset =
+                getAvatarOffset(
+                    index
+                );
+
+            avatar.position.x +=
+                offset.x;
+
+            avatar.position.z +=
+                offset.z;
+
+            avatarGroup.add(
+                avatar
+            );
+
+            player.mesh =
+                avatar;
+
+        }
+    );
+
+}
+
+
+function getAvatarOffset(index) {
+
+    const offsets = [
+
+        {
+            x: -0.9,
+            z: -0.5
+        },
+
+        {
+            x: 0.9,
+            z: 0.5
+        },
+
+        {
+            x: -0.8,
+            z: 0.7
+        },
+
+        {
+            x: 0.8,
+            z: -0.7
+        }
+
+    ];
+
+    return offsets[
+        index %
+        offsets.length
+    ];
+
+}
+
+
+/* ============================================================
+   CREATION AVATARS 3D
+============================================================ */
+
+function createAvatar(type) {
+
+    const group =
+        new THREE.Group();
+
+
+    switch(type) {
+
+        case "robot":
+            createRobot(group);
+            break;
+
+        case "alien":
+            createAlien(group);
+            break;
+
+        case "astronaut":
+            createAstronaut(group);
+            break;
+
+        case "wizard":
+            createWizard(group);
+            break;
+
+        case "ninja":
+            createNinja(group);
+            break;
+
+        case "detective":
+            createDetective(group);
+            break;
+
+        case "scientist":
+            createScientist(group);
+            break;
+
+        case "explorer":
+            createExplorer(group);
+            break;
+
+        default:
+            createRobot(group);
+
+    }
+
+
+    group.scale.set(
+        0.9,
+        0.9,
+        0.9
+    );
+
+    group.userData.baseY =
+        group.position.y;
+
+    return group;
+
+}
+
+
+/* ============================================================
+   ROBOT
+============================================================ */
+
+function createRobot(group) {
+
+    const bodyMaterial =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0x38bdf8,
+
+            metalness:
+                0.65,
+
+            roughness:
+                0.28
+
+        });
+
+
+    const darkMaterial =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0x172033,
+
+            metalness:
+                0.6,
+
+            roughness:
+                0.3
+
+        });
+
+
+    const body =
+        new THREE.Mesh(
+
+            new RoundedBoxGeometry(
+                1.45,
+                1.55,
+                1.15,
+                5,
+                0.2
+            ),
+
+            bodyMaterial
+
+        );
+
+    body.position.y =
+        1.65;
+
+    body.castShadow =
+        true;
+
+    group.add(
+        body
+    );
+
+
+    const head =
+        new THREE.Mesh(
+
+            new RoundedBoxGeometry(
+                1.4,
+                1.1,
+                1.2,
+                5,
+                0.22
+            ),
+
+            bodyMaterial
+
+        );
+
+    head.position.y =
+        3.0;
+
+    head.castShadow =
+        true;
+
+    group.add(
+        head
+    );
+
+
+    /*
+        Visage.
+    */
+
+    const eyeMaterial =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0x111827,
+
+            emissive:
+                0x22d3ee,
+
+            emissiveIntensity:
+                1.4
+
+        });
+
+
+    [-0.33,0.33].forEach(
+        x => {
+
+            const eye =
+                new THREE.Mesh(
+
+                    new THREE.SphereGeometry(
+                        0.13,
+                        12,
+                        8
+                    ),
+
+                    eyeMaterial
+
+                );
+
+            eye.position.set(
+                x,
+                3.03,
+                -0.62
+            );
+
+            group.add(
+                eye
+            );
+
+        }
+    );
+
+
+    /*
+        Antenne.
+    */
+
+    const antenna =
+        new THREE.Mesh(
+
+            new THREE.CylinderGeometry(
+                0.07,
+                0.07,
+                0.55,
+                8
+            ),
+
+            darkMaterial
+
+        );
+
+    antenna.position.y =
+        3.8;
+
+    group.add(
+        antenna
+    );
+
+
+    const light =
+        new THREE.Mesh(
+
+            new THREE.SphereGeometry(
+                0.16,
+                12,
+                8
+            ),
+
+            new THREE.MeshStandardMaterial({
+
+                color:
+                    0xf43f5e,
+
+                emissive:
+                    0xf43f5e,
+
+                emissiveIntensity:
+                    2
+
+            })
+
+        );
+
+    light.position.y =
+        4.12;
+
+    group.add(
+        light
+    );
+
+
+    createRobotLimb(
+        group,
+        -0.92,
+        1.65,
+        0
+    );
+
+    createRobotLimb(
+        group,
+        0.92,
+        1.65,
+        0
+    );
+
+    createRobotLeg(
+        group,
+        -0.4
+    );
+
+    createRobotLeg(
+        group,
+        0.4
+    );
+
+}
+
+
+function createRobotLimb(
+    group,
+    x,
+    y,
+    z
+) {
+
+    const limb =
+        new THREE.Mesh(
+
+            new RoundedBoxGeometry(
+                0.35,
+                1.15,
+                0.4,
+                4,
+                0.1
+            ),
+
+            new THREE.MeshStandardMaterial({
+
+                color:
+                    0x64748b,
+
+                metalness:
+                    0.65,
+
+                roughness:
+                    0.35
+
+            })
+
+        );
+
+    limb.position.set(
+        x,
+        y,
+        z
+    );
+
+    limb.rotation.z =
+        x < 0
+            ? -0.08
+            : 0.08;
+
+    limb.castShadow =
+        true;
+
+    group.add(
+        limb
+    );
+
+}
+
+
+function createRobotLeg(
+    group,
+    x
+) {
+
+    const leg =
+        new THREE.Mesh(
+
+            new RoundedBoxGeometry(
+                0.4,
+                0.85,
+                0.45,
+                4,
+                0.1
+            ),
+
+            new THREE.MeshStandardMaterial({
+                color: 0x475569,
+                metalness: 0.7,
+                roughness: 0.35
+            })
+
+        );
+
+    leg.position.set(
+        x,
+        0.65,
+        0
+    );
+
+    leg.castShadow =
+        true;
+
+    group.add(
+        leg
+    );
+
+}
+
+
+/* ============================================================
+   ALIEN
+============================================================ */
+
+function createAlien(group) {
+
+    const green =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0x84cc16,
+
+            roughness:
+                0.48
+
+        });
+
+
+    const dark =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0x172033,
+
+            roughness:
+                0.4
+
+        });
+
+
+    const body =
+        new THREE.Mesh(
+
+            new THREE.SphereGeometry(
+                0.95,
+                20,
+                14
+            ),
+
+            green
+
+        );
+
+    body.scale.y =
+        1.25;
+
+    body.position.y =
+        1.25;
+
+    body.castShadow =
+        true;
+
+    group.add(
+        body
+    );
+
+
+    const head =
+        new THREE.Mesh(
+
+            new THREE.SphereGeometry(
+                0.92,
+                20,
+                14
+            ),
+
+            green
+
+        );
+
+    head.scale.set(
+        0.9,
+        1.15,
+        0.78
+    );
+
+    head.position.y =
+        2.75;
+
+    head.castShadow =
+        true;
+
+    group.add(
+        head
+    );
+
+
+    [-0.32,0.32].forEach(
+        x => {
+
+            const eye =
+                new THREE.Mesh(
+
+                    new THREE.SphereGeometry(
+                        0.27,
+                        16,
+                        10
+                    ),
+
+                    dark
+
+                );
+
+            eye.scale.z =
+                0.45;
+
+            eye.position.set(
+                x,
+                2.8,
+                -0.67
+            );
+
+            group.add(
+                eye
+            );
+
+        }
+    );
+
+
+    [-0.65,0.65].forEach(
+        x => {
+
+            const leg =
+                new THREE.Mesh(
+
+                    new THREE.CylinderGeometry(
+                        0.17,
+                        0.23,
+                        1.2,
+                        10
+                    ),
+
+                    green
+
+                );
+
+            leg.position.set(
+                x * 0.55,
+                0.38,
+                0
+            );
+
+            leg.castShadow =
+                true;
+
+            group.add(
+                leg
+            );
+
+        }
+    );
+
+
+    [-1,1].forEach(
+        side => {
+
+            const arm =
+                new THREE.Mesh(
+
+                    new THREE.CylinderGeometry(
+                        0.15,
+                        0.19,
+                        1.25,
+                        10
+                    ),
+
+                    green
+
+                );
+
+            arm.position.set(
+                side * 0.95,
+                1.4,
+                0
+            );
+
+            arm.rotation.z =
+                side *
+                -0.35;
+
+            group.add(
+                arm
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   ASTRONAUTE
+============================================================ */
+
+function createAstronaut(group) {
+
+    const suit =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0xf8fafc,
+
+            roughness:
+                0.55
+
+        });
+
+
+    const glass =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0x0f172a,
+
+            metalness:
+                0.65,
+
+            roughness:
+                0.15
+
+        });
+
+
+    const red =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0xdc2626,
+
+            roughness:
+                0.45
+
+        });
+
+
+    const body =
+        new THREE.Mesh(
+
+            new RoundedBoxGeometry(
+                1.5,
+                1.55,
+                1.15,
+                6,
+                0.25
+            ),
+
+            suit
+
+        );
+
+    body.position.y =
+        1.65;
+
+    body.castShadow =
+        true;
+
+    group.add(
+        body
+    );
+
+
+    const helmet =
+        new THREE.Mesh(
+
+            new THREE.SphereGeometry(
+                0.9,
+                20,
+                14
+            ),
+
+            suit
+
+        );
+
+    helmet.scale.y =
+        1.05;
+
+    helmet.position.y =
+        3.05;
+
+    helmet.castShadow =
+        true;
+
+    group.add(
+        helmet
+    );
+
+
+    const visor =
+        new THREE.Mesh(
+
+            new THREE.SphereGeometry(
+                0.58,
+                20,
+                12
+            ),
+
+            glass
+
+        );
+
+    visor.scale.set(
+        0.9,
+        0.68,
+        0.45
+    );
+
+    visor.position.set(
+        0,
+        3.08,
+        -0.7
+    );
+
+    group.add(
+        visor
+    );
+
+
+    [-1,1].forEach(
+        side => {
+
+            const arm =
+                new THREE.Mesh(
+
+                    new CylinderGeometrySafe(
+                        0.2,
+                        0.23,
+                        1.15,
+                        12
+                    ),
+
+                    suit
+
+                );
+
+            arm.position.set(
+                side * 0.95,
+                1.65,
+                0
+            );
+
+            arm.rotation.z =
+                side *
+                -0.25;
+
+            group.add(
+                arm
+            );
+
+
+            const boot =
+                new THREE.Mesh(
+
+                    new RoundedBoxGeometry(
+                        0.5,
+                        0.55,
+                        0.8,
+                        4,
+                        0.12
+                    ),
+
+                    red
+
+                );
+
+            boot.position.set(
+                side * 0.4,
+                0.25,
+                -0.1
+            );
+
+            boot.castShadow =
+                true;
+
+            group.add(
+                boot
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   MAGICIEN
+============================================================ */
+
+function createWizard(group) {
+
+    const purple =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0x7e22ce,
+
+            roughness:
+                0.55
+
+        });
+
+
+    const skin =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0xf5c6a5,
+
+            roughness:
+                0.75
+
+        });
+
+
+    const dark =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0x24113a,
+
+            roughness:
+                0.65
+
+        });
+
+
+    const body =
+        new THREE.Mesh(
+
+            new THREE.ConeGeometry(
+                0.95,
+                1.9,
+                16
+            ),
+
+            purple
+
+        );
+
+    body.position.y =
+        1.25;
+
+    body.castShadow =
+        true;
+
+    group.add(
+        body
+    );
+
+
+    const head =
+        new THREE.Mesh(
+
+            new THREE.SphereGeometry(
+                0.58,
+                18,
+                12
+            ),
+
+            skin
+
+        );
+
+    head.position.y =
+        2.65;
+
+    head.castShadow =
+        true;
+
+    group.add(
+        head
+    );
+
+
+    const hat =
+        new THREE.Mesh(
+
+            new THREE.ConeGeometry(
+                0.75,
+                1.4,
+                16
+            ),
+
+            dark
+
+        );
+
+    hat.position.y =
+        3.65;
+
+    hat.rotation.z =
+        0.12;
+
+    hat.castShadow =
+        true;
+
+    group.add(
+        hat
+    );
+
+
+    const wand =
+        new THREE.Mesh(
+
+            new THREE.CylinderGeometry(
+                0.06,
+                0.06,
+                1.8,
+                8
+            ),
+
+            new THREE.MeshStandardMaterial({
+                color: 0x8b5a2b,
+                roughness: 0.8
+            })
+
+        );
+
+    wand.position.set(
+        1.05,
+        1.5,
+        0
+    );
+
+    wand.rotation.z =
+        -0.25;
+
+    group.add(
+        wand
+    );
+
+
+    const magic =
+        new THREE.Mesh(
+
+            new THREE.OctahedronGeometry(
+                0.22,
+                1
+            ),
+
+            new THREE.MeshStandardMaterial({
+
+                color:
+                    0x22d3ee,
+
+                emissive:
+                    0x22d3ee,
+
+                emissiveIntensity:
+                    1.5,
+
+                metalness:
+                    0.5
+
+            })
+
+        );
+
+    magic.position.set(
+        1.27,
+        2.45,
+        0
+    );
+
+    group.add(
+        magic
+    );
+
+}
+
+
+/* ============================================================
+   NINJA
+============================================================ */
+
+function createNinja(group) {
+
+    const black =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0x111827,
+
+            roughness:
+                0.58
+
+        });
+
+
+    const red =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0xdc2626,
+
+            roughness:
+                0.5
+
+        });
+
+
+    const body =
+        new THREE.Mesh(
+
+            new RoundedBoxGeometry(
+                1.25,
+                1.7,
+                1,
+                5,
+                0.2
+            ),
+
+            black
+
+        );
+
+    body.position.y =
+        1.5;
+
+    body.castShadow =
+        true;
+
+    group.add(
+        body
+    );
+
+
+    const head =
+        new THREE.Mesh(
+
+            new SphereGeometrySafe(
+                0.72,
+                18,
+                12
+            ),
+
+            black
+
+        );
+
+    head.position.y =
+        2.8;
+
+    head.castShadow =
+        true;
+
+    group.add(
+        head
+    );
+
+
+    const mask =
+        new THREE.Mesh(
+
+            new RoundedBoxGeometry(
+                1.25,
+                0.35,
+                0.16,
+                4,
+                0.05
+            ),
+
+            red
+
+        );
+
+    mask.position.set(
+        0,
+        2.75,
+        -0.65
+    );
+
+    group.add(
+        mask
+    );
+
+
+    for (
+        const x of [-0.38,0.38]
+    ) {
+
+        const leg =
+            new THREE.Mesh(
+
+                new RoundedBoxGeometry(
+                    0.42,
+                    1.05,
+                    0.5,
+                    4,
+                    0.1
+                ),
+
+                black
+
+            );
+
+        leg.position.set(
+            x,
+            0.45,
+            0
+        );
+
+        group.add(
+            leg
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   DETECTIVE
+============================================================ */
+
+function createDetective(group) {
+
+    const coat =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0x92400e,
+
+            roughness:
+                0.8
+
+        });
+
+
+    const skin =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0xf3c19e,
+
+            roughness:
+                0.75
+
+        });
+
+
+    const black =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0x111827,
+
+            roughness:
+                0.55
+
+        });
+
+
+    const body =
+        new THREE.Mesh(
+
+            new ConeGeometrySafe(
+                0.9,
+                1.9,
+                16
+            ),
+
+            coat
+
+        );
+
+    body.position.y =
+        1.25;
+
+    group.add(
+        body
+    );
+
+
+    const head =
+        new THREE.Mesh(
+
+            new SphereGeometrySafe(
+                0.58,
+                18,
+                12
+            ),
+
+            skin
+
+        );
+
+    head.position.y =
+        2.7;
+
+    group.add(
+        head
+    );
+
+
+    const hat =
+        new THREE.Mesh(
+
+            new CylinderGeometrySafe(
+                0.75,
+                0.85,
+                0.25,
+                16
+            ),
+
+            black
+
+        );
+
+    hat.position.y =
+        3.35;
+
+    group.add(
+        hat
+    );
+
+
+    const brim =
+        new THREE.Mesh(
+
+            new BoxGeometrySafe(
+                1.4,
+                0.12,
+                0.7
+            ),
+
+            black
+
+        );
+
+    brim.position.set(
+        0,
+        3.2,
+        -0.1
+    );
+
+    group.add(
+        brim
+    );
+
+
+    const magnifying =
+        new THREE.Mesh(
+
+            new THREE.TorusGeometry(
+                0.33,
+                0.07,
+                8,
+                20
+            ),
+
+            new THREE.MeshStandardMaterial({
+                color: 0xd4d4d8,
+                metalness: 0.8,
+                roughness: 0.2
+            })
+
+        );
+
+    magnifying.position.set(
+        1.0,
+        1.85,
+        -0.15
+    );
+
+    magnifying.rotation.y =
+        Math.PI / 2;
+
+    group.add(
+        magnifying
+    );
+
+}
+
+
+/* ============================================================
+   SCIENTIFIQUE
+============================================================ */
+
+function createScientist(group) {
+
+    const white =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0xf8fafc,
+
+            roughness:
+                0.68
+
+        });
+
+
+    const blue =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0x2563eb,
+
+            roughness:
+                0.5
+
+        });
+
+
+    const skin =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0xf2c2a5,
+
+            roughness:
+                0.75
+
+        });
+
+
+    const body =
+        new THREE.Mesh(
+
+            new RoundedBoxGeometry(
+                1.45,
+                1.75,
+                1.05,
+                5,
+                0.2
+            ),
+
+            white
+
+        );
+
+    body.position.y =
+        1.5;
+
+    group.add(
+        body
+    );
+
+
+    const head =
+        new THREE.Mesh(
+
+            new SphereGeometrySafe(
+                0.6,
+                18,
+                12
+            ),
+
+            skin
+
+        );
+
+    head.position.y =
+        2.85;
+
+    group.add(
+        head
+    );
+
+
+    const glasses =
+        new THREE.Mesh(
+
+            new TorusGeometrySafe(
+                0.2,
+                0.055,
+                8,
+                16
+            ),
+
+            blue
+
+        );
+
+    glasses.position.set(
+        -0.27,
+        2.9,
+        -0.58
+    );
+
+    glasses.scale.z =
+        0.3;
+
+    group.add(
+        glasses
+    );
+
+
+    const testTube =
+        new THREE.Mesh(
+
+            new CylinderGeometrySafe(
+                0.12,
+                0.12,
+                0.7,
+                10
+            ),
+
+            new THREE.MeshStandardMaterial({
+                color: 0x22d3ee,
+                transparent: true,
+                opacity: 0.7
+            })
+
+        );
+
+    testTube.position.set(
+        0.95,
+        1.5,
+        -0.35
+    );
+
+    group.add(
+        testTube
+    );
+
+}
+
+
+/* ============================================================
+   EXPLORATEUR
+============================================================ */
+
+function createExplorer(group) {
+
+    const orange =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0xea580c,
+
+            roughness:
+                0.62
+
+        });
+
+
+    const skin =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0xdca77e,
+
+            roughness:
+                0.76
+
+        });
+
+
+    const dark =
+        new THREE.MeshStandardMaterial({
+
+            color:
+                0x1e293b,
+
+            roughness:
+                0.62
+
+        });
+
+
+    const body =
+        new THREE.Mesh(
+
+            new RoundedBoxGeometry(
+                1.4,
+                1.65,
+                1.05,
+                5,
+                0.2
+            ),
+
+            orange
+
+        );
+
+    body.position.y =
+        1.5;
+
+    group.add(
+        body
+    );
+
+
+    const head =
+        new THREE.Mesh(
+
+            new SphereGeometrySafe(
+                0.58,
+                18,
+                12
+            ),
+
+            skin
+
+        );
+
+    head.position.y =
+        2.75;
+
+    group.add(
+        head
+    );
+
+
+    const hat =
+        new THREE.Mesh(
+
+            new CylinderGeometrySafe(
+                0.75,
+                0.8,
+                0.3,
+                16
+            ),
+
+            dark
+
+        );
+
+    hat.position.y =
+        3.35;
+
+    group.add(
+        hat
+    );
+
+
+    const backpack =
+        new THREE.Mesh(
+
+            new RoundedBoxGeometry(
+                0.85,
+                1.3,
+                0.45,
+                5,
+                0.12
+            ),
+
+            dark
+
+        );
+
+    backpack.position.set(
+        0,
+        1.5,
+        0.7
+    );
+
+    group.add(
+        backpack
+    );
+
+
+    const binocular =
+        new THREE.Mesh(
+
+            new BoxGeometrySafe(
+                0.6,
+                0.25,
+                0.25
+            ),
+
+            new THREE.MeshStandardMaterial({
+                color: 0x111827,
+                metalness: 0.5,
+                roughness: 0.35
+            })
+
+        );
+
+    binocular.position.set(
+        0.8,
+        2.65,
+        -0.35
+    );
+
+    group.add(
+        binocular
+    );
+
+}
+
+
+/* ============================================================
+   RENDU TEXTE
+============================================================ */
+
+function createTextSprite(
+    text,
+    color = "#ffffff",
+    fontSize = 28
+) {
+
+    const canvas =
+        document.createElement(
+            "canvas"
+        );
+
+    canvas.width =
+        512;
+
+    canvas.height =
+        256;
+
+    const context =
+        canvas.getContext(
+            "2d"
+        );
+
+    context.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    context.font =
+        `900 ${fontSize}px Arial`;
+
+    context.textAlign =
+        "center";
+
+    context.textBaseline =
+        "middle";
+
+    context.strokeStyle =
+        "rgba(0,0,0,0.35)";
+
+    context.lineWidth =
+        10;
+
+    context.strokeText(
+        text,
+        256,
+        128
+    );
+
+    context.fillStyle =
+        color;
+
+    context.fillText(
+        text,
+        256,
+        128
+    );
+
+    const texture =
+        new THREE.CanvasTexture(
+            canvas
+        );
+
+    texture.colorSpace =
+        THREE.SRGBColorSpace;
+
+    const material =
+        new THREE.SpriteMaterial({
+
+            map:
+                texture,
+
+            transparent:
+                true,
+
+            depthWrite:
+                false
+
+        });
+
+    return new THREE.Sprite(
+        material
+    );
+
+}
+
+
+/* ============================================================
+   CAMERA
+============================================================ */
+
+function setCameraOverview(
+    immediate = false
+) {
+
+    const targetPosition =
+        new THREE.Vector3(
+            36,
+            47,
+            38
+        );
+
+    const targetLook =
+        new THREE.Vector3(
+            0,
+            0,
+            -105
+        );
+
+    if (immediate) {
+
+        camera.position.copy(
+            targetPosition
+        );
+
+        controls.target.copy(
+            targetLook
+        );
+
+        controls.update();
+
+        return;
+
+    }
+
+    animateCameraTo(
+        targetPosition,
+        targetLook,
+        1000
+    );
+
+}
+
+
+function cameraFollowPlayer(
+    player,
+    target
+) {
+
+    const desiredCamera =
+        new THREE.Vector3(
+            target.x + 12,
+            target.y + 12,
+            target.z + 18
+        );
+
+    camera.position.lerp(
+        desiredCamera,
+        0.12
+    );
+
+    controls.target.lerp(
+        new THREE.Vector3(
+            target.x,
+            target.y,
+            target.z
+        ),
+        0.15
+    );
+
+}
+
+
+function animateCameraTo(
+    targetPosition,
+    targetLook,
+    duration
+) {
+
+    const startPosition =
+        camera.position.clone();
+
+    const startTarget =
+        controls.target.clone();
+
+    const start =
+        performance.now();
+
+
+    function animate(now) {
+
+        const t =
+            Math.min(
+                (
+                    now - start
+                ) /
+                duration,
+                1
+            );
+
+        const eased =
+            easeInOutCubic(t);
+
+        camera.position.lerpVectors(
+            startPosition,
+            targetPosition,
+            eased
+        );
+
+        controls.target.lerpVectors(
+            startTarget,
+            targetLook,
+            eased
+        );
+
+        controls.update();
+
+        if (
+            t < 1
+        ) {
+
+            requestAnimationFrame(
+                animate
+            );
+
+        }
+
+    }
+
+    requestAnimationFrame(
+        animate
+    );
+
+}
+
+
+/* ============================================================
+   VICTOIRE 3D
+============================================================ */
+
+function playVictoryAnimation() {
+
+    victoryMode =
+        true;
+
+    victoryStartTime =
+        performance.now();
+
+    controls.enabled =
+        false;
+
+    const player =
+        gameState.players[
+            gameState.currentPlayerIndex
+        ];
+
+    if (
+        player &&
+        player.mesh
+    ) {
+
+        const target =
+            player.mesh.position.clone();
+
+        const cameraPosition =
+            target.clone().add(
+                new THREE.Vector3(
+                    17,
+                    11,
+                    17
+                )
+            );
+
+        animateCameraTo(
+            cameraPosition,
+            target,
+            1200
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   PARTICULES VICTOIRE
+============================================================ */
+
+let victoryParticles = [];
+
+
+function createVictoryParticles() {
+
+    if (
+        victoryParticles.length > 0
+    ) {
+        return;
+    }
+
+    const player =
+        gameState.players[
+            gameState.currentPlayerIndex
+        ];
+
+    if (
+        !player ||
+        !player.mesh
+    ) {
+        return;
+    }
+
+
+    const colors = [
+        0xffd700,
+        0x22c55e,
+        0x38bdf8,
+        0xf43f5e,
+        0xa855f7,
+        0xffffff
+    ];
+
+
+    for (
+        let i = 0;
+        i < 120;
+        i++
+    ) {
+
+        const material =
+            new THREE.MeshStandardMaterial({
+
+                color:
+                    colors[
+                        randomInt(
+                            0,
+                            colors.length - 1
+                        )
+                    ],
+
+                roughness:
+                    0.45,
+
+                metalness:
+                    0.15
+
+            });
+
+
+        const particle =
+            new THREE.Mesh(
+
+                new BoxGeometrySafe(
+                    0.15,
+                    0.15,
+                    0.15
+                ),
+
+                material
+
+            );
+
+
+        particle.position.copy(
+            player.mesh.position
+        );
+
+        particle.position.y +=
+            3;
+
+
+        particle.userData.velocity =
+            new THREE.Vector3(
+
+                (
+                    Math.random() -
+                    0.5
+                ) *
+                0.22,
+
+                Math.random() *
+                0.35,
+
+                (
+                    Math.random() -
+                    0.5
+                ) *
+                0.22
+
+            );
+
+
+        particle.userData.life =
+            1 +
+            Math.random() *
+            2;
+
+
+        avatarGroup.add(
+            particle
+        );
+
+        victoryParticles.push(
+            particle
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   ANIMATION VICTOIRE
+============================================================ */
+
+function updateVictoryAnimation(
+    delta
+) {
+
+    if (
+        !victoryMode
+    ) {
+        return;
+    }
+
+
+    createVictoryParticles();
+
+
+    const elapsed =
+        (
+            performance.now() -
+            victoryStartTime
+        ) /
+        1000;
+
+
+    /*
+        Rotation spectaculaire de la ville.
+    */
+
+    boardGroup.rotation.y =
+        Math.sin(
+            elapsed *
+            0.75
+        ) *
+        0.14;
+
+
+    boardGroup.rotation.z =
+        Math.sin(
+            elapsed *
+            0.45
+        ) *
+        0.025;
+
+
+    /*
+        Caméra orbitale autour du gagnant.
+    */
+
+    const player =
+        gameState.players[
+            gameState.currentPlayerIndex
+        ];
+
+
+    if (
+        player &&
+        player.mesh
+    ) {
+
+        const center =
+            player.mesh.position.clone();
+
+        const radius =
+            22;
+
+        const angle =
+            elapsed *
+            0.55;
+
+
+        const desired =
+            new THREE.Vector3(
+
+                center.x +
+                Math.cos(angle) *
+                radius,
+
+                center.y +
+                12,
+
+                center.z +
+                Math.sin(angle) *
+                radius
+
+            );
+
+
+        camera.position.lerp(
+            desired,
+            0.035
+        );
+
+
+        controls.target.lerp(
+            center,
+            0.08
+        );
+
+    }
+
+
+    /*
+        Particules.
+    */
+
+    victoryParticles.forEach(
+        particle => {
+
+            particle.position.add(
+                particle.userData.velocity
+            );
+
+            particle.userData.velocity.y -=
+                delta *
+                0.45;
+
+            particle.rotation.x +=
+                delta *
+                3;
+
+            particle.rotation.z +=
+                delta *
+                2;
+
+            particle.userData.life -=
+                delta;
+
+        }
+    );
+
+
+    victoryParticles =
+        victoryParticles.filter(
+            particle => {
+
+                if (
+                    particle.userData.life <= 0
+                ) {
+
+                    avatarGroup.remove(
+                        particle
+                    );
+
+                    particle.geometry.dispose();
+
+                    particle.material.dispose();
+
+                    return false;
+
+                }
+
+                return true;
+
+            }
+        );
+
+
+    controls.update();
+
+}
+
+
+/* ============================================================
+   RESET PLATEAU
+============================================================ */
+
+function resetBoardPositions() {
+
+    boardGroup.rotation.set(
+        0,
+        0,
+        0
+    );
+
+    victoryMode =
+        false;
+
+    controls.enabled =
+        true;
+
+    victoryParticles.forEach(
+        particle => {
+
+            avatarGroup.remove(
+                particle
+            );
+
+        }
+    );
+
+    victoryParticles =
+        [];
+
+    gameState.players.forEach(
+        player => {
+
+            player.position =
+                0;
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   RENDU
+============================================================ */
+
+function render() {
+
+    if (!renderer) {
+        return;
+    }
+
+    const delta =
+        clock.getDelta();
+
+    /*
+        Petite animation permanente des avatars.
+    */
+
+    if (
+        gameState.gameStarted &&
+        !gameState.moving
+    ) {
+
+        const time =
+            performance.now() *
+            0.003;
+
+        gameState.players.forEach(
+            (player, index) => {
+
+                if (
+                    player.mesh
+                ) {
+
+                    const base =
+                        getPathPosition(
+                            player.position
+                        );
+
+                    const offset =
+                        getAvatarOffset(
+                            index
+                        );
+
+                    const targetY =
+                        base.y +
+                        0.1 +
+                        Math.sin(
+                            time +
+                            index
+                        ) *
+                        0.06;
+
+                    player.mesh.position.y =
+                        targetY;
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /*
+        Mouvement des nuages.
+    */
+
+    clouds.forEach(
+        (cloud, index) => {
+
+            cloud.position.x +=
+                delta *
+                (
+                    0.8 +
+                    index *
+                    0.02
+                );
+
+            if (
+                cloud.position.x >
+                120
+            ) {
+
+                cloud.position.x =
+                    -120;
+
+            }
+
+        }
+    );
+
+
+    /*
+        Petits mouvements des animaux pour donner vie aux abords
+        de la ville sans distraire du parcours.
+    */
+    if (movingDecorGroup) {
+        movingDecorGroup.children.forEach(
+            item => {
+                if (item.userData && item.userData.windmillHub) {
+                    item.userData.windmillHub.rotation.z += 0.018;
+                }
+            }
+        );
+    }
+
+    if (animalGroup) {
+
+        animalGroup.children.forEach(
+            animal => {
+
+                const phase =
+                    animal.userData.phase || 0;
+
+                const time =
+                    performance.now() *
+                    0.0012 +
+                    phase;
+
+                animal.position.y =
+                    animal.userData.baseY +
+                    Math.sin(time) *
+                    0.035;
+
+                animal.rotation.y +=
+                    Math.sin(time * 0.35) *
+                    delta *
+                    0.08;
+
+            }
+        );
+
+    }
+
+
+    /*
+        Décors mobiles : voitures, oiseaux et moulins.
+    */
+    if (movingDecorGroup) {
+
+        movingDecorGroup.children.forEach(
+            object => {
+
+                if (object.userData.axis === "x") {
+                    object.position.x +=
+                        object.userData.speed * delta;
+
+                    if (object.position.x > object.userData.max) {
+                        object.position.x = object.userData.min;
+                    }
+
+                    if (object.position.x < object.userData.min) {
+                        object.position.x = object.userData.max;
+                    }
+                }
+
+                if (object.userData.wings) {
+                    const time =
+                        performance.now() * 0.006 +
+                        (object.userData.phase || 0);
+
+                    object.position.x +=
+                        object.userData.speed * delta;
+
+                    object.position.y +=
+                        Math.sin(time) * delta * 0.7;
+
+                    object.rotation.y =
+                        Math.sin(time) * 0.12;
+
+                    object.userData.wings[0].rotation.x =
+                        Math.sin(time * 1.8) * 0.5;
+
+                    object.userData.wings[1].rotation.x =
+                        -Math.sin(time * 1.8) * 0.5;
+
+                    if (object.position.x > 75) {
+                        object.position.x = -75;
+                    }
+                }
+
+                if (object.userData.blades) {
+                    object.userData.blades.forEach(
+                        hub => {
+                            hub.rotation.z += delta * 2.2;
+                        }
+                    );
+                }
+
+            }
+        );
+
+    }
+
+
+    /*
+        Lumières de rue légèrement
+        pulsantes.
+    */
+
+    streetLights.forEach(
+        (light, index) => {
+
+            light.intensity =
+                0.85 +
+                Math.sin(
+                    performance.now() *
+                    0.001 +
+                    index
+                ) *
+                0.12;
+
+        }
+    );
+
+
+    updateVictoryAnimation(
+        delta
+    );
+
+
+    controls.update();
+
+    renderer.render(
+        scene,
+        camera
+    );
+
+}
+
+
+/* ============================================================
+   RESIZE
+============================================================ */
+
+function onResize() {
+
+    if (
+        !renderer ||
+        !camera
+    ) {
+        return;
+    }
+
+    camera.aspect =
+        window.innerWidth /
+        window.innerHeight;
+
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(
+        window.innerWidth,
+        window.innerHeight
+    );
+
+}
+
+
+/* ============================================================
+   GEOMETRIES DE SECURITE
+============================================================ */
+
+/*
+    Ces fonctions évitent les problèmes de compatibilité
+    liés aux constructeurs Three.js dans différents navigateurs.
+*/
+
+function BoxGeometrySafe(
+    width,
+    height,
+    depth
+) {
+
+    return new THREE.BoxGeometry(
+        width,
+        height,
+        depth
+    );
+
+}
+
+
+function SphereGeometrySafe(
+    radius,
+    widthSegments,
+    heightSegments
+) {
+
+    return new THREE.SphereGeometry(
+        radius,
+        widthSegments,
+        heightSegments
+    );
+
+}
+
+
+function CylinderGeometrySafe(
+    radiusTop,
+    radiusBottom,
+    height,
+    radialSegments
+) {
+
+    return new THREE.CylinderGeometry(
+        radiusTop,
+        radiusBottom,
+        height,
+        radialSegments
+    );
+
+}
+
+
+function ConeGeometrySafe(
+    radius,
+    height,
+    radialSegments
+) {
+
+    return new THREE.ConeGeometry(
+        radius,
+        height,
+        radialSegments
+    );
+
+}
+
+
+function TorusGeometrySafe(
+    radius,
+    tube,
+    radialSegments,
+    tubularSegments
+) {
+
+    return new THREE.TorusGeometry(
+        radius,
+        tube,
+        radialSegments,
+        tubularSegments
+    );
+
+}
+
+
+/* ============================================================
+   INITIALISATION FINALE
+============================================================ */
+
+buildPlayerSetup();
+
+initThree();
+
+
+/* ============================================================
+   CLAVIER
+============================================================ */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        /*
+            Espace = lancer le dé lorsque
+            le bouton est disponible.
+        */
+
+        if (
+            event.code ===
+            "Space" &&
+            gameState.phase ===
+            "dice"
+        ) {
+
+            event.preventDefault();
+
+            if (
+                !rollDiceButton.disabled
+            ) {
+
+                rollDice();
+
+            }
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   RESTART
+============================================================ */
+
+restartButton.addEventListener(
+    "click",
+    () => {
+
+        /*
+            Retour complet à l'écran
+            d'inscription.
+        */
+
+        gameState.players =
+            [];
+
+        gameState.currentPlayerIndex =
+            0;
+
+        gameState.currentRoll =
+            null;
+
+        gameState.currentQuestion =
+            null;
+
+        gameState.usedQuestionIndexes =
+            new Set();
+
+        gameState.phase =
+            "start";
+
+        gameState.moving =
+            false;
+
+        gameState.gameOver =
+            false;
+
+        gameState.gameStarted =
+            false;
+
+        questionDeck =
+            [];
+
+        gameHud.classList.remove(
+            "visible"
+        );
+
+        victoryMode =
+            false;
+
+        controls.enabled =
+            true;
+
+        boardGroup.rotation.set(
+            0,
+            0,
+            0
+        );
+
+        /*
+            Reconstruction de la sélection
+            des joueurs.
+        */
+
+        selectedPlayerCount =
+            2;
+
+        document
+            .querySelectorAll(
+                ".count-button"
+            )
+            .forEach(
+                button => {
+
+                    button.classList.toggle(
+                        "selected",
+                        button.dataset.count ===
+                        "2"
+                    );
+
+                }
+            );
+
+        buildPlayerSetup();
+
+        showScreen(
+            startScreen
+        );
+
+        setCameraOverview(
+            true
+        );
+
+    }
+);
+
+
+/* ============================================================
+   PROTECTION CONTRE LE CLIC DROIT
+   Pas indispensable, mais permet de garder
+   la sensation de jeu.
+============================================================ */
+
+document.addEventListener(
+    "contextmenu",
+    event => {
+
+        if (
+            gameState.gameStarted
+        ) {
+
+            event.preventDefault();
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   FIN
+============================================================ */
+
+</script>
+
+</body>
+</html>

@@ -1,17 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
-<title>Parcours de soins - Jeu</title>
-
+<title>Parcours de soins - Jeu 3D</title>
 
 <style>
 
@@ -20,947 +13,664 @@
 ========================================================= */
 
 :root {
-
-    --blue:
-        #2457a6;
-
-    --dark-blue:
-        #173b73;
-
-    --light-blue:
-        #dcecff;
-
-    --green:
-        #27ae60;
-
-    --gold:
-        #f2bd45;
-
-    --red:
-        #e74c3c;
-
-    --background:
-        #eaf0f7;
-
-    --white:
-        #ffffff;
-
+    --blue:#2563eb;
+    --dark-blue:#102d69;
+    --green:#16a34a;
+    --red:#dc2626;
+    --yellow:#f59e0b;
+    --purple:#7c3aed;
+    --ground:#b8d89c;
+    --road:#596477;
+    --text:#172033;
 }
 
-
 /* =========================================================
-   RESET
+   BASE
 ========================================================= */
 
 * {
-
-    box-sizing:
-        border-box;
-
-}
-
-html,
-body {
-
-    margin:
-        0;
-
-    padding:
-        0;
-
-    min-height:
-        100%;
-
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
 body {
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
+    min-height:100vh;
+    font-family:Arial, Helvetica, sans-serif;
+    color:var(--text);
     background:
-        radial-gradient(
-            circle at top,
-            #f9fbff,
-            #dce5f0
-        );
-
-    color:
-        #202938;
-
-    overflow-x:
-        hidden;
-
+        radial-gradient(circle at 30% 10%,#ffffff 0%,transparent 30%),
+        linear-gradient(135deg,#dce9fa,#f5f8fc);
+    overflow-x:hidden;
 }
-
-
-/* =========================================================
-   ÉCRANS
-========================================================= */
 
 .screen {
-
-    min-height:
-        100vh;
-
-    width:
-        100%;
-
-    display:
-        none;
-
-    align-items:
-        center;
-
-    justify-content:
-        center;
-
-    padding:
-        25px;
-
+    min-height:100vh;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:25px;
 }
 
 .screen.active {
-
-    display:
-        flex;
-
+    display:flex;
 }
-
 
 /* =========================================================
    BOUTONS
 ========================================================= */
 
-.main-button {
-
-    border:
-        none;
-
-    padding:
-        16px 28px;
-
-    border-radius:
-        14px;
-
-    background:
-        linear-gradient(
-            145deg,
-            #2d69c7,
-            #173b73
-        );
-
-    color:
-        white;
-
-    font-size:
-        16px;
-
-    font-weight:
-        bold;
-
-    cursor:
-        pointer;
-
-    box-shadow:
-        0 8px 18px
-        rgba(23,59,115,.3);
-
-    transition:
-        .2s;
-
+.btn {
+    border:none;
+    border-radius:15px;
+    padding:15px 28px;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.2s;
 }
 
-.main-button:hover {
-
-    transform:
-        translateY(-3px);
-
-    box-shadow:
-        0 12px 25px
-        rgba(23,59,115,.35);
-
+.btn:hover {
+    transform:translateY(-3px);
 }
 
-.main-button:disabled {
-
-    opacity:
-        .45;
-
-    cursor:
-        not-allowed;
-
-    transform:
-        none;
-
+.btn-primary {
+    background:linear-gradient(135deg,#2563eb,#173b8f);
+    color:white;
+    box-shadow:0 9px 20px rgba(37,99,235,.25);
 }
 
+.btn-secondary {
+    background:#e8edf5;
+    color:#24324d;
+}
 
 /* =========================================================
    INSCRIPTION
 ========================================================= */
 
-#playersScreen {
-
-    background:
-        radial-gradient(
-            circle at 50% 20%,
-            #ffffff,
-            #dce8f6
-        );
-
+.setup-container {
+    width:min(1050px,100%);
+    background:rgba(255,255,255,.96);
+    padding:35px;
+    border-radius:28px;
+    box-shadow:0 30px 80px rgba(20,40,80,.18);
 }
 
-.players-box {
-
-    width:
-        min(900px,100%);
-
-    background:
-        rgba(255,255,255,.96);
-
-    padding:
-        40px;
-
-    border-radius:
-        30px;
-
-    box-shadow:
-        0 30px 80px
-        rgba(24,49,80,.2);
-
-    text-align:
-        center;
-
+.logo {
+    text-align:center;
+    font-size:60px;
 }
 
-.players-box h1 {
-
-    margin:
-        0 0 10px;
-
-    color:
-        var(--dark-blue);
-
-    font-size:
-        clamp(32px,5vw,52px);
-
+h1 {
+    text-align:center;
+    color:var(--dark-blue);
+    font-size:clamp(32px,5vw,48px);
+    margin:8px 0;
 }
 
-.players-box > p {
-
-    color:
-        #687386;
-
-    font-size:
-        18px;
-
-    margin-bottom:
-        35px;
-
+.subtitle {
+    text-align:center;
+    color:#64748b;
+    margin-bottom:30px;
+    font-size:18px;
 }
 
 .players-list {
-
-    display:
-        grid;
-
-    grid-template-columns:
-        repeat(2,1fr);
-
-    gap:
-        18px;
-
-    margin-bottom:
-        30px;
-
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:18px;
 }
 
-.player-card {
-
-    border:
-        2px solid
-        #dce3ec;
-
-    border-radius:
-        18px;
-
-    padding:
-        18px;
-
-    background:
-        linear-gradient(
-            145deg,
-            #ffffff,
-            #f4f7fb
-        );
-
-    text-align:
-        left;
-
-    transition:
-        .2s;
-
+.player-form {
+    background:#f7f9fd;
+    border:2px solid #dce3ef;
+    border-radius:20px;
+    padding:18px;
 }
 
-.player-card:focus-within {
-
-    border-color:
-        var(--blue);
-
-    box-shadow:
-        0 8px 20px
-        rgba(36,87,166,.12);
-
+.player-form h3 {
+    color:var(--dark-blue);
+    margin-bottom:12px;
 }
 
-.player-number {
-
-    font-weight:
-        bold;
-
-    color:
-        var(--dark-blue);
-
-    margin-bottom:
-        10px;
-
+.player-name {
+    width:100%;
+    padding:13px;
+    border:2px solid #d7dfeb;
+    border-radius:12px;
+    font-size:16px;
+    margin-bottom:14px;
 }
 
-.player-card input {
-
-    width:
-        100%;
-
-    padding:
-        13px;
-
-    border:
-        2px solid
-        #dce3ec;
-
-    border-radius:
-        10px;
-
-    font-size:
-        16px;
-
-    outline:
-        none;
-
-    margin-bottom:
-        12px;
-
-}
-
-.player-card input:focus {
-
-    border-color:
-        var(--blue);
-
-}
-
-
-/* =========================================================
-   SÉLECTION AVATARS
-========================================================= */
-
-.avatar-title {
-
-    font-size:
-        13px;
-
-    font-weight:
-        bold;
-
-    color:
-        #697386;
-
-    margin-bottom:
-        8px;
-
-}
-
-.avatar-options {
-
-    display:
-        flex;
-
-    flex-wrap:
-        wrap;
-
-    gap:
-        7px;
-
+.avatar-grid {
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:8px;
 }
 
 .avatar-option {
-
-    width:
-        43px;
-
-    height:
-        43px;
-
-    border:
-        2px solid
-        transparent;
-
-    border-radius:
-        12px;
-
-    background:
-        #edf2f8;
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        center;
-
-    font-size:
-        24px;
-
-    cursor:
-        pointer;
-
-    transition:
-        .18s;
-
-}
-
-.avatar-option:hover {
-
-    transform:
-        scale(1.1);
-
-    background:
-        #dcecff;
-
+    position:relative;
+    height:62px;
+    border:2px solid #d7dfeb;
+    background:white;
+    border-radius:14px;
+    font-size:31px;
+    cursor:pointer;
 }
 
 .avatar-option.selected {
+    border-color:#2563eb;
+    background:#eaf1ff;
+    box-shadow:0 0 0 3px rgba(37,99,235,.12);
+}
 
-    border-color:
-        var(--blue);
+.avatar-option.taken {
+    opacity:.22;
+    filter:grayscale(1);
+    cursor:not-allowed;
+}
 
+.avatar-label {
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:2px;
+    font-size:9px;
+    color:#64748b;
+}
+
+.setup-buttons {
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    margin-top:25px;
+    flex-wrap:wrap;
+}
+
+.error {
+    color:#dc2626;
+    text-align:center;
+    font-weight:bold;
+    margin-top:15px;
+}
+
+/* =========================================================
+   ÉCRAN DÉ
+========================================================= */
+
+.turn-screen {
+    flex-direction:column;
+    text-align:center;
     background:
-        #dcecff;
-
-    box-shadow:
-        0 0 0 3px
-        rgba(36,87,166,.12);
-
-    transform:
-        scale(1.08);
-
+        radial-gradient(circle,#ffffff,#e5eefb);
 }
 
-
-/* =========================================================
-   ÉCRAN DE JEU
-========================================================= */
-
-#diceScreen {
-
-    background:
-        radial-gradient(
-            circle at center,
-            #ffffff,
-            #dfe8f3
-        );
-
+.turn-avatar {
+    font-size:110px;
+    animation:float 2s infinite ease-in-out;
 }
 
-.dice-game-screen {
-
-    width:
-        min(1450px,100%);
-
+@keyframes float {
+    50% {
+        transform:translateY(-12px);
+    }
 }
 
-
-/* =========================================================
-   HEADER JOUEUR
-========================================================= */
-
-.dice-header {
-
-    text-align:
-        center;
-
-    margin-bottom:
-        20px;
-
+.turn-label {
+    font-size:20px;
+    color:#64748b;
 }
 
-.player-circle {
-
-    width:
-        72px;
-
-    height:
-        72px;
-
-    margin:
-        auto;
-
-    border-radius:
-        50%;
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        center;
-
-    font-size:
-        36px;
-
-    background:
-        white;
-
-    border:
-        4px solid
-        white;
-
-    box-shadow:
-        0 10px 25px
-        rgba(0,0,0,.22);
-
+.turn-name {
+    font-size:clamp(45px,8vw,75px);
+    font-weight:900;
+    color:var(--dark-blue);
+    margin:8px 0 25px;
 }
 
-.dice-header h1 {
-
-    color:
-        var(--dark-blue);
-
-    font-size:
-        clamp(30px,5vw,46px);
-
-    margin:
-        8px 0 0;
-
-}
-
-
-/* =========================================================
-   DÉ + PLATEAU
-========================================================= */
-
-.dice-and-board {
-
-    display:
-        grid;
-
-    grid-template-columns:
-        220px 1fr;
-
-    gap:
-        30px;
-
-    align-items:
-        center;
-
-}
-
-
-/* =========================================================
-   DÉ
-========================================================= */
-
-.dice-panel {
-
-    text-align:
-        center;
-
+.dice-area {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 }
 
 .dice {
-
-    width:
-        150px;
-
-    height:
-        150px;
-
-    margin:
-        auto auto 25px;
-
-    border-radius:
-        30px;
-
-    background:
-        linear-gradient(
-            145deg,
-            #ffffff,
-            #e7edf5
-        );
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        center;
-
-    font-size:
-        95px;
-
+    width:125px;
+    height:125px;
+    border-radius:25px;
+    background:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:70px;
+    font-weight:bold;
     box-shadow:
-        0 18px 35px
-        rgba(20,40,70,.22),
-
-        inset 0 2px 4px
-        white;
-
+        0 25px 40px rgba(20,40,80,.25),
+        inset 0 -9px #d8dfeb;
+    margin-bottom:25px;
 }
 
 .dice.rolling {
-
-    animation:
-        diceRolling .08s infinite
-        linear;
-
+    animation:diceRoll .7s ease-in-out;
 }
 
-@keyframes diceRolling {
-
-    0% {
-        transform:
-            rotate(-8deg)
-            scale(1);
-    }
-
-    50% {
-        transform:
-            rotate(8deg)
-            scale(1.08);
-    }
-
-    100% {
-        transform:
-            rotate(-8deg)
-            scale(1);
-    }
-
+@keyframes diceRoll {
+    0%{transform:rotate(0) scale(1)}
+    25%{transform:rotate(90deg) scale(1.1)}
+    50%{transform:rotate(180deg) scale(.9)}
+    75%{transform:rotate(270deg) scale(1.1)}
+    100%{transform:rotate(360deg) scale(1)}
 }
-
-.dice-instruction {
-
-    margin-top:
-        18px;
-
-    line-height:
-        1.5;
-
-    color:
-        #697386;
-
-}
-
 
 /* =========================================================
-   CONTENEUR 3D
+   QUESTION
 ========================================================= */
 
-.board-stage {
-
-    perspective:
-        1400px;
-
-    width:
-        100%;
-
-    padding:
-        25px;
-
+.question-screen {
+    background:linear-gradient(135deg,#edf4ff,#fff);
 }
 
+.question-card {
+    width:min(900px,100%);
+    background:white;
+    padding:40px;
+    border-radius:28px;
+    box-shadow:0 30px 80px rgba(20,45,90,.16);
+}
+
+.question-header {
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:25px;
+}
+
+.question-number {
+    color:#2563eb;
+    font-weight:bold;
+}
+
+.question-player {
+    color:#64748b;
+    font-weight:bold;
+}
+
+.question-text {
+    font-size:clamp(23px,4vw,34px);
+    line-height:1.35;
+    font-weight:800;
+    margin-bottom:28px;
+}
+
+.answers {
+    display:grid;
+    gap:14px;
+}
+
+.answer {
+    padding:18px;
+    border-radius:16px;
+    border:2px solid #dce3ed;
+    background:#f9fbfe;
+    font-size:18px;
+    text-align:left;
+    cursor:pointer;
+}
+
+.answer:hover:not(.disabled) {
+    border-color:#2563eb;
+    background:#eef5ff;
+    transform:translateX(4px);
+}
+
+.answer.correct {
+    background:#e8f8ed;
+    border-color:#16a34a;
+}
+
+.answer.wrong {
+    background:#ffeded;
+    border-color:#dc2626;
+}
+
+.answer.disabled {
+    cursor:default;
+}
+
+.feedback {
+    display:none;
+    margin-top:20px;
+    padding:17px;
+    border-radius:14px;
+    font-weight:bold;
+}
+
+.feedback.show {
+    display:block;
+}
+
+.feedback.success {
+    background:#e8f8ed;
+    color:#08752f;
+}
+
+.feedback.failure {
+    background:#ffeded;
+    color:#a31313;
+}
 
 /* =========================================================
-   PLATEAU 3D
+   ÉCRAN PLATEAU
 ========================================================= */
 
-.board-3d {
+.board-screen {
+    flex-direction:column;
+    padding:15px;
+    overflow:hidden;
+    background:
+        linear-gradient(#dcecff 0%,#dcecff 35%,#a7cb8a 35%,#87ad6c 100%);
+}
 
-    position:
-        relative;
+.board-header {
+    width:min(1250px,100%);
+    background:rgba(255,255,255,.94);
+    border-radius:18px;
+    padding:12px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 10px 25px rgba(20,40,80,.15);
+    z-index:100;
+}
 
-    transform-style:
-        preserve-3d;
+.current-player-info {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:bold;
+}
+
+.current-mini-avatar {
+    font-size:38px;
+}
+
+/* =========================================================
+   SCÈNE 3D
+========================================================= */
+
+.board-wrapper {
+
+    width:100%;
+    flex:1;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    perspective:1600px;
+
+    min-height:620px;
+
+    overflow:hidden;
+}
+
+/*
+   Grande scène.
+*/
+
+.scene {
+
+    width:min(1100px,92vw);
+    height:min(680px,70vh);
+
+    position:relative;
+
+    transform-style:preserve-3d;
 
     transform:
-        rotateX(13deg)
-        rotateY(-3deg);
+        rotateX(57deg)
+        rotateZ(-7deg)
+        translateZ(0);
 
     transition:
-        transform 1s
-        cubic-bezier(.2,.8,.2,1);
-
-    animation:
-        boardFloat 5s
-        ease-in-out
-        infinite;
+        transform 1.2s cubic-bezier(.2,.8,.2,1);
 
 }
 
-
-/*
-    Mouvement permanent très léger
-*/
-
-@keyframes boardFloat {
-
-    0%,
-    100% {
-
-        transform:
-            rotateX(13deg)
-            rotateY(-3deg)
-            translateY(0);
-
-    }
-
-    50% {
-
-        transform:
-            rotateX(16deg)
-            rotateY(3deg)
-            translateY(-7px);
-
-    }
-
-}
-
-
-/*
-    Base épaisse du plateau
-*/
-
-.board-3d::after {
-
-    content:
-        "";
-
-    position:
-        absolute;
-
-    z-index:
-        -2;
-
-    left:
-        20px;
-
-    right:
-        20px;
-
-    top:
-        25px;
-
-    bottom:
-        -25px;
-
-    border-radius:
-        30px;
-
-    background:
-        linear-gradient(
-            145deg,
-            #9eafc3,
-            #6c7d91
-        );
-
-    transform:
-        translateZ(-35px);
-
-    box-shadow:
-        0 35px 40px
-        rgba(24,45,70,.3);
-
-}
-
-
-/*
-    Plateau principal
-*/
+/* =========================================================
+   PLATEAU DE BASE
+========================================================= */
 
 .board {
 
-    position:
-        relative;
+    position:absolute;
 
-    display:
-        grid;
+    inset:0;
 
-    grid-template-columns:
-        repeat(6,1fr);
+    transform-style:preserve-3d;
 
-    gap:
-        12px;
+    border-radius:38px;
 
-    padding:
-        25px;
+    background:#47763e;
 
-    border-radius:
-        30px;
-
-    background:
-
-        linear-gradient(
-            145deg,
-            #d9e7f5,
-            #b9cee3
-        );
-
-    border:
-        3px solid
-        #a7bfd7;
+    border:10px solid #31582e;
 
     box-shadow:
-
-        inset 0 3px 0
-        rgba(255,255,255,.8),
-
-        0 20px 35px
-        rgba(30,55,80,.25);
-
-    transform:
-        translateZ(0);
-
-    transform-style:
-        preserve-3d;
+        0 30px 0 #254824,
+        0 45px 0 #1b361c,
+        0 60px 80px rgba(0,0,0,.45);
 
 }
 
-
 /*
-    Décoration au milieu
+   Couches verticales donnant l'impression
+   d'une véritable épaisseur.
 */
 
 .board::before {
 
-    content:
-        "";
+    content:"";
 
-    position:
-        absolute;
+    position:absolute;
 
-    left:
-        40px;
+    inset:-10px;
 
-    right:
-        40px;
+    border-radius:42px;
 
-    top:
-        50%;
+    background:#365f31;
 
-    height:
-        10px;
+    transform:translateZ(-35px);
 
-    transform:
-        translateY(-50%)
-        translateZ(-1px);
-
-    background:
-        rgba(110,140,170,.35);
-
-    border-radius:
-        20px;
+    box-shadow:
+        0 20px 0 #244423;
 
 }
 
+.board::after {
+
+    content:"";
+
+    position:absolute;
+
+    inset:20px;
+
+    border-radius:27px;
+
+    border:4px solid rgba(255,255,255,.15);
+
+    pointer-events:none;
+
+}
 
 /* =========================================================
-   CASES
+   SOL
+========================================================= */
+
+.ground {
+
+    position:absolute;
+
+    inset:25px;
+
+    border-radius:28px;
+
+    background:
+
+        radial-gradient(
+            circle at 20% 30%,
+            rgba(255,255,255,.15) 0 2px,
+            transparent 3px
+        ),
+
+        radial-gradient(
+            circle at 70% 70%,
+            rgba(0,0,0,.08) 0 3px,
+            transparent 4px
+        ),
+
+        linear-gradient(
+            135deg,
+            #a8d083,
+            #78ae63
+        );
+
+    transform:translateZ(4px);
+
+}
+
+/* =========================================================
+   ROUTES
+========================================================= */
+
+.road {
+
+    position:absolute;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0 38px,
+            #f8e9a8 38px 55px
+        ),
+        #515b68;
+
+    box-shadow:
+        0 7px 0 #39414c;
+
+    transform:translateZ(8px);
+
+}
+
+.road-horizontal {
+
+    left:30px;
+    right:30px;
+    top:46%;
+    height:90px;
+
+}
+
+.road-vertical {
+
+    top:30px;
+    bottom:30px;
+    left:47%;
+    width:90px;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0 38px,
+            #f8e9a8 38px 55px
+        ),
+        #515b68;
+
+}
+
+/* =========================================================
+   PARCOURS
+========================================================= */
+
+.board-path {
+
+    position:absolute;
+
+    left:90px;
+    right:90px;
+    top:70px;
+    bottom:70px;
+
+    display:grid;
+
+    grid-template-columns:repeat(8,1fr);
+    grid-template-rows:repeat(5,1fr);
+
+    gap:12px;
+
+    transform:translateZ(35px);
+
+    z-index:30;
+
+}
+
+/* =========================================================
+   CASES 3D
 ========================================================= */
 
 .cell {
 
-    position:
-        relative;
-
-    min-height:
-        105px;
-
-    border-radius:
-        18px;
-
-    border:
-        3px solid
-        #d0dce8;
+    position:relative;
 
     background:
         linear-gradient(
             145deg,
             #ffffff,
-            #e9eef4
+            #dce6f1
         );
 
-    display:
-        flex;
+    border:3px solid #b7c5d7;
 
-    flex-direction:
-        column;
+    border-radius:14px;
 
-    align-items:
-        center;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
-    justify-content:
-        center;
+    font-weight:900;
 
-    text-align:
-        center;
+    color:#334155;
 
-    padding:
-        8px;
-
-    transform-style:
-        preserve-3d;
+    transform-style:preserve-3d;
 
     box-shadow:
+        0 9px 0 #94a7bd,
+        0 15px 18px rgba(0,0,0,.25);
 
-        0 8px 0
-        #b6c5d4,
-
-        0 12px 15px
-        rgba(30,50,70,.13),
-
-        inset 0 2px 0
-        white;
-
-    transition:
-        transform .3s,
-        box-shadow .3s;
+    transition:.3s;
 
 }
 
 .cell:hover {
 
     transform:
-        translateZ(7px)
-        translateY(-3px);
+        translateZ(8px)
+        scale(1.04);
 
-    box-shadow:
+}
 
-        0 11px 0
-        #b6c5d4,
+.cell::after {
 
-        0 18px 20px
-        rgba(30,50,70,.18),
+    content:"";
 
-        inset 0 2px 0
-        white;
+    position:absolute;
+
+    inset:5px;
+
+    border-radius:8px;
+
+    border:2px solid rgba(255,255,255,.8);
+
+    pointer-events:none;
 
 }
 
@@ -969,26 +679,13 @@ body {
     background:
         linear-gradient(
             145deg,
-            #e6faef,
-            #c8efd9
+            #bbf7d0,
+            #4ade80
         );
 
-    border-color:
-        #63bd8a;
+    border-color:#15803d;
 
-}
-
-.cell.special {
-
-    background:
-        linear-gradient(
-            145deg,
-            #fff9e4,
-            #ffe9a7
-        );
-
-    border-color:
-        #e7bd50;
+    color:#14532d;
 
 }
 
@@ -997,784 +694,540 @@ body {
     background:
         linear-gradient(
             145deg,
-            #f0eaff,
-            #dcd0ff
+            #fde68a,
+            #f59e0b
         );
 
-    border-color:
-        #9c86dd;
+    border-color:#b45309;
+
+    color:#78350f;
 
 }
-
-
-/* =========================================================
-   CASE ACTUELLE
-========================================================= */
-
-.cell.current {
-
-    border-color:
-        var(--blue);
-
-    box-shadow:
-
-        0 10px 0
-        #17417e,
-
-        0 0 0 5px
-        rgba(36,87,166,.15),
-
-        0 20px 30px
-        rgba(36,87,166,.25);
-
-    transform:
-        translateZ(10px);
-
-}
-
-
-/* =========================================================
-   ARRIVÉE
-========================================================= */
-
-.cell.arrival-highlight {
-
-    animation:
-        cellArrival
-        1s
-        ease-in-out
-        3;
-
-}
-
-@keyframes cellArrival {
-
-    0%,
-    100% {
-
-        transform:
-            translateZ(10px)
-            scale(1);
-
-    }
-
-    50% {
-
-        transform:
-            translateZ(30px)
-            scale(1.08);
-
-        box-shadow:
-            0 0 35px
-            rgba(242,189,69,.8);
-
-    }
-
-}
-
-
-/* =========================================================
-   CONTENU CASE
-========================================================= */
 
 .cell-number {
 
-    font-size:
-        9px;
+    position:absolute;
 
-    font-weight:
-        bold;
+    top:5px;
+    left:7px;
 
-    color:
-        #7d8998;
+    font-size:10px;
 
-}
-
-.cell-icon {
-
-    font-size:
-        28px;
-
-    margin:
-        4px 0;
-
-    transform:
-        translateZ(8px);
-
-    filter:
-        drop-shadow(
-            0 3px 2px
-            rgba(0,0,0,.18)
-        );
+    opacity:.65;
 
 }
-
-.cell-name {
-
-    font-size:
-        10px;
-
-    font-weight:
-        bold;
-
-    color:
-        #344054;
-
-}
-
 
 /* =========================================================
-   AVATARS SUR LE PLATEAU
+   PONT / HÔPITAL / DÉCORS
+========================================================= */
+
+.decor {
+
+    position:absolute;
+
+    transform-style:preserve-3d;
+
+    z-index:15;
+
+}
+
+/* -------- HÔPITAL -------- */
+
+.hospital {
+
+    left:25px;
+    top:35px;
+
+    width:155px;
+    height:110px;
+
+    background:#f7fafc;
+
+    border:5px solid #d2dae5;
+
+    border-radius:10px;
+
+    transform:translateZ(80px);
+
+    box-shadow:
+        0 12px 0 #aebaca,
+        0 18px 20px rgba(0,0,0,.25);
+
+}
+
+.hospital::before {
+
+    content:"🏥";
+
+    position:absolute;
+
+    font-size:65px;
+
+    left:40px;
+    top:15px;
+
+}
+
+.hospital::after {
+
+    content:"HÔPITAL";
+
+    position:absolute;
+
+    bottom:-30px;
+
+    left:25px;
+
+    background:#dc2626;
+
+    color:white;
+
+    padding:5px 10px;
+
+    border-radius:6px;
+
+    font-size:12px;
+
+    font-weight:bold;
+
+}
+
+/* -------- CABINET -------- */
+
+.doctor-office {
+
+    right:25px;
+    top:50px;
+
+    width:135px;
+    height:100px;
+
+    background:#fefefe;
+
+    border:5px solid #d6dee8;
+
+    border-radius:9px;
+
+    transform:translateZ(75px);
+
+    box-shadow:
+        0 10px 0 #aebaca,
+        0 17px 20px rgba(0,0,0,.25);
+
+}
+
+.doctor-office::before {
+
+    content:"🩺";
+
+    position:absolute;
+
+    font-size:52px;
+
+    left:38px;
+    top:17px;
+
+}
+
+.doctor-office::after {
+
+    content:"CABINET";
+
+    position:absolute;
+
+    bottom:-27px;
+
+    left:30px;
+
+    background:#2563eb;
+
+    color:white;
+
+    padding:5px 8px;
+
+    border-radius:5px;
+
+    font-size:11px;
+
+    font-weight:bold;
+
+}
+
+/* -------- PHARMACIE -------- */
+
+.pharmacy {
+
+    left:28px;
+    bottom:30px;
+
+    width:140px;
+    height:90px;
+
+    background:#f8fafc;
+
+    border:5px solid #cbd5e1;
+
+    border-radius:10px;
+
+    transform:translateZ(70px);
+
+    box-shadow:
+        0 10px 0 #a7b4c4,
+        0 16px 20px rgba(0,0,0,.25);
+
+}
+
+.pharmacy::before {
+
+    content:"💊";
+
+    position:absolute;
+
+    font-size:50px;
+
+    left:42px;
+    top:12px;
+
+}
+
+.pharmacy::after {
+
+    content:"PHARMACIE";
+
+    position:absolute;
+
+    bottom:-27px;
+
+    left:23px;
+
+    background:#16a34a;
+
+    color:white;
+
+    padding:5px 8px;
+
+    border-radius:5px;
+
+    font-size:11px;
+
+    font-weight:bold;
+
+}
+
+/* -------- LABORATOIRE -------- */
+
+.laboratory {
+
+    right:30px;
+    bottom:35px;
+
+    width:140px;
+    height:90px;
+
+    background:#eef6ff;
+
+    border:5px solid #bfd0e4;
+
+    border-radius:10px;
+
+    transform:translateZ(70px);
+
+    box-shadow:
+        0 10px 0 #99abc0,
+        0 16px 20px rgba(0,0,0,.25);
+
+}
+
+.laboratory::before {
+
+    content:"🔬";
+
+    position:absolute;
+
+    font-size:50px;
+
+    left:43px;
+    top:12px;
+
+}
+
+.laboratory::after {
+
+    content:"LABORATOIRE";
+
+    position:absolute;
+
+    bottom:-27px;
+
+    left:15px;
+
+    background:#7c3aed;
+
+    color:white;
+
+    padding:5px 7px;
+
+    border-radius:5px;
+
+    font-size:10px;
+
+    font-weight:bold;
+
+}
+
+/* =========================================================
+   ARBRES
+========================================================= */
+
+.tree {
+
+    width:45px;
+    height:80px;
+
+    transform:translateZ(60px);
+
+}
+
+.tree::before {
+
+    content:"";
+
+    position:absolute;
+
+    width:22px;
+    height:45px;
+
+    background:#704b2a;
+
+    left:12px;
+    bottom:0;
+
+    border-radius:5px;
+
+    box-shadow:0 7px 0 #50351e;
+
+}
+
+.tree::after {
+
+    content:"🌳";
+
+    position:absolute;
+
+    font-size:48px;
+
+    top:-5px;
+
+}
+
+/* Positions */
+
+.tree1 {
+    left:210px;
+    top:25px;
+}
+
+.tree2 {
+    left:310px;
+    bottom:20px;
+}
+
+.tree3 {
+    right:215px;
+    top:20px;
+}
+
+.tree4 {
+    right:300px;
+    bottom:20px;
+}
+
+/* =========================================================
+   BANCS
+========================================================= */
+
+.bench {
+
+    width:75px;
+    height:30px;
+
+    background:#8b5e34;
+
+    border-radius:5px;
+
+    transform:translateZ(45px);
+
+    box-shadow:
+        0 10px 0 #57381f;
+
+}
+
+.bench::before,
+.bench::after {
+
+    content:"";
+
+    position:absolute;
+
+    bottom:-17px;
+
+    width:8px;
+
+    height:20px;
+
+    background:#3f2b1c;
+
+}
+
+.bench::before {
+    left:12px;
+}
+
+.bench::after {
+    right:12px;
+}
+
+/* =========================================================
+   LAMPADAIRES
+========================================================= */
+
+.lamp {
+
+    width:15px;
+    height:100px;
+
+    background:#343b45;
+
+    transform:translateZ(70px);
+
+}
+
+.lamp::before {
+
+    content:"💡";
+
+    position:absolute;
+
+    top:-25px;
+
+    left:-9px;
+
+    font-size:28px;
+
+}
+
+/* =========================================================
+   PIONS / AVATARS
 ========================================================= */
 
 .pawns {
 
-    position:
-        absolute;
+    position:absolute;
 
-    bottom:
-        4px;
+    inset:0;
 
-    display:
-        flex;
+    pointer-events:none;
 
-    align-items:
-        flex-end;
+    transform-style:preserve-3d;
 
-    justify-content:
-        center;
-
-    z-index:
-        20;
-
-    transform:
-        translateZ(30px);
+    z-index:100;
 
 }
-
-
-/*
-   Avatar
-*/
 
 .pawn {
 
-    width:
-        39px;
+    position:absolute;
 
-    height:
-        39px;
-
-    margin-left:
-        -6px;
-
-    border-radius:
-        50%;
-
-    background:
-        linear-gradient(
-            145deg,
-            #ffffff,
-            #e8edf3
-        );
-
-    border:
-        3px solid
-        white;
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        center;
-
-    font-size:
-        25px;
-
-    box-shadow:
-
-        0 7px 10px
-        rgba(0,0,0,.3),
-
-        inset 0 3px 4px
-        rgba(255,255,255,.8);
+    font-size:48px;
 
     transform:
-        translateZ(20px);
+        translate(-50%,-50%)
+        translateZ(90px);
 
-    position:
-        relative;
+    transition:
+        left .5s cubic-bezier(.2,.8,.2,1),
+        top .5s cubic-bezier(.2,.8,.2,1);
+
+    filter:
+        drop-shadow(0 8px 4px rgba(0,0,0,.4));
 
 }
-
-
-/*
-   Anneau coloré
-*/
 
 .pawn::after {
 
-    content:
-        "";
+    content:"";
 
-    position:
-        absolute;
+    position:absolute;
 
-    inset:
-        -5px;
+    left:50%;
 
-    border-radius:
-        50%;
+    bottom:-8px;
 
-    border:
-        3px solid
-        var(--pawn-color);
+    transform:translateX(-50%);
+
+    width:35px;
+    height:12px;
+
+    background:rgba(0,0,0,.3);
+
+    border-radius:50%;
+
+    filter:blur(3px);
 
 }
-
-
-/*
-   Avatar qui bouge
-*/
 
 .pawn.moving {
 
     animation:
-        avatarJump
-        .48s
+        pawnJump .55s
         ease-in-out;
 
 }
 
-@keyframes avatarJump {
+@keyframes pawnJump {
 
     0% {
-
         transform:
-            translateZ(20px)
-            translateY(0)
-            rotate(0);
-
+            translate(-50%,-50%)
+            translateZ(90px)
+            scale(1);
     }
 
-    35% {
-
+    50% {
         transform:
-            translateZ(55px)
-            translateY(-30px)
-            rotate(-7deg)
-            scale(1.12);
-
-    }
-
-    65% {
-
-        transform:
-            translateZ(40px)
-            translateY(-12px)
-            rotate(6deg)
-            scale(1.06);
-
+            translate(-50%,-75%)
+            translateZ(150px)
+            scale(1.25);
     }
 
     100% {
-
         transform:
-            translateZ(20px)
-            translateY(0)
-            rotate(0);
-
+            translate(-50%,-50%)
+            translateZ(90px)
+            scale(1);
     }
 
 }
 
-
 /* =========================================================
-   BOUTON PIOCHER
+   ANIMATION VICTOIRE
 ========================================================= */
 
-#questionButtonContainer {
-
-    text-align:
-        center;
-
-    margin-top:
-        25px;
-
-}
-
-
-/* =========================================================
-   QUESTION
-========================================================= */
-
-#questionScreen {
-
-    background:
-        radial-gradient(
-            circle,
-            #ffffff,
-            #e8eef5
-        );
-
-}
-
-.question-box {
-
-    width:
-        min(900px,100%);
-
-    background:
-        white;
-
-    padding:
-        45px;
-
-    border-radius:
-        28px;
-
-    box-shadow:
-        0 25px 60px
-        rgba(20,40,70,.18);
-
-}
-
-.question-box h1 {
-
-    font-size:
-        clamp(25px,4vw,38px);
-
-    line-height:
-        1.35;
-
-    color:
-        #202938;
-
-    margin:
-        0 0 30px;
-
-}
-
-.options {
-
-    display:
-        grid;
-
-    gap:
-        14px;
-
-}
-
-.option {
-
-    border:
-        2px solid
-        #dce2eb;
-
-    background:
-        white;
-
-    padding:
-        17px;
-
-    border-radius:
-        14px;
-
-    cursor:
-        pointer;
-
-    text-align:
-        left;
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    gap:
-        15px;
-
-    font-size:
-        17px;
-
-    transition:
-        .2s;
-
-}
-
-.option:hover {
-
-    background:
-        #edf4ff;
-
-    border-color:
-        var(--blue);
-
-}
-
-.option:disabled {
-
-    cursor:
-        default;
-
-}
-
-.option-letter {
-
-    width:
-        42px;
-
-    height:
-        42px;
-
-    flex-shrink:
-        0;
-
-    border-radius:
-        50%;
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        center;
-
-    background:
-        #edf1f7;
-
-    font-weight:
-        bold;
-
-    color:
-        var(--dark-blue);
-
-}
-
-.option.correct {
-
-    background:
-        #e6f8ef;
-
-    border-color:
-        #2db276;
-
-}
-
-.option.correct
-.option-letter {
-
-    background:
-        #2db276;
-
-    color:
-        white;
-
-}
-
-.option.wrong {
-
-    background:
-        #fff0f0;
-
-    border-color:
-        #df5757;
-
-}
-
-.option.wrong
-.option-letter {
-
-    background:
-        #df5757;
-
-    color:
-        white;
-
-}
-
-.feedback {
-
-    margin-top:
-        25px;
-
-    padding:
-        20px;
-
-    border-radius:
-        15px;
-
-    line-height:
-        1.5;
-
-}
-
-.feedback.good {
-
-    background:
-        #e7f8ef;
-
-    border:
-        2px solid
-        #a0dabb;
-
-}
-
-.feedback.bad {
-
-    background:
-        #fff0f0;
-
-    border:
-        2px solid
-        #e7aaaa;
-
-}
-
-
-/* =========================================================
-   PLATEAU APRÈS QUESTION
-========================================================= */
-
-#boardAfterQuestionScreen {
-
-    background:
-        radial-gradient(
-            circle,
-            #ffffff,
-            #dfe8f3
-        );
-
-}
-
-.board-wrapper {
-
-    width:
-        min(1250px,100%);
-
-}
-
-.board-text {
-
-    text-align:
-        center;
-
-    font-size:
-        27px;
-
-    font-weight:
-        bold;
-
-    color:
-        var(--dark-blue);
-
-    margin-bottom:
-        20px;
-
-}
-
-
-/* =========================================================
-   BOUTON FIN TOUR
-========================================================= */
-
-.finish-container {
-
-    text-align:
-        center;
-
-    margin-top:
-        30px;
-
-}
-
-
-/* =========================================================
-   FIN TOUR
-========================================================= */
-
-#endTurnScreen {
-
-    background:
-        radial-gradient(
-            circle,
-            #ffffff,
-            #e1eaf4
-        );
-
-}
-
-.end-turn-box {
-
-    width:
-        min(600px,100%);
-
-    background:
-        white;
-
-    padding:
-        50px 35px;
-
-    border-radius:
-        30px;
-
-    text-align:
-        center;
-
-    box-shadow:
-        0 25px 60px
-        rgba(20,40,70,.18);
-
-}
-
-.end-turn-box h1 {
-
-    color:
-        var(--dark-blue);
-
-    font-size:
-        42px;
-
-}
-
-.next-player-label {
-
-    color:
-        #697386;
-
-    font-size:
-        14px;
-
-    font-weight:
-        bold;
-
-    text-transform:
-        uppercase;
-
-    margin-top:
-        30px;
-
-}
-
-.next-player-name {
-
-    font-size:
-        35px;
-
-    font-weight:
-        bold;
-
-    color:
-        var(--blue);
-
-    margin:
-        8px 0 30px;
-
-}
-
-
-/* =========================================================
-   VICTOIRE
-========================================================= */
-
-#winnerScreen {
-
-    background:
-        radial-gradient(
-            circle at center,
-            #fff9dd,
-            #dfe9f5
-        );
-
-    overflow:
-        hidden;
-
-}
-
-.winner-scene {
-
-    width:
-        min(1250px,100%);
-
-    text-align:
-        center;
-
-}
-
-.winner-title {
-
-    font-size:
-        clamp(35px,6vw,60px);
-
-    color:
-        var(--dark-blue);
-
-    margin:
-        0 0 5px;
-
-}
-
-.winner-name {
-
-    font-size:
-        clamp(28px,5vw,48px);
-
-    color:
-        #d38e00;
-
-    font-weight:
-        bold;
-
-    margin:
-        5px 0 30px;
-
-}
-
-
-/*
-   Plateau de victoire
-*/
-
-.winner-board-stage {
-
-    perspective:
-        1300px;
-
-    padding:
-        30px;
-
-}
-
-.winner-board {
-
-    position:
-        relative;
-
-    transform-style:
-        preserve-3d;
+.scene.victory {
 
     animation:
-        victoryBoard
-        5s
-        ease-in-out
-        infinite;
+        victorySpin 4.5s
+        cubic-bezier(.2,.7,.2,1);
 
 }
 
-@keyframes victoryBoard {
+@keyframes victorySpin {
 
     0% {
 
         transform:
-            rotateX(14deg)
-            rotateY(-5deg)
-            rotateZ(0)
+            rotateX(57deg)
+            rotateZ(-7deg)
             scale(1);
 
     }
@@ -1782,237 +1235,119 @@ body {
     20% {
 
         transform:
-            rotateX(20deg)
-            rotateY(12deg)
-            rotateZ(-2deg)
-            scale(1.02);
+            rotateX(48deg)
+            rotateZ(65deg)
+            scale(1.05);
 
     }
 
-    40% {
+    45% {
 
         transform:
-            rotateX(8deg)
-            rotateY(-14deg)
-            rotateZ(2deg)
-            scale(1.04);
+            rotateX(65deg)
+            rotateZ(180deg)
+            scale(1.12);
 
     }
 
-    60% {
+    70% {
 
         transform:
-            rotateX(18deg)
-            rotateY(10deg)
-            rotateZ(-1deg)
-            scale(1.02);
-
-    }
-
-    80% {
-
-        transform:
-            rotateX(10deg)
-            rotateY(-8deg)
-            rotateZ(1deg)
-            scale(1.04);
+            rotateX(48deg)
+            rotateZ(300deg)
+            scale(1.06);
 
     }
 
     100% {
 
         transform:
-            rotateX(14deg)
-            rotateY(-5deg)
-            rotateZ(0)
+            rotateX(57deg)
+            rotateZ(360deg)
             scale(1);
 
     }
 
 }
 
-.victory-glow {
+/* =========================================================
+   FIN
+========================================================= */
 
-    position:
-        absolute;
+.end-screen {
 
-    inset:
-        -80px;
+    flex-direction:column;
 
-    border-radius:
-        50%;
+    text-align:center;
 
     background:
         radial-gradient(
-            circle,
-            rgba(255,215,80,.4),
-            transparent 65%
+            circle at center,
+            #fff7c7,
+            #eaf2ff 55%,
+            #d8e5fa
         );
 
-    animation:
-        glowPulse
-        2s
-        infinite;
-
-    pointer-events:
-        none;
-
 }
 
-@keyframes glowPulse {
+.winner-crown {
 
-    0%,
-    100% {
-
-        opacity:
-            .35;
-
-        transform:
-            scale(.9);
-
-    }
-
-    50% {
-
-        opacity:
-            .85;
-
-        transform:
-            scale(1.1);
-
-    }
-
-}
-
-
-/*
-   Avatar gagnant
-*/
-
-.winner-avatar {
-
-    font-size:
-        80px;
-
-    position:
-        relative;
-
-    z-index:
-        50;
-
-    display:
-        inline-flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        center;
-
-    width:
-        120px;
-
-    height:
-        120px;
-
-    border-radius:
-        50%;
-
-    background:
-        white;
-
-    border:
-        8px solid
-        #f2bd45;
-
-    box-shadow:
-        0 0 0 8px
-        rgba(242,189,69,.2),
-
-        0 20px 40px
-        rgba(0,0,0,.25);
+    font-size:90px;
 
     animation:
-        winnerBounce
-        1s
+        crown 1s
         ease-in-out
-        infinite;
+        infinite
+        alternate;
 
 }
 
-@keyframes winnerBounce {
+@keyframes crown {
 
-    0%,
-    100% {
-
+    from {
         transform:
             translateY(0)
-            scale(1)
-            rotate(-3deg);
-
+            rotate(-5deg);
     }
 
-    50% {
-
+    to {
         transform:
-            translateY(-25px)
-            scale(1.12)
-            rotate(3deg);
-
+            translateY(-15px)
+            rotate(5deg);
     }
 
 }
 
+.winner-avatar {
+    font-size:125px;
+}
 
-/* =========================================================
-   SCORES
-========================================================= */
+.winner-title {
 
-.scores {
+    font-size:
+        clamp(45px,8vw,85px);
 
-    width:
-        min(550px,100%);
+    font-weight:1000;
 
-    margin:
-        30px auto;
+    color:#f59e0b;
 
-    display:
-        grid;
-
-    gap:
-        9px;
+    text-shadow:
+        0 5px 0 #b45309;
 
 }
 
-.score {
+.winner-name {
 
-    display:
-        flex;
+    font-size:
+        clamp(35px,6vw,65px);
 
-    justify-content:
-        space-between;
+    font-weight:900;
 
-    align-items:
-        center;
+    color:var(--dark-blue);
 
-    padding:
-        14px 18px;
-
-    border-radius:
-        12px;
-
-    background:
-        rgba(255,255,255,.85);
-
-    box-shadow:
-        0 4px 10px
-        rgba(30,50,70,.08);
-
-    font-weight:
-        bold;
+    margin-bottom:25px;
 
 }
-
 
 /* =========================================================
    CONFETTIS
@@ -2020,24 +1355,27 @@ body {
 
 .confetti {
 
-    position:
-        fixed;
+    position:fixed;
 
-    top:
-        -20px;
+    inset:0;
 
-    width:
-        12px;
+    pointer-events:none;
 
-    height:
-        20px;
+    overflow:hidden;
 
-    z-index:
-        100;
+}
+
+.confetti-piece {
+
+    position:absolute;
+
+    top:-20px;
+
+    width:10px;
+    height:20px;
 
     animation:
         confettiFall
-        4s
         linear
         forwards;
 
@@ -2045,156 +1383,79 @@ body {
 
 @keyframes confettiFall {
 
-    0% {
-
-        transform:
-            translateY(-20px)
-            rotate(0);
-
-        opacity:
-            1;
-
-    }
-
-    100% {
+    to {
 
         transform:
             translateY(110vh)
             rotate(720deg);
 
-        opacity:
-            0;
-
     }
 
 }
-
 
 /* =========================================================
    RESPONSIVE
 ========================================================= */
 
-@media(max-width:1050px) {
+@media(max-width:800px) {
 
-    .dice-and-board {
+    .board-wrapper {
+        min-height:500px;
+    }
 
-        grid-template-columns:
-            1fr;
+    .scene {
+
+        width:900px;
+        height:560px;
+
+        transform:
+            rotateX(58deg)
+            rotateZ(-6deg)
+            scale(.78);
 
     }
 
-    .board-stage {
+    .board-path {
 
-        padding:
-            10px;
-
-    }
-
-    .dice {
-
-        width:
-            125px;
-
-        height:
-            125px;
-
-        font-size:
-            80px;
+        left:75px;
+        right:75px;
 
     }
 
-}
+    .hospital,
+    .doctor-office,
+    .pharmacy,
+    .laboratory {
 
-
-@media(max-width:700px) {
-
-    .players-list {
-
-        grid-template-columns:
-            1fr;
-
-    }
-
-    .players-box,
-    .question-box {
-
-        padding:
-            25px;
-
-    }
-
-    .board,
-    .board-3d .board {
-
-        grid-template-columns:
-            repeat(4,1fr);
-
-        gap:
-            7px;
-
-        padding:
-            12px;
-
-    }
-
-    .cell {
-
-        min-height:
-            82px;
-
-    }
-
-    .cell-icon {
-
-        font-size:
-            22px;
-
-    }
-
-    .cell-name {
-
-        font-size:
-            8px;
-
-    }
-
-    .pawn {
-
-        width:
-            31px;
-
-        height:
-            31px;
-
-        font-size:
-            20px;
+        transform:
+            translateZ(65px)
+            scale(.8);
 
     }
 
 }
 
+/* =========================================================
+   PETIT INDICATEUR
+========================================================= */
 
-@media(max-width:480px) {
+.board-footer {
 
-    .board,
-    .board-3d .board {
+    color:#40516c;
 
-        grid-template-columns:
-            repeat(3,1fr);
+    background:rgba(255,255,255,.75);
 
-    }
+    padding:6px 14px;
 
-    .cell {
+    border-radius:10px;
 
-        min-height:
-            74px;
+    font-size:13px;
 
-    }
+    margin-top:5px;
 
 }
 
 </style>
-
 </head>
 
 
@@ -2205,137 +1466,87 @@ body {
      INSCRIPTION
 ====================================================== -->
 
-<section
-    id="playersScreen"
-    class="screen active"
->
+<section id="setupScreen" class="screen active">
 
-<div class="players-box">
+<div class="setup-container">
 
-    <h1>
-        🩺 Parcours de soins
-    </h1>
+<div class="logo">🏥🎲</div>
 
-    <p>
-        Inscris les joueurs et choisis un avatar pour chacun.
-    </p>
+<h1>Le parcours de soins</h1>
 
+<p class="subtitle">
+Choisissez votre joueur et votre avatar.
+Chaque avatar ne peut être choisi qu'une seule fois.
+</p>
 
-    <div
-        id="playersList"
-        class="players-list"
-    ></div>
+<div id="playersList" class="players-list"></div>
 
+<div class="setup-buttons">
 
-    <button
-        class="main-button"
-        onclick="startGame()"
-    >
-        🎮 COMMENCER LA PARTIE
-    </button>
+<button
+class="btn btn-secondary"
+onclick="addPlayer()">
+＋ Ajouter un joueur
+</button>
+
+<button
+class="btn btn-primary"
+onclick="startGame()">
+🎮 Commencer la partie
+</button>
+
+</div>
+
+<div id="setupError" class="error"></div>
 
 </div>
 
 </section>
-
 
 
 <!-- ======================================================
-     DÉ + PLATEAU
+     DÉ
 ====================================================== -->
 
-<section
-    id="diceScreen"
-    class="screen"
->
+<section id="turnScreen"
+class="screen turn-screen">
 
-<div class="dice-game-screen">
+<div
+id="turnAvatar"
+class="turn-avatar">
+🤖
+</div>
 
+<div class="turn-label">
+C'est au tour de
+</div>
 
-    <div class="dice-header">
+<div
+id="turnName"
+class="turn-name">
+Joueur
+</div>
 
-        <div
-            id="playerCircle"
-            class="player-circle"
-        ></div>
+<div class="dice-area">
 
-        <h1
-            id="dicePlayerName"
-        ></h1>
+<div
+id="dice"
+class="dice">
+?
+</div>
 
-    </div>
+<button
+id="rollButton"
+class="btn btn-primary"
+onclick="rollDice()">
 
+🎲 Lancer le dé
 
-    <div class="dice-and-board">
-
-
-        <div class="dice-panel">
-
-            <div
-                id="dice"
-                class="dice"
-            >
-                ⚀
-            </div>
-
-
-            <button
-                id="rollButton"
-                class="main-button"
-                onclick="rollDice()"
-            >
-                🎲 LANCER LE DÉ
-            </button>
-
-
-            <div
-                id="diceInstruction"
-                class="dice-instruction"
-            >
-                Lance le dé pour commencer ton tour.
-            </div>
-
-
-            <div
-                id="questionButtonContainer"
-                style="display:none;"
-            >
-
-                <button
-                    class="main-button"
-                    onclick="goToQuestion()"
-                >
-                    🎴 PIOCHER UNE CARTE
-                </button>
-
-            </div>
-
-        </div>
-
-
-
-        <div class="board-stage">
-
-            <div
-                id="board3D"
-                class="board-3d"
-            >
-
-                <div
-                    id="board"
-                    class="board"
-                ></div>
-
-            </div>
-
-        </div>
-
-    </div>
+</button>
 
 </div>
 
 </section>
-
 
 
 <!-- ======================================================
@@ -2343,133 +1554,207 @@ body {
 ====================================================== -->
 
 <section
-    id="questionScreen"
-    class="screen"
->
+id="questionScreen"
+class="screen question-screen">
 
-<div class="question-box">
+<div class="question-card">
 
-    <h1
-        id="questionText"
-    ></h1>
+<div class="question-header">
 
+<div
+id="questionNumber"
+class="question-number">
+Question
+</div>
 
-    <div
-        id="options"
-        class="options"
-    ></div>
+<div
+id="questionPlayer"
+class="question-player">
+Joueur
+</div>
 
+</div>
 
-    <div
-        id="feedback"
-        class="feedback"
-        style="display:none"
-    ></div>
+<div
+id="questionText"
+class="question-text">
+</div>
+
+<div
+id="answers"
+class="answers">
+</div>
+
+<div
+id="feedback"
+class="feedback">
+</div>
 
 </div>
 
 </section>
 
 
-
 <!-- ======================================================
-     PLATEAU APRÈS QUESTION
+     PLATEAU
 ====================================================== -->
 
 <section
-    id="boardAfterQuestionScreen"
-    class="screen"
->
+id="boardScreen"
+class="screen board-screen">
+
+
+<div class="board-header">
+
+<div class="current-player-info">
+
+<div
+id="boardAvatar"
+class="current-mini-avatar">
+🤖
+</div>
+
+<div>
+
+<div
+style="
+font-size:11px;
+color:#718096;">
+TOUR DE
+</div>
+
+<div id="boardPlayerName">
+Joueur
+</div>
+
+</div>
+
+</div>
+
+
+<div>
+
+Case :
+<strong id="positionText">
+0
+</strong>
+
+</div>
+
+</div>
+
 
 <div class="board-wrapper">
 
-    <div
-        id="boardText"
-        class="board-text"
-    ></div>
+<div
+id="scene"
+class="scene">
 
 
-    <div class="board-stage">
-
-        <div
-            id="boardAfter3D"
-            class="board-3d"
-        >
-
-            <div
-                id="boardAfterQuestion"
-                class="board"
-            ></div>
-
-        </div>
-
-    </div>
+<div
+id="board"
+class="board">
 
 
-    <div class="finish-container">
+<!-- SOL -->
 
-        <button
-            id="finishTurnButton"
-            class="main-button"
-            onclick="finishBoard()"
-            disabled
-        >
-            TERMINER LE TOUR
-        </button>
+<div class="ground"></div>
 
-    </div>
+
+<!-- ROUTES -->
+
+<div class="road road-horizontal"></div>
+
+<div class="road road-vertical"></div>
+
+
+<!-- DÉCORS -->
+
+<div class="decor hospital"></div>
+
+<div class="decor doctor-office"></div>
+
+<div class="decor pharmacy"></div>
+
+<div class="decor laboratory"></div>
+
+
+<!-- ARBRES -->
+
+<div class="decor tree tree1"></div>
+
+<div class="decor tree tree2"></div>
+
+<div class="decor tree tree3"></div>
+
+<div class="decor tree tree4"></div>
+
+
+<!-- BANCS -->
+
+<div
+class="decor bench"
+style="
+left:350px;
+top:25px;">
+</div>
+
+<div
+class="decor bench"
+style="
+right:350px;
+bottom:25px;">
+</div>
+
+
+<!-- LAMPADAIRES -->
+
+<div
+class="decor lamp"
+style="
+left:205px;
+top:155px;">
+</div>
+
+<div
+class="decor lamp"
+style="
+right:205px;
+bottom:150px;">
+</div>
+
+
+<!-- PARCOURS -->
+
+<div
+id="boardPath"
+class="board-path">
+</div>
+
+
+<!-- PIONS -->
+
+<div
+id="pawns"
+class="pawns">
+</div>
+
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="board-footer">
+
+Bonne réponse = déplacement du nombre de cases obtenu au dé.
+Mauvaise réponse = le joueur reste sur sa case.
 
 </div>
 
 </section>
-
-
-
-<!-- ======================================================
-     FIN TOUR
-====================================================== -->
-
-<section
-    id="endTurnScreen"
-    class="screen"
->
-
-<div class="end-turn-box">
-
-    <h1>
-        Tour terminé
-    </h1>
-
-    <p>
-        <strong id="finishedPlayer"></strong>
-        a terminé son tour.
-    </p>
-
-
-    <div
-        class="next-player-label"
-    >
-        Prochain joueur
-    </div>
-
-
-    <div
-        id="nextPlayerName"
-        class="next-player-name"
-    ></div>
-
-
-    <button
-        class="main-button"
-        onclick="startNextTurn()"
-    >
-        🎲 COMMENCER LE TOUR
-    </button>
-
-</div>
-
-</section>
-
 
 
 <!-- ======================================================
@@ -2477,65 +1762,43 @@ body {
 ====================================================== -->
 
 <section
-    id="winnerScreen"
-    class="screen"
->
+id="endScreen"
+class="screen end-screen">
 
-<div class="winner-scene">
-
-    <h1 class="winner-title">
-        🏆 VICTOIRE !
-    </h1>
-
-
-    <div
-        id="winnerName"
-        class="winner-name"
-    ></div>
-
-
-    <div class="winner-board-stage">
-
-        <div
-            id="winnerBoard"
-            class="winner-board"
-        >
-
-            <div class="victory-glow"></div>
-
-            <div
-                id="winnerBoardContent"
-                class="board"
-            ></div>
-
-        </div>
-
-    </div>
-
-
-    <div
-        id="winnerAvatar"
-        class="winner-avatar"
-    ></div>
-
-
-    <div
-        id="scores"
-        class="scores"
-    ></div>
-
-
-    <button
-        class="main-button"
-        onclick="newGame()"
-    >
-        🔄 NOUVELLE PARTIE
-    </button>
-
+<div
+id="confetti"
+class="confetti">
 </div>
 
-</section>
+<div class="winner-crown">
+👑
+</div>
 
+<div
+id="winnerAvatar"
+class="winner-avatar">
+🤖
+</div>
+
+<div class="winner-title">
+VICTOIRE !
+</div>
+
+<div
+id="winnerName"
+class="winner-name">
+Joueur
+</div>
+
+<button
+class="btn btn-primary"
+onclick="location.reload()">
+
+🔄 Nouvelle partie
+
+</button>
+
+</section>
 
 
 <script>
@@ -2546,34 +1809,16 @@ body {
 
 const avatars = [
 
-    "🧑‍⚕️",
-    "👨‍⚕️",
-    "👩‍⚕️",
-    "🧑‍🎓",
-    "👨‍🎓",
-    "👩‍🎓",
-    "🧑‍🔬",
-    "👨‍🔬",
-    "👩‍🔬",
-    "🧑‍💼",
-    "👨‍💼",
-    "👩‍💼"
-
-];
-
-
-/* =========================================================
-   COULEURS JOUEURS
-========================================================= */
-
-const colors = [
-
-    "#e74c3c",
-    "#2980b9",
-    "#27ae60",
-    "#8e44ad",
-    "#f39c12",
-    "#16a085"
+{emoji:"🤖",name:"Robot"},
+{emoji:"👽",name:"Extra-terrestre"},
+{emoji:"🦊",name:"Renard"},
+{emoji:"🐼",name:"Panda"},
+{emoji:"🦁",name:"Lion"},
+{emoji:"🐸",name:"Grenouille"},
+{emoji:"🐙",name:"Poulpe"},
+{emoji:"🦄",name:"Licorne"},
+{emoji:"🚀",name:"Astronaute"},
+{emoji:"🧙",name:"Magicien"}
 
 ];
 
@@ -2582,1110 +1827,654 @@ const colors = [
    VARIABLES
 ========================================================= */
 
-let players = [];
+let players=[];
 
-let currentPlayerIndex = 0;
+let playerForms=[];
 
-let currentPlayer = null;
+let currentPlayerIndex=0;
 
-let diceValue = 0;
+let diceValue=0;
 
-let currentCard = null;
+let currentQuestion=null;
 
-let answered = false;
+let usedQuestions=[];
 
-let lastAnswerCorrect = false;
-
-let remainingCards = [];
-
-
-/* =========================================================
-   DÉ
-========================================================= */
-
-const diceFaces = [
-
-    "⚀",
-    "⚁",
-    "⚂",
-    "⚃",
-    "⚄",
-    "⚅"
-
-];
-
-
-/* =========================================================
-   PLATEAU
-========================================================= */
-
-const boardCells = [
-
-    {
-        icon:"🏠",
-        name:"Départ",
-        type:"start"
-    },
-
-    {
-        icon:"👨‍⚕️",
-        name:"Médecin traitant"
-    },
-
-    {
-        icon:"💡",
-        name:"Prévention",
-        type:"special"
-    },
-
-    {
-        icon:"🩺",
-        name:"Consultation"
-    },
-
-    {
-        icon:"🔬",
-        name:"Spécialiste"
-    },
-
-    {
-        icon:"💊",
-        name:"Pharmacie"
-    },
-
-    {
-        icon:"💶",
-        name:"Remboursement",
-        type:"special"
-    },
-
-    {
-        icon:"👨‍⚕️",
-        name:"Médecin traitant"
-    },
-
-    {
-        icon:"🩺",
-        name:"Consultation"
-    },
-
-    {
-        icon:"🔬",
-        name:"Spécialiste"
-    },
-
-    {
-        icon:"🚑",
-        name:"Urgences",
-        type:"special"
-    },
-
-    {
-        icon:"💊",
-        name:"Pharmacie"
-    },
-
-    {
-        icon:"💶",
-        name:"Remboursement",
-        type:"special"
-    },
-
-    {
-        icon:"👨‍⚕️",
-        name:"Médecin traitant"
-    },
-
-    {
-        icon:"🩺",
-        name:"Consultation"
-    },
-
-    {
-        icon:"🔬",
-        name:"Spécialiste"
-    },
-
-    {
-        icon:"❤️",
-        name:"Prévention",
-        type:"special"
-    },
-
-    {
-        icon:"🩺",
-        name:"Consultation"
-    },
-
-    {
-        icon:"💶",
-        name:"Remboursement",
-        type:"special"
-    },
-
-    {
-        icon:"👨‍⚕️",
-        name:"Médecin traitant"
-    },
-
-    {
-        icon:"🔬",
-        name:"Spécialiste"
-    },
-
-    {
-        icon:"💊",
-        name:"Pharmacie"
-    },
-
-    {
-        icon:"🩺",
-        name:"Consultation"
-    },
-
-    {
-        icon:"🏆",
-        name:"Arrivée",
-        type:"finish"
-    }
-
-];
+let questions=[];
 
 
 /* =========================================================
    QUESTIONS
 ========================================================= */
 
-const cards = [
+const questionBank=[
 
 {
-question:
-"Quel professionnel joue généralement un rôle central dans le parcours de soins coordonné ?",
-
-options:[
-{text:"Le pharmacien",correct:false},
-{text:"Le médecin traitant",correct:true},
-{text:"L'Assurance Maladie",correct:false},
-{text:"Le spécialiste",correct:false}
+q:"Dans le parcours de soins coordonnés, vers quel professionnel se tourne-t-on généralement en premier ?",
+answers:[
+"Son médecin traitant",
+"Un spécialiste choisi au hasard",
+"L'hôpital",
+"La pharmacie"
 ],
-
-explanation:
-"Le médecin traitant joue un rôle central dans le suivi et la coordination des soins."
+correct:0
 },
 
 {
-question:
-"Pourquoi le médecin traitant peut-il orienter son patient vers un spécialiste ?",
-
-options:[
-{text:"Pour rendre automatiquement la consultation gratuite",correct:false},
-{text:"Pour coordonner et adapter les soins aux besoins du patient",correct:true},
-{text:"Pour remplacer le spécialiste",correct:false},
-{text:"Pour choisir lui-même le montant du remboursement",correct:false}
+q:"Quel est le rôle principal du médecin traitant ?",
+answers:[
+"Coordonner et orienter le parcours de soins",
+"Rembourser les consultations",
+"Vendre les médicaments",
+"Fixer les tarifs des hôpitaux"
 ],
-
-explanation:
-"Il coordonne le parcours et peut orienter le patient vers le professionnel adapté."
+correct:0
 },
 
 {
-question:
-"Que peut-il se passer lorsqu'un patient consulte un spécialiste sans respecter le parcours de soins coordonné ?",
-
-options:[
-{text:"La consultation est automatiquement interdite",correct:false},
-{text:"Le patient est automatiquement hospitalisé",correct:false},
-{text:"Le remboursement peut être moins favorable",correct:true},
-{text:"La consultation devient automatiquement gratuite",correct:false}
+q:"Pourquoi est-il conseillé de déclarer un médecin traitant ?",
+answers:[
+"Pour bénéficier du parcours de soins coordonnés",
+"Pour ne plus payer aucune consultation",
+"Pour obtenir automatiquement tous les médicaments gratuitement",
+"Pour éviter toute consultation chez un spécialiste"
 ],
-
-explanation:
-"Le non-respect du parcours peut entraîner une diminution du remboursement."
+correct:0
 },
 
 {
-question:
-"Dans le régime général, quelle est la part habituellement prise en charge par l'Assurance Maladie pour de nombreuses consultations médicales, sur la base de remboursement, avant certaines participations ?",
-
-options:[
-{text:"25 %",correct:false},
-{text:"50 %",correct:false},
-{text:"100 %",correct:false},
-{text:"70 %",correct:true}
+q:"Que peut-il se passer si un patient consulte directement un spécialiste sans respecter le parcours de soins ?",
+answers:[
+"Il peut être moins bien remboursé",
+"Il est toujours remboursé à 100 %",
+"La consultation est automatiquement gratuite",
+"Il reçoit une amende"
 ],
-
-explanation:
-"Le taux de remboursement de nombreuses consultations est de 70 % de la base de remboursement, avant certaines participations et hors situations particulières."
+correct:0
 },
 
 {
-question:
-"Qu'est-ce que la base de remboursement ?",
-
-options:[
-{text:"Un tarif de référence utilisé pour calculer le remboursement",correct:true},
-{text:"Un montant toujours payé intégralement par le patient",correct:false},
-{text:"Le salaire du médecin",correct:false},
-{text:"Le prix fixé par la mutuelle",correct:false}
+q:"Quel professionnel peut être consulté directement dans certaines situations prévues par le parcours de soins ?",
+answers:[
+"Certains spécialistes en accès direct spécifique",
+"N'importe quel professionnel",
+"Uniquement un dentiste",
+"Uniquement un pharmacien"
 ],
-
-explanation:
-"Le remboursement est calculé à partir d'une base de remboursement définie par les règles de l'Assurance Maladie."
+correct:0
 },
 
 {
-question:
-"Une situation d'urgence nécessite-t-elle toujours de passer d'abord par le médecin traitant ?",
-
-options:[
-{text:"Oui, toujours",correct:false},
-{text:"Non, l'urgence constitue une situation particulière",correct:true},
-{text:"Oui, uniquement le week-end",correct:false},
-{text:"Oui, si le patient possède une mutuelle",correct:false}
+q:"Que signifie « parcours de soins coordonnés » ?",
+answers:[
+"Un parcours dans lequel les soins sont organisés notamment autour du médecin traitant",
+"Un parcours où l'on consulte uniquement l'hôpital",
+"Un parcours réservé aux personnes âgées",
+"Un parcours sans médecin"
 ],
-
-explanation:
-"Les situations d'urgence constituent une situation particulière dans laquelle le parcours habituel ne s'applique pas de la même manière."
+correct:0
 },
 
 {
-question:
-"Quel est l'objectif principal du parcours de soins coordonné ?",
-
-options:[
-{text:"Empêcher l'accès aux spécialistes",correct:false},
-{text:"Faire payer davantage les patients",correct:false},
-{text:"Améliorer la coordination et la continuité des soins",correct:true},
-{text:"Supprimer le médecin traitant",correct:false}
+q:"Quel est le principal objectif du parcours de soins coordonnés ?",
+answers:[
+"Améliorer la coordination et le suivi des soins",
+"Interdire l'accès aux spécialistes",
+"Supprimer les consultations",
+"Faire payer davantage tous les patients"
 ],
-
-explanation:
-"Le parcours vise notamment à organiser les soins autour du patient et à favoriser leur coordination."
+correct:0
 },
 
 {
-question:
-"Pourquoi le respect du parcours de soins peut-il avoir une conséquence financière ?",
-
-options:[
-{text:"Parce que le médecin fixe le remboursement",correct:false},
-{text:"Parce que la carte Vitale change de couleur",correct:false},
-{text:"Parce que le spécialiste décide du taux de remboursement",correct:false},
-{text:"Parce que les règles de remboursement peuvent être moins favorables hors parcours",correct:true}
+q:"Un patient consulte un spécialiste sans passer par son médecin traitant alors qu'il n'est pas dans une situation d'accès direct prévue. Que risque-t-il ?",
+answers:[
+"Une diminution du remboursement",
+"Une hospitalisation obligatoire",
+"Une consultation gratuite",
+"La suppression de sa carte Vitale"
 ],
-
-explanation:
-"Le respect du parcours de soins coordonné peut avoir une incidence sur le niveau de remboursement."
+correct:0
 },
 
 {
-question:
-"Quelle situation correspond à une bonne coordination des soins ?",
-
-options:[
-{text:"Le médecin traitant oriente le patient vers le professionnel adapté",correct:true},
-{text:"Le patient consulte uniquement les urgences",correct:false},
-{text:"Le patient change de médecin à chaque consultation",correct:false},
-{text:"Le pharmacien pose tous les diagnostics",correct:false}
+q:"Quel document permet notamment de justifier ses droits auprès de l'Assurance Maladie ?",
+answers:[
+"La carte Vitale",
+"Le permis de conduire",
+"La carte de bibliothèque",
+"Le carnet de correspondance"
 ],
-
-explanation:
-"L'orientation par le médecin traitant participe à la coordination du parcours."
+correct:0
 },
 
 {
-question:
-"Un dépassement d'honoraires est-il automatiquement remboursé intégralement par l'Assurance Maladie ?",
-
-options:[
-{text:"Oui, toujours",correct:false},
-{text:"Oui, si le médecin est spécialiste",correct:false},
-{text:"Non",correct:true},
-{text:"Oui, uniquement aux urgences",correct:false}
+q:"Dans une situation d'urgence médicale, doit-on obligatoirement passer par son médecin traitant avant d'être soigné ?",
+answers:[
+"Non",
+"Oui, toujours",
+"Seulement le week-end",
+"Seulement pour les adultes"
 ],
-
-explanation:
-"L'Assurance Maladie rembourse selon les bases prévues. Un dépassement peut rester à la charge du patient ou être couvert en partie par une complémentaire."
+correct:0
 },
 
 {
-question:
-"Certaines spécialités bénéficient de règles d'accès direct spécifique. Que signifie cela ?",
-
-options:[
-{text:"Tous les spécialistes sont accessibles directement",correct:false},
-{text:"Le spécialiste devient automatiquement le médecin traitant",correct:false},
-{text:"La consultation est forcément gratuite",correct:false},
-{text:"Dans certaines situations prévues, le patient peut consulter directement certains spécialistes sans passer par son médecin traitant",correct:true}
+q:"Quel professionnel délivre généralement les médicaments prescrits ?",
+answers:[
+"Le pharmacien",
+"Le médecin traitant",
+"L'infirmier scolaire",
+"Le kinésithérapeute"
 ],
-
-explanation:
-"Certaines situations et spécialités permettent un accès direct spécifique dans le cadre prévu par les règles de l'Assurance Maladie."
+correct:0
 },
 
 {
-question:
-"Quel professionnel délivre généralement les médicaments prescrits ?",
-
-options:[
-{text:"Le pharmacien",correct:true},
-{text:"Le médecin traitant",correct:false},
-{text:"L'Assurance Maladie",correct:false},
-{text:"Le spécialiste",correct:false}
+q:"Une consultation médicale peut être remboursée par l'Assurance Maladie selon des règles précises. Le remboursement dépend notamment :",
+answers:[
+"Des tarifs et règles de prise en charge",
+"De la couleur de la carte Vitale",
+"Du nombre de personnes dans la salle d'attente",
+"De l'âge du médecin"
 ],
-
-explanation:
-"Le pharmacien délivre les médicaments et peut également apporter des conseils."
+correct:0
 },
 
 {
-question:
-"Le fait d'avoir un médecin traitant signifie-t-il qu'il est interdit de consulter un autre médecin ?",
-
-options:[
-{text:"Oui, absolument",correct:false},
-{text:"Non",correct:true},
-{text:"Oui, sauf pendant les vacances",correct:false},
-{text:"Oui, sauf avec une mutuelle",correct:false}
+q:"Pourquoi le patient doit-il transmettre les informations importantes aux professionnels qui le suivent ?",
+answers:[
+"Pour favoriser la continuité et la coordination des soins",
+"Pour accélérer les remboursements uniquement",
+"Pour éviter toute prescription",
+"Pour remplacer son médecin"
 ],
-
-explanation:
-"Le médecin traitant coordonne le parcours mais le patient peut consulter d'autres professionnels selon ses besoins et les règles applicables."
+correct:0
 },
 
 {
-question:
-"Quel peut être l'intérêt de consulter son médecin traitant avant un spécialiste ?",
-
-options:[
-{text:"Obtenir automatiquement un médicament",correct:false},
-{text:"Éviter toute consultation spécialisée",correct:false},
-{text:"Bénéficier d'une orientation adaptée et d'un suivi coordonné",correct:true},
-{text:"Ne jamais payer de consultation",correct:false}
+q:"Quelle situation correspond le mieux à un parcours de soins coordonné ?",
+answers:[
+"Le médecin traitant évalue la situation puis oriente si nécessaire vers un spécialiste",
+"Le patient consulte plusieurs spécialistes sans communiquer les informations",
+"Le patient choisit systématiquement l'hôpital le plus éloigné",
+"Le patient ne consulte personne"
 ],
-
-explanation:
-"Le médecin traitant peut évaluer la situation et orienter vers le professionnel approprié."
+correct:0
 },
 
 {
-question:
-"Si un patient respecte le parcours de soins mais consulte un professionnel pratiquant un dépassement d'honoraires, que peut-il rester à payer ?",
-
-options:[
-{text:"Rien dans tous les cas",correct:false},
-{text:"La totalité de la consultation obligatoirement",correct:false},
-{text:"Uniquement les médicaments",correct:false},
-{text:"Tout ou partie du dépassement, selon les conditions et la complémentaire",correct:true}
+q:"Pourquoi le médecin traitant peut-il orienter vers un spécialiste ?",
+answers:[
+"Parce qu'il assure notamment la coordination du parcours",
+"Parce qu'il décide du prix des médicaments",
+"Parce qu'il remplace tous les spécialistes",
+"Parce qu'il gère les pharmacies"
 ],
-
-explanation:
-"Le respect du parcours ne signifie pas que tous les dépassements d'honoraires sont remboursés."
+correct:0
 },
 
 {
-question:
-"Quelle affirmation décrit le mieux le parcours de soins coordonné ?",
-
-options:[
-{text:"Organiser les soins autour du patient",correct:true},
-{text:"Interdire les spécialistes",correct:false},
-{text:"Supprimer les urgences",correct:false},
-{text:"Rendre tous les soins gratuits",correct:false}
+q:"Si un spécialiste est consulté sur orientation du médecin traitant, cela s'inscrit généralement :",
+answers:[
+"Dans le parcours de soins coordonnés",
+"Dans une procédure administrative sans rapport avec les soins",
+"Dans un parcours réservé aux urgences",
+"Dans un système de soins sans remboursement"
 ],
-
-explanation:
-"Le parcours de soins coordonné cherche à améliorer l'organisation et la continuité des soins."
+correct:0
 },
 
 {
-question:
-"Pourquoi les remboursements ne correspondent-ils pas toujours exactement au prix payé ?",
-
-options:[
-{text:"Parce que chaque patient choisit son taux",correct:false},
-{text:"Parce qu'ils sont calculés à partir d'une base de remboursement et de règles précises",correct:true},
-{text:"Parce que le médecin décide du remboursement",correct:false},
-{text:"Parce que la mutuelle remplace toujours l'Assurance Maladie",correct:false}
+q:"Quel exemple correspond à une situation où le passage par le médecin traitant peut ne pas être nécessaire ?",
+answers:[
+"Une situation d'urgence",
+"Une consultation choisie au hasard sans raison",
+"Une consultation parce que la salle d'attente est vide",
+"Une consultation pour éviter toute coordination"
 ],
-
-explanation:
-"Le montant remboursé dépend notamment de la base de remboursement, du taux applicable et de la situation du patient."
+correct:0
 },
 
 {
-question:
-"Quel acteur peut intervenir après une prescription médicale pour délivrer un médicament et conseiller le patient ?",
-
-options:[
-{text:"Le médecin traitant uniquement",correct:false},
-{text:"L'hôpital uniquement",correct:false},
-{text:"Le pharmacien",correct:true},
-{text:"L'Assurance Maladie",correct:false}
+q:"Le parcours de soins concerne principalement :",
+answers:[
+"L'organisation et la coordination des consultations et soins",
+"Uniquement les hospitalisations",
+"Uniquement les médicaments",
+"Uniquement les remboursements dentaires"
 ],
-
-explanation:
-"Le pharmacien intervient notamment dans la délivrance des médicaments et le conseil."
+correct:0
 },
 
 {
-question:
-"Quelle situation correspond le moins à un parcours de soins coordonné ?",
-
-options:[
-{text:"Déclarer un médecin traitant",correct:false},
-{text:"Être orienté vers un spécialiste lorsque cela est nécessaire",correct:false},
-{text:"Assurer un suivi médical régulier",correct:false},
-{text:"Consulter systématiquement différents spécialistes sans coordination du suivi",correct:true}
+q:"Un patient consulte régulièrement son médecin traitant. Celui-ci l'oriente vers un spécialiste lorsque cela est nécessaire. Cette situation montre :",
+answers:[
+"Une coordination des soins",
+"Une absence de parcours",
+"Une situation d'urgence",
+"Un refus de soins"
 ],
+correct:0
+},
 
-explanation:
-"L'absence de coordination entre les différents professionnels est contraire à l'objectif du parcours coordonné."
+{
+q:"Pourquoi le respect du parcours peut-il avoir un impact financier pour le patient ?",
+answers:[
+"Parce que le niveau de remboursement peut être différent selon la situation",
+"Parce que le médecin traitant fixe directement le prix",
+"Parce que les spécialistes deviennent gratuits",
+"Parce que les pharmacies ne remboursent jamais"
+],
+correct:0
+},
+
+{
+q:"Quel acteur joue un rôle central dans la coordination du parcours de soins ?",
+answers:[
+"Le médecin traitant",
+"Le patient uniquement",
+"Le pharmacien uniquement",
+"Le laboratoire uniquement"
+],
+correct:0
+},
+
+{
+q:"Un patient change de médecin traitant. Pourquoi cette information est-elle importante pour son parcours ?",
+answers:[
+"Parce que son médecin traitant déclaré participe à la coordination de ses soins",
+"Parce que cela change automatiquement son groupe sanguin",
+"Parce qu'il ne pourra plus consulter",
+"Parce que sa carte Vitale devient inutilisable"
+],
+correct:0
+},
+
+{
+q:"Le respect du parcours de soins permet notamment :",
+answers:[
+"Une meilleure organisation du suivi médical",
+"De supprimer les spécialistes",
+"D'éviter tous les examens",
+"De ne jamais consulter un médecin"
+],
+correct:0
+},
+
+{
+q:"Quel comportement favorise le mieux un parcours de soins coordonné ?",
+answers:[
+"Informer son médecin traitant et suivre les orientations nécessaires",
+"Multiplier les consultations sans transmettre les informations",
+"Changer de spécialiste à chaque problème",
+"Éviter de conserver les documents médicaux"
+],
+correct:0
+},
+
+{
+q:"Une personne consulte directement un spécialiste alors qu'elle aurait dû passer par son médecin traitant. La conséquence possible est :",
+answers:[
+"Une moins bonne prise en charge financière",
+"Une interdiction définitive de consulter",
+"Une hospitalisation automatique",
+"La suppression de son dossier médical"
+],
+correct:0
 }
 
 ];
 
 
 /* =========================================================
-   CRÉATION DE L'INTERFACE D'INSCRIPTION
-========================================================= */
-
-function createPlayerForms() {
-
-    const container =
-        document.getElementById(
-            "playersList"
-        );
-
-    container.innerHTML =
-        "";
-
-
-    for (
-        let i = 0;
-        i < 6;
-        i++
-    ) {
-
-        const card =
-            document.createElement(
-                "div"
-            );
-
-        card.className =
-            "player-card";
-
-
-        let avatarHTML =
-            "";
-
-
-        avatars.forEach(
-            (avatar,index) => {
-
-                avatarHTML += `
-
-                    <button
-                        type="button"
-                        class="avatar-option
-                        ${
-                            index === i
-                                ? "selected"
-                                : ""
-                        }"
-                        data-player="${i}"
-                        data-avatar="${avatar}"
-                        onclick="selectAvatar(
-                            ${i},
-                            '${avatar}'
-                        )"
-                    >
-                        ${avatar}
-                    </button>
-
-                `;
-
-            }
-        );
-
-
-        card.innerHTML = `
-
-            <div class="player-number">
-                Joueur ${i + 1}
-            </div>
-
-            <input
-                id="playerName${i}"
-                placeholder="Prénom du joueur ${i + 1}"
-                autocomplete="off"
-            >
-
-            <div class="avatar-title">
-                Choisis ton avatar
-            </div>
-
-            <div class="avatar-options">
-                ${avatarHTML}
-            </div>
-
-        `;
-
-
-        container.appendChild(
-            card
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   AVATARS SÉLECTIONNÉS
-========================================================= */
-
-const selectedAvatars =
-    new Array(6).fill(
-        null
-    );
-
-
-function selectAvatar(
-    playerIndex,
-    avatar
-) {
-
-    selectedAvatars[
-        playerIndex
-    ] =
-        avatar;
-
-
-    document
-        .querySelectorAll(
-            `[data-player="${playerIndex}"]`
-        )
-        .forEach(
-            button => {
-
-                button.classList.toggle(
-                    "selected",
-                    button.dataset.avatar ===
-                    avatar
-                );
-
-            }
-        );
-
-}
-
-
-/* =========================================================
    MÉLANGE
 ========================================================= */
 
-function shuffle(array) {
+function shuffle(array){
 
-    const result =
-        [...array];
+    const result=[...array];
 
+    for(let i=result.length-1;i>0;i--){
 
-    for (
-        let i =
-            result.length - 1;
-        i > 0;
-        i--
-    ) {
-
-        const j =
-            Math.floor(
-                Math.random() *
-                (i + 1)
-            );
-
+        const j=Math.floor(
+            Math.random()*(i+1)
+        );
 
         [
             result[i],
             result[j]
-        ] =
-        [
+        ]=[
             result[j],
             result[i]
         ];
 
     }
 
-
     return result;
-
 }
 
 
 /* =========================================================
-   NOUVEAU PAQUET
+   INIT
 ========================================================= */
 
-function createNewDeck() {
+function init(){
 
-    remainingCards =
-        shuffle(
-            cards.map(
-                card => ({
+    questions=shuffle(questionBank);
 
-                    question:
-                        card.question,
+    addPlayer();
 
-                    explanation:
-                        card.explanation,
-
-                    options:
-                        shuffle(
-                            card.options
-                        )
-
-                })
-            )
-        );
+    addPlayer();
 
 }
 
-
-/* =========================================================
-   ÉCRAN
-========================================================= */
-
-function showScreen(id) {
-
-    document
-        .querySelectorAll(
-            ".screen"
-        )
-        .forEach(
-            screen => {
-
-                screen.classList.remove(
-                    "active"
-                );
-
-            }
-        );
-
-
-    document
-        .getElementById(id)
-        .classList.add(
-            "active"
-        );
-
-
-    window.scrollTo(
-        0,
-        0
-    );
-
-}
+init();
 
 
 /* =========================================================
-   DÉBUT PARTIE
+   JOUEURS
 ========================================================= */
 
-function startGame() {
+function addPlayer(){
 
-    players = [];
+    if(playerForms.length>=6){
 
-
-    for (
-        let i = 0;
-        i < 6;
-        i++
-    ) {
-
-        const input =
-            document.getElementById(
-                "playerName" + i
-            );
-
-
-        const name =
-            input.value.trim();
-
-
-        if (name) {
-
-            players.push({
-
-                name:
-                    name,
-
-                avatar:
-                    selectedAvatars[i]
-                    || avatars[i],
-
-                color:
-                    colors[
-                        i
-                    ],
-
-                position:
-                    0,
-
-                points:
-                    0
-
-            });
-
-        }
-
-    }
-
-
-    if (
-        players.length < 2
-    ) {
-
-        alert(
-            "Il faut au moins 2 joueurs pour commencer."
-        );
+        document.getElementById("setupError")
+        .textContent="Maximum 6 joueurs.";
 
         return;
 
     }
 
+    const index=playerForms.length;
 
-    createNewDeck();
+    const div=document.createElement("div");
+
+    div.className="player-form";
+
+    div.innerHTML=`
+
+        <h3>Joueur ${index+1}</h3>
+
+        <input
+            class="player-name"
+            id="name-${index}"
+            maxlength="20"
+            placeholder="Prénom du joueur">
+
+        <div
+            class="avatar-grid"
+            id="avatars-${index}">
+        </div>
+
+    `;
+
+    document
+        .getElementById("playersList")
+        .appendChild(div);
+
+    playerForms.push({
+        avatar:null
+    });
+
+    renderAvatars(index);
+
+}
 
 
-    currentPlayerIndex =
-        0;
+function renderAvatars(playerIndex){
+
+    const container=
+        document.getElementById(
+            `avatars-${playerIndex}`
+        );
+
+    container.innerHTML="";
+
+    const selectedByOthers=
+        playerForms
+        .map((p,i)=>
+            i!==playerIndex
+            ?p.avatar
+            :null
+        );
+
+    avatars.forEach((avatar,index)=>{
+
+        const button=
+            document.createElement("button");
+
+        button.type="button";
+
+        button.className="avatar-option";
+
+        const taken=
+            selectedByOthers.includes(index);
+
+        if(taken)
+            button.classList.add("taken");
+
+        if(
+            playerForms[playerIndex].avatar
+            ===index
+        )
+            button.classList.add("selected");
+
+        button.disabled=taken;
+
+        button.innerHTML=`
+
+            ${avatar.emoji}
+
+            <span class="avatar-label">
+                ${avatar.name}
+            </span>
+
+        `;
+
+        button.onclick=()=>{
+
+            playerForms[playerIndex].avatar=
+                index;
+
+            renderAllAvatars();
+
+        };
+
+        container.appendChild(button);
+
+    });
+
+}
 
 
-    currentPlayer =
-        players[
-            currentPlayerIndex
-        ];
+function renderAllAvatars(){
 
-
-    prepareDiceScreen();
+    playerForms.forEach((_,i)=>{
+        renderAvatars(i);
+    });
 
 }
 
 
 /* =========================================================
-   ÉCRAN DU DÉ
+   DÉMARRAGE
 ========================================================= */
 
-function prepareDiceScreen() {
+function startGame(){
 
-    currentPlayer =
-        players[
-            currentPlayerIndex
-        ];
-
-
-    document
-        .getElementById(
-            "dicePlayerName"
-        )
-        .textContent =
-            currentPlayer.name;
-
-
-    const circle =
+    const error=
         document.getElementById(
-            "playerCircle"
+            "setupError"
         );
 
+    error.textContent="";
 
-    circle.textContent =
-        currentPlayer.avatar;
+    const newPlayers=[];
 
+    for(
+        let i=0;
+        i<playerForms.length;
+        i++
+    ){
 
-    circle.style.borderColor =
-        currentPlayer.color;
+        const name=
+            document
+            .getElementById(`name-${i}`)
+            .value
+            .trim();
 
+        if(!name){
 
-    document
-        .getElementById(
-            "dice"
-        )
-        .textContent =
-            "⚀";
+            error.textContent=
+                `Veuillez renseigner le prénom du joueur ${i+1}.`;
 
-
-    document
-        .getElementById(
-            "rollButton"
-        )
-        .disabled =
-            false;
-
-
-    document
-        .getElementById(
-            "questionButtonContainer"
-        )
-        .style.display =
-            "none";
-
-
-    document
-        .getElementById(
-            "diceInstruction"
-        )
-        .innerHTML =
-            "Lance le dé pour commencer ton tour.";
-
-
-    renderBoard(
-        "board",
-        false
-    );
-
-
-    animateBoardEntrance();
-
-
-    showScreen(
-        "diceScreen"
-    );
-
-}
-
-
-/* =========================================================
-   ANIMATION PLATEAU
-========================================================= */
-
-function animateBoardEntrance() {
-
-    const board =
-        document.getElementById(
-            "board3D"
-        );
-
-
-    board.animate(
-
-        [
-
-            {
-                transform:
-                    "rotateX(28deg) rotateY(-18deg) translateY(20px) scale(.96)"
-            },
-
-            {
-                transform:
-                    "rotateX(13deg) rotateY(-3deg) translateY(0) scale(1)"
-            }
-
-        ],
-
-        {
-
-            duration:
-                900,
-
-            easing:
-                "cubic-bezier(.2,.8,.2,1)"
+            return;
 
         }
 
-    );
+        if(
+            playerForms[i].avatar===null
+        ){
 
-}
+            error.textContent=
+                `Veuillez choisir un avatar pour ${name}.`;
 
-
-/* =========================================================
-   LANCER LE DÉ
-========================================================= */
-
-function rollDice() {
-
-    const button =
-        document.getElementById(
-            "rollButton"
-        );
-
-
-    button.disabled =
-        true;
-
-
-    const dice =
-        document.getElementById(
-            "dice"
-        );
-
-
-    dice.classList.add(
-        "rolling"
-    );
-
-
-    /*
-       Le plateau bouge également
-       pendant le lancer.
-    */
-
-    const board =
-        document.getElementById(
-            "board3D"
-        );
-
-
-    board.animate(
-
-        [
-
-            {
-                transform:
-                    "rotateX(13deg) rotateY(-3deg) rotateZ(0)"
-            },
-
-            {
-                transform:
-                    "rotateX(19deg) rotateY(9deg) rotateZ(-2deg)"
-            },
-
-            {
-                transform:
-                    "rotateX(10deg) rotateY(-8deg) rotateZ(2deg)"
-            },
-
-            {
-                transform:
-                    "rotateX(13deg) rotateY(-3deg) rotateZ(0)"
-            }
-
-        ],
-
-        {
-
-            duration:
-                900,
-
-            easing:
-                "ease-in-out"
+            return;
 
         }
 
-    );
+        newPlayers.push({
 
+            name,
 
-    let count =
-        0;
+            avatar:
+                playerForms[i].avatar,
 
+            position:0
 
-    const animation =
-        setInterval(
-
-            () => {
-
-                const value =
-                    Math.floor(
-                        Math.random() * 6
-                    );
-
-
-                dice.textContent =
-                    diceFaces[
-                        value
-                    ];
-
-
-                count++;
-
-
-                if (
-                    count >= 12
-                ) {
-
-                    clearInterval(
-                        animation
-                    );
-
-
-                    dice.classList.remove(
-                        "rolling"
-                    );
-
-
-                    diceValue =
-                        Math.floor(
-                            Math.random() * 6
-                        ) + 1;
-
-
-                    dice.textContent =
-                        diceFaces[
-                            diceValue - 1
-                        ];
-
-
-                    document
-                        .getElementById(
-                            "diceInstruction"
-                        )
-                        .innerHTML = `
-
-                            🎲 Résultat :
-                            <strong>
-                                ${diceValue}
-                            </strong>
-
-                            <br><br>
-
-                            Pioche une carte.
-                            Si tu réponds correctement,
-                            tu avanceras de
-                            <strong>
-                                ${diceValue}
-                            </strong>
-                            case${diceValue > 1 ? "s" : ""}.
-
-                        `;
-
-
-                    document
-                        .getElementById(
-                            "questionButtonContainer"
-                        )
-                        .style.display =
-                            "block";
-
-                }
-
-            },
-
-            90
-
-        );
-
-}
-
-
-/* =========================================================
-   PIOCHER
-========================================================= */
-
-function goToQuestion() {
-
-    if (
-        remainingCards.length === 0
-    ) {
-
-        createNewDeck();
+        });
 
     }
 
+    players=newPlayers;
 
-    currentCard =
-        remainingCards.shift();
+    currentPlayerIndex=0;
+
+    showTurnScreen();
+
+}
 
 
-    showQuestion();
+/* =========================================================
+   ÉCRANS
+========================================================= */
+
+function showScreen(id){
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen=>{
+            screen.classList.remove("active");
+        });
+
+    document
+        .getElementById(id)
+        .classList.add("active");
+
+}
+
+
+/* =========================================================
+   TOUR
+========================================================= */
+
+function showTurnScreen(){
+
+    const player=
+        players[currentPlayerIndex];
+
+    document
+        .getElementById("turnAvatar")
+        .textContent=
+        avatars[player.avatar].emoji;
+
+    document
+        .getElementById("turnName")
+        .textContent=
+        player.name;
+
+    const dice=
+        document.getElementById("dice");
+
+    dice.textContent="?";
+
+    dice.classList.remove("rolling");
+
+    const button=
+        document.getElementById("rollButton");
+
+    button.disabled=false;
+
+    button.style.opacity="1";
+
+    showScreen("turnScreen");
+
+}
+
+
+/* =========================================================
+   DÉ
+========================================================= */
+
+function rollDice(){
+
+    const button=
+        document.getElementById(
+            "rollButton"
+        );
+
+    button.disabled=true;
+
+    button.style.opacity=".5";
+
+    const dice=
+        document.getElementById("dice");
+
+    dice.classList.add("rolling");
+
+    let count=0;
+
+    const interval=
+        setInterval(()=>{
+
+            dice.textContent=
+                Math.floor(
+                    Math.random()*6
+                )+1;
+
+            count++;
+
+            if(count>=10){
+
+                clearInterval(interval);
+
+                diceValue=
+                    Math.floor(
+                        Math.random()*6
+                    )+1;
+
+                dice.textContent=
+                    diceValue;
+
+                setTimeout(
+                    showQuestion,
+                    700
+                );
+
+            }
+
+        },70);
 
 }
 
@@ -3694,98 +2483,126 @@ function goToQuestion() {
    QUESTION
 ========================================================= */
 
-function showQuestion() {
+function getNextQuestion(){
 
-    answered =
-        false;
+    if(
+        usedQuestions.length
+        >=questions.length
+    ){
 
+        usedQuestions=[];
 
-    lastAnswerCorrect =
-        false;
+        questions=
+            shuffle(questionBank);
 
+    }
 
-    document
-        .getElementById(
-            "questionText"
-        )
-        .textContent =
-            currentCard.question;
-
-
-    const options =
-        document.getElementById(
-            "options"
+    let available=
+        questions.filter(
+            (_,index)=>
+                !usedQuestions.includes(index)
         );
 
+    const index=
+        Math.floor(
+            Math.random()*available.length
+        );
 
-    options.innerHTML =
-        "";
+    const selected=
+        available[index];
+
+    const originalIndex=
+        questions.indexOf(selected);
+
+    usedQuestions.push(originalIndex);
+
+    return selected;
+
+}
 
 
-    const letters = [
-        "A",
-        "B",
-        "C",
-        "D"
-    ];
+function showQuestion(){
 
+    currentQuestion=
+        getNextQuestion();
 
-    currentCard.options.forEach(
-        (option,index) => {
+    const player=
+        players[currentPlayerIndex];
 
-            const button =
+    document
+        .getElementById("questionPlayer")
+        .textContent=
+        player.name;
+
+    document
+        .getElementById("questionText")
+        .textContent=
+        currentQuestion.q;
+
+    const answers=
+        document.getElementById("answers");
+
+    answers.innerHTML="";
+
+    /*
+       On mélange à nouveau les réponses.
+    */
+
+    const correctText=
+        currentQuestion.answers[
+            currentQuestion.correct
+        ];
+
+    const answerList=
+        shuffle(
+            currentQuestion.answers
+            .map(text=>({
+
+                text,
+
+                correct:
+                    text===correctText
+
+            }))
+        );
+
+    answerList.forEach(
+        (answer,index)=>{
+
+            const button=
                 document.createElement(
                     "button"
                 );
 
+            button.className="answer";
 
-            button.className =
-                "option";
+            button.textContent=
+                `${String.fromCharCode(65+index)}. ${answer.text}`;
 
+            button.onclick=()=>{
 
-            button.innerHTML = `
+                answerQuestion(
+                    button,
+                    answer.correct
+                );
 
-                <span
-                    class="option-letter"
-                >
-                    ${letters[index]}
-                </span>
+            };
 
-                <span>
-                    ${option.text}
-                </span>
-
-            `;
-
-
-            button.onclick =
-                () =>
-                    answerQuestion(
-                        index
-                    );
-
-
-            options.appendChild(
-                button
-            );
+            answers.appendChild(button);
 
         }
     );
 
-
-    const feedback =
+    const feedback=
         document.getElementById(
             "feedback"
         );
 
+    feedback.className="feedback";
 
-    feedback.style.display =
-        "none";
+    feedback.textContent="";
 
-
-    showScreen(
-        "questionScreen"
-    );
+    showScreen("questionScreen");
 
 }
 
@@ -3794,411 +2611,274 @@ function showQuestion() {
    RÉPONSE
 ========================================================= */
 
-function answerQuestion(index) {
-
-    if (
-        answered
-    ) {
-
-        return;
-
-    }
-
-
-    answered =
-        true;
-
-
-    const buttons =
-        document.querySelectorAll(
-            ".option"
-        );
-
-
-    buttons.forEach(
-        button => {
-
-            button.disabled =
-                true;
-
-        }
-    );
-
-
-    const correctIndex =
-        currentCard.options.findIndex(
-            option =>
-                option.correct
-        );
-
-
-    const isCorrect =
-        currentCard.options[
-            index
-        ].correct;
-
-
-    lastAnswerCorrect =
-        isCorrect;
-
-
-    buttons[
-        correctIndex
-    ].classList.add(
-        "correct"
-    );
-
-
-    if (
-        !isCorrect
-    ) {
-
-        buttons[
-            index
-        ].classList.add(
-            "wrong"
-        );
-
-    }
-
-
-    if (
-        isCorrect
-    ) {
-
-        currentPlayer.points++;
-
-    }
-
-
-    const feedback =
-        document.getElementById(
-            "feedback"
-        );
-
-
-    feedback.style.display =
-        "block";
-
-
-    feedback.className =
-        "feedback " +
-        (
-            isCorrect
-                ? "good"
-                : "bad"
-        );
-
-
-    const correctLetter =
-        [
-            "A",
-            "B",
-            "C",
-            "D"
-        ][
-            correctIndex
-        ];
-
-
-    if (
-        isCorrect
-    ) {
-
-        feedback.innerHTML = `
-
-            <strong>
-                ✅ Bonne réponse !
-            </strong>
-
-            <p>
-                ${currentCard.explanation}
-            </p>
-
-            <p>
-                🎲 Tu as obtenu
-                <strong>
-                    ${diceValue}
-                </strong>
-                au dé.
-            </p>
-
-            <p>
-                Ton avatar va avancer !
-            </p>
-
-            <button
-                class="main-button"
-                onclick="showBoardAfterQuestion()"
-            >
-                CONTINUER
-            </button>
-
-        `;
-
-    }
-
-    else {
-
-        feedback.innerHTML = `
-
-            <strong>
-                ❌ Mauvaise réponse
-            </strong>
-
-            <p>
-                ${currentCard.explanation}
-            </p>
-
-            <p>
-                La bonne réponse était :
-                <strong>
-                    ${correctLetter}
-                </strong>.
-            </p>
-
-            <p>
-                🚫 Tu n'avances pas de case.
-            </p>
-
-            <button
-                class="main-button"
-                onclick="showBoardAfterQuestion()"
-            >
-                CONTINUER
-            </button>
-
-        `;
-
-    }
-
-}
-
-
-/* =========================================================
-   PLATEAU APRÈS QUESTION
-========================================================= */
-
-function showBoardAfterQuestion() {
-
-    const start =
-        currentPlayer.position;
-
-
-    let target =
-        start;
-
-
-    if (
-        lastAnswerCorrect
-    ) {
-
-        target =
-            Math.min(
-                start + diceValue,
-                boardCells.length - 1
+function answerQuestion(
+    button,
+    correct
+){
+
+    document
+        .querySelectorAll(".answer")
+        .forEach(b=>{
+            b.classList.add("disabled");
+        });
+
+    if(correct){
+
+        button.classList.add("correct");
+
+        const feedback=
+            document.getElementById(
+                "feedback"
             );
 
-    }
+        feedback.className=
+            "feedback show success";
 
+        feedback.textContent=
+            `✅ Bonne réponse ! Vous avancez de ${diceValue} case${diceValue>1?"s":""}.`;
 
-    document
-        .getElementById(
-            "finishTurnButton"
-        )
-        .disabled =
-            true;
+        setTimeout(
+            moveCurrentPlayer,
+            1300
+        );
 
+    }else{
 
-    document
-        .getElementById(
-            "boardText"
-        )
-        .textContent =
+        button.classList.add("wrong");
 
-            lastAnswerCorrect
+        const feedback=
+            document.getElementById(
+                "feedback"
+            );
 
-                ?
+        feedback.className=
+            "feedback show failure";
 
-                `${currentPlayer.name} avance de ${diceValue} case${diceValue > 1 ? "s" : ""} !`
+        feedback.textContent=
+            "❌ Mauvaise réponse. Vous ne bougez pas.";
 
-                :
-
-                `${currentPlayer.name} reste sur sa case.`;
-
-
-    renderBoard(
-        "boardAfterQuestion",
-        false,
-        start
-    );
-
-
-    showScreen(
-        "boardAfterQuestionScreen"
-    );
-
-
-    if (
-        !lastAnswerCorrect
-    ) {
-
-        document
-            .getElementById(
-                "finishTurnButton"
-            )
-            .disabled =
-                false;
-
-        return;
+        setTimeout(
+            ()=>{
+                showBoard(false);
+            },
+            1500
+        );
 
     }
-
-
-    animatePawnMovement(
-        start,
-        target
-    );
 
 }
 
 
 /* =========================================================
-   RENDU DU PLATEAU
+   DÉPLACEMENT
 ========================================================= */
 
-function renderBoard(
-    boardId,
-    winnerMode = false,
-    temporaryPosition = null
-) {
+function moveCurrentPlayer(){
 
-    const board =
-        document.getElementById(
-            boardId
+    const player=
+        players[currentPlayerIndex];
+
+    player.position+=diceValue;
+
+    const finish=39;
+
+    if(player.position>=finish){
+
+        player.position=finish;
+
+        showBoard(true,true);
+
+        setTimeout(
+            ()=>{
+                showWinner(player);
+            },
+            1600
         );
 
+        return;
 
-    board.innerHTML =
-        "";
+    }
+
+    showBoard(true,false);
+
+}
 
 
-    boardCells.forEach(
-        (cell,index) => {
+/* =========================================================
+   CRÉATION DES CASES
+========================================================= */
 
-            const element =
+function createBoard(){
+
+    const path=
+        document.getElementById(
+            "boardPath"
+        );
+
+    path.innerHTML="";
+
+    for(let i=0;i<40;i++){
+
+        const cell=
+            document.createElement("div");
+
+        cell.className="cell";
+
+        if(i===0)
+            cell.classList.add("start");
+
+        if(i===39)
+            cell.classList.add("finish");
+
+        cell.innerHTML=`
+
+            <span class="cell-number">
+                ${i}
+            </span>
+
+            ${
+                i===0
+                ?"DÉPART"
+                :""
+            }
+
+            ${
+                i===39
+                ?"🏁"
+                :""
+            }
+
+        `;
+
+        path.appendChild(cell);
+
+    }
+
+}
+
+
+/* =========================================================
+   COORDONNÉES
+========================================================= */
+
+function getCellCoordinates(position){
+
+    const cells=
+        document.querySelectorAll(
+            ".cell"
+        );
+
+    const cell=
+        cells[position];
+
+    const scene=
+        document.getElementById(
+            "scene"
+        );
+
+    if(!cell)
+        return {
+            x:50,
+            y:50
+        };
+
+    const cellRect=
+        cell.getBoundingClientRect();
+
+    const sceneRect=
+        scene.getBoundingClientRect();
+
+    return {
+
+        x:
+            cellRect.left
+            +
+            cellRect.width/2
+            -
+            sceneRect.left,
+
+        y:
+            cellRect.top
+            +
+            cellRect.height/2
+            -
+            sceneRect.top
+
+    };
+
+}
+
+
+/* =========================================================
+   PIONS
+========================================================= */
+
+function updatePawns(
+    animatedPlayer=null
+){
+
+    const pawns=
+        document.getElementById(
+            "pawns"
+        );
+
+    pawns.innerHTML="";
+
+    const offsets=[
+
+        [-12,-12],
+        [12,-12],
+        [-12,12],
+        [12,12],
+        [0,-18],
+        [0,18]
+
+    ];
+
+    players.forEach(
+        (player,index)=>{
+
+            const pawn=
                 document.createElement(
                     "div"
                 );
 
+            pawn.className="pawn";
 
-            element.className =
-                "cell";
-
-
-            if (
-                cell.type
-            ) {
-
-                element.classList.add(
-                    cell.type
+            if(
+                index===animatedPlayer
+            )
+                pawn.classList.add(
+                    "moving"
                 );
 
-            }
+            pawn.textContent=
+                avatars[
+                    player.avatar
+                ].emoji;
 
+            pawns.appendChild(pawn);
 
-            const playerPosition =
-                temporaryPosition !== null
-                    ? temporaryPosition
-                    : currentPlayer.position;
+            requestAnimationFrame(
+                ()=>{
 
+                    const coord=
+                        getCellCoordinates(
+                            player.position
+                        );
 
-            if (
-                playerPosition === index
-            ) {
+                    const offset=
+                        offsets[
+                            index%offsets.length
+                        ];
 
-                element.classList.add(
-                    "current"
-                );
+                    pawn.style.left=
+                        `${coord.x+offset[0]}px`;
 
-            }
-
-
-            const playersHere =
-                players.filter(
-                    player =>
-                        player.position ===
-                        index
-                );
-
-
-            if (
-                temporaryPosition !== null
-                &&
-                index === temporaryPosition
-            ) {
-
-                if (
-                    !playersHere.includes(
-                        currentPlayer
-                    )
-                ) {
-
-                    playersHere.push(
-                        currentPlayer
-                    );
+                    pawn.style.top=
+                        `${coord.y+offset[1]}px`;
 
                 }
-
-            }
-
-
-            element.innerHTML = `
-
-                <div class="cell-number">
-                    CASE ${index + 1}
-                </div>
-
-                <div class="cell-icon">
-                    ${cell.icon}
-                </div>
-
-                <div class="cell-name">
-                    ${cell.name}
-                </div>
-
-                <div class="pawns">
-
-                    ${
-                        playersHere
-                            .map(
-                                player => `
-
-                                    <div
-                                        class="pawn"
-                                        style="
-                                            --pawn-color:
-                                            ${player.color};
-                                        "
-                                        data-player-name="
-                                            ${player.name}
-                                        "
-                                    >
-                                        ${player.avatar}
-                                    </div>
-
-                                `
-                            )
-                            .join("")
-                    }
-
-                </div>
-
-            `;
-
-
-            board.appendChild(
-                element
             );
 
         }
@@ -4208,330 +2888,112 @@ function renderBoard(
 
 
 /* =========================================================
-   ANIMATION DU DÉPLACEMENT
+   PLATEAU
 ========================================================= */
 
-function animatePawnMovement(
-    start,
-    target
-) {
+function showBoard(
+    animate=false,
+    victory=false
+){
 
-    const finishButton =
+    const player=
+        players[currentPlayerIndex];
+
+    document
+        .getElementById("boardAvatar")
+        .textContent=
+        avatars[player.avatar].emoji;
+
+    document
+        .getElementById("boardPlayerName")
+        .textContent=
+        player.name;
+
+    document
+        .getElementById("positionText")
+        .textContent=
+        player.position;
+
+    createBoard();
+
+    showScreen("boardScreen");
+
+    const scene=
         document.getElementById(
-            "finishTurnButton"
+            "scene"
         );
 
+    scene.classList.remove("victory");
 
-    finishButton.disabled =
-        true;
+    /*
+       On attend que le plateau soit réellement
+       affiché avant de calculer les positions.
+    */
 
+    setTimeout(()=>{
 
-    if (
-        target === start
-    ) {
+        updatePawns(
+            animate
+            ?currentPlayerIndex
+            :null
+        );
 
-        finishButton.disabled =
-            false;
+    },150);
 
-        return;
+    /*
+       Mouvement de caméra.
+    */
 
-    }
+    scene.style.transform=
+        `
+        rotateX(53deg)
+        rotateZ(-11deg)
+        translateY(-8px)
+        scale(1.02)
+        `;
 
+    setTimeout(()=>{
 
-    let position =
-        start;
+        scene.style.transform=
+            `
+            rotateX(57deg)
+            rotateZ(-7deg)
+            translateY(0)
+            scale(1)
+            `;
+
+    },900);
 
 
     /*
-       Petit mouvement du plateau
-       avant le départ.
+       S'il y a victoire, on ne passe
+       pas au joueur suivant.
     */
 
-    const board =
-        document.getElementById(
-            "boardAfter3D"
-        );
-
-
-    board.animate(
-
-        [
-
-            {
-                transform:
-                    "rotateX(13deg) rotateY(-3deg)"
-            },
-
-            {
-                transform:
-                    "rotateX(18deg) rotateY(6deg)"
-            },
-
-            {
-                transform:
-                    "rotateX(13deg) rotateY(-3deg)"
-            }
-
-        ],
-
-        {
-
-            duration:
-                650,
-
-            easing:
-                "ease-in-out"
-
-        }
-
-    );
-
-
-    function nextStep() {
-
-        position++;
-
-
-        renderBoard(
-            "boardAfterQuestion",
-            false,
-            position
-        );
-
-
-        /*
-           Avatar saute.
-        */
-
-        const pawns =
-            document.querySelectorAll(
-                ".pawn"
-            );
-
-
-        pawns.forEach(
-            pawn => {
-
-                if (
-                    pawn.dataset.playerName ===
-                    currentPlayer.name
-                ) {
-
-                    pawn.classList.add(
-                        "moving"
-                    );
-
-                    setTimeout(
-                        () => {
-
-                            pawn.classList.remove(
-                                "moving"
-                            );
-
-                        },
-                        480
-                    );
-
-                }
-
-            }
-        );
-
-
-        /*
-           Petit mouvement de caméra
-           du plateau à chaque case.
-        */
-
-        board.animate(
-
-            [
-
-                {
-                    transform:
-                        "rotateX(13deg) rotateY(-3deg)"
-                },
-
-                {
-                    transform:
-                        position % 2 === 0
-
-                            ?
-
-                            "rotateX(17deg) rotateY(5deg) translateY(-5px)"
-
-                            :
-
-                            "rotateX(10deg) rotateY(-6deg) translateY(-5px)"
-                },
-
-                {
-                    transform:
-                        "rotateX(13deg) rotateY(-3deg)"
-                }
-
-            ],
-
-            {
-
-                duration:
-                    520,
-
-                easing:
-                    "ease-in-out"
-
-            }
-
-        );
-
-
-        if (
-            position <
-            target
-        ) {
-
-            setTimeout(
-                nextStep,
-                650
-            );
-
-        }
-
-        else {
-
-            currentPlayer.position =
-                target;
-
-
-            setTimeout(
-                () => {
-
-                    renderBoard(
-                        "boardAfterQuestion",
-                        false,
-                        target
-                    );
-
-
-                    const cells =
-                        document.querySelectorAll(
-                            "#boardAfterQuestion .cell"
-                        );
-
-
-                    if (
-                        cells[target]
-                    ) {
-
-                        cells[target]
-                            .classList.add(
-                                "arrival-highlight"
-                            );
-
-                    }
-
-
-                    document
-                        .getElementById(
-                            "boardText"
-                        )
-                        .textContent =
-
-                            `${currentPlayer.name} est arrivé sur la case ${target + 1} !`;
-
-
-                    finishButton.disabled =
-                        false;
-
-
-                },
-                600
-            );
-
-        }
-
-    }
-
-
-    setTimeout(
-        nextStep,
-        600
-    );
-
-}
-
-
-/* =========================================================
-   FIN DU TOUR
-========================================================= */
-
-function finishBoard() {
-
-    if (
-        currentPlayer.position >=
-        boardCells.length - 1
-    ) {
-
-        showWinner();
-
+    if(victory)
         return;
 
-    }
 
+    setTimeout(()=>{
 
-    const nextIndex =
-        (
-            currentPlayerIndex + 1
-        ) %
-        players.length;
+        currentPlayerIndex++;
 
-
-    document
-        .getElementById(
-            "finishedPlayer"
+        if(
+            currentPlayerIndex
+            >=players.length
         )
-        .textContent =
-            currentPlayer.name;
+            currentPlayerIndex=0;
 
-
-    document
-        .getElementById(
-            "nextPlayerName"
+        if(
+            players.some(
+                p=>p.position>=39
+            )
         )
-        .textContent =
-            players[
-                nextIndex
-            ].name;
+            return;
 
+        showTurnScreen();
 
-    showScreen(
-        "endTurnScreen"
-    );
-
-}
-
-
-/* =========================================================
-   TOUR SUIVANT
-========================================================= */
-
-function startNextTurn() {
-
-    currentPlayerIndex++;
-
-
-    if (
-        currentPlayerIndex >=
-        players.length
-    ) {
-
-        currentPlayerIndex =
-            0;
-
-    }
-
-
-    prepareDiceScreen();
+    },2500);
 
 }
 
@@ -4540,202 +3002,44 @@ function startNextTurn() {
    VICTOIRE
 ========================================================= */
 
-function showWinner() {
+function showWinner(player){
 
-    const winner =
-        currentPlayer;
-
-
-    document
-        .getElementById(
-            "winnerName"
-        )
-        .textContent =
-            winner.name;
-
-
-    document
-        .getElementById(
-            "winnerAvatar"
-        )
-        .textContent =
-            winner.avatar;
-
-
-    /*
-       On crée un plateau final
-       où tous les avatars sont présents.
-    */
-
-    players.forEach(
-        player => {
-
-            /*
-               Le gagnant est mis
-               visuellement sur l'arrivée.
-            */
-
-            if (
-                player === winner
-            ) {
-
-                player.position =
-                    boardCells.length - 1;
-
-            }
-
-        }
-    );
-
-
-    renderBoard(
-        "winnerBoardContent",
-        true
-    );
-
-
-    /*
-       Scores
-    */
-
-    const scores =
+    const scene=
         document.getElementById(
-            "scores"
+            "scene"
         );
 
-
-    scores.innerHTML =
-        "";
-
-
-    const sorted =
-        [...players].sort(
-            (a,b) =>
-                b.points -
-                a.points
-        );
-
-
-    sorted.forEach(
-        (player,index) => {
-
-            const row =
-                document.createElement(
-                    "div"
-                );
-
-
-            row.className =
-                "score";
-
-
-            row.innerHTML = `
-
-                <span>
-                    ${index === 0 ? "🥇 " : ""}
-                    ${index + 1}.
-                    ${player.name}
-                </span>
-
-                <span>
-                    ${player.points}
-                    point${player.points > 1 ? "s" : ""}
-                </span>
-
-            `;
-
-
-            scores.appendChild(
-                row
-            );
-
-        }
-    );
-
-
-    showScreen(
-        "winnerScreen"
-    );
-
-
     /*
-       Animation spéciale de victoire
+       Le plateau continue d'exister
+       visuellement et effectue une
+       rotation spectaculaire.
     */
 
-    startVictoryAnimation();
+    scene.classList.add("victory");
 
-}
+    setTimeout(()=>{
 
+        document
+            .getElementById(
+                "winnerAvatar"
+            )
+            .textContent=
+            avatars[
+                player.avatar
+            ].emoji;
 
-/* =========================================================
-   ANIMATION VICTOIRE
-========================================================= */
+        document
+            .getElementById(
+                "winnerName"
+            )
+            .textContent=
+            player.name;
 
-function startVictoryAnimation() {
+        createConfetti();
 
-    const board =
-        document.getElementById(
-            "winnerBoard"
-        );
+        showScreen("endScreen");
 
-
-    /*
-       Mouvement plus spectaculaire
-       du plateau.
-    */
-
-    board.animate(
-
-        [
-
-            {
-                transform:
-                    "rotateX(10deg) rotateY(-20deg) rotateZ(-2deg) scale(.9)"
-            },
-
-            {
-                transform:
-                    "rotateX(24deg) rotateY(18deg) rotateZ(3deg) scale(1.04)"
-            },
-
-            {
-                transform:
-                    "rotateX(7deg) rotateY(-16deg) rotateZ(-2deg) scale(1.02)"
-            },
-
-            {
-                transform:
-                    "rotateX(20deg) rotateY(12deg) rotateZ(2deg) scale(1.04)"
-            },
-
-            {
-                transform:
-                    "rotateX(13deg) rotateY(-5deg) rotateZ(0) scale(1)"
-            }
-
-        ],
-
-        {
-
-            duration:
-                4200,
-
-            easing:
-                "ease-in-out",
-
-            iterations:
-                2
-
-        }
-
-    );
-
-
-    /*
-       Confettis
-    */
-
-    createConfetti();
+    },4300);
 
 }
 
@@ -4744,155 +3048,63 @@ function startVictoryAnimation() {
    CONFETTIS
 ========================================================= */
 
-function createConfetti() {
+function createConfetti(){
 
-    const confettiColors = [
+    const container=
+        document.getElementById(
+            "confetti"
+        );
 
-        "#e74c3c",
-        "#2980b9",
-        "#27ae60",
-        "#f2bd45",
-        "#8e44ad",
-        "#16a085"
+    container.innerHTML="";
+
+    const colors=[
+
+        "#2563eb",
+        "#f59e0b",
+        "#16a34a",
+        "#dc2626",
+        "#7c3aed",
+        "#ec4899"
 
     ];
 
-
-    for (
-        let i = 0;
-        i < 80;
+    for(
+        let i=0;
+        i<130;
         i++
-    ) {
+    ){
 
-        const piece =
+        const piece=
             document.createElement(
                 "div"
             );
 
+        piece.className=
+            "confetti-piece";
 
-        piece.className =
-            "confetti";
+        piece.style.left=
+            Math.random()*100+"%";
 
-
-        piece.style.left =
-            Math.random() * 100 +
-            "%";
-
-
-        piece.style.background =
-            confettiColors[
+        piece.style.background=
+            colors[
                 Math.floor(
-                    Math.random() *
-                    confettiColors.length
+                    Math.random()*colors.length
                 )
             ];
 
+        piece.style.animationDuration=
+            (2+Math.random()*3)+"s";
 
-        piece.style.animationDelay =
-            Math.random() * 2 +
-            "s";
+        piece.style.animationDelay=
+            Math.random()*1.5+"s";
 
-
-        piece.style.transform =
-            `rotate(${Math.random()*360}deg)`;
-
-
-        document.body.appendChild(
-            piece
-        );
-
-
-        setTimeout(
-            () => {
-
-                piece.remove();
-
-            },
-            6500
-        );
+        container.appendChild(piece);
 
     }
-
-}
-
-
-/* =========================================================
-   NOUVELLE PARTIE
-========================================================= */
-
-function newGame() {
-
-    players =
-        [];
-
-    currentPlayer =
-        null;
-
-    currentPlayerIndex =
-        0;
-
-    diceValue =
-        0;
-
-    currentCard =
-        null;
-
-    remainingCards =
-        [];
-
-
-    for (
-        let i = 0;
-        i < 6;
-        i++
-    ) {
-
-        const input =
-            document.getElementById(
-                "playerName" + i
-            );
-
-
-        input.value =
-            "";
-
-    }
-
-
-    createPlayerForms();
-
-
-    showScreen(
-        "playersScreen"
-    );
-
-}
-
-
-/* =========================================================
-   INITIALISATION
-========================================================= */
-
-createPlayerForms();
-
-
-/*
-   Sélection par défaut des avatars.
-*/
-
-for (
-    let i = 0;
-    i < 6;
-    i++
-) {
-
-    selectedAvatars[i] =
-        avatars[i];
 
 }
 
 </script>
 
 </body>
-
 </html>

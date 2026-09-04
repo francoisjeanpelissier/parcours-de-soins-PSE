@@ -12,18 +12,22 @@
   --green:#22a447;
   --red:#dc2626;
   --gold:#f5b301;
-  --road:#555e6b;
-  --grass:#8fbd6d;
+  --road:#4c5663;
+  --grass:#78a85b;
   --text:#172033;
 }
 
-*{box-sizing:border-box;margin:0;padding:0}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
 body{
   min-height:100vh;
   font-family:Arial,Helvetica,sans-serif;
   color:var(--text);
-  background:linear-gradient(135deg,#dcecff,#f7faff);
+  background:#dcecff;
   overflow:hidden;
 }
 
@@ -35,11 +39,13 @@ body{
   padding:22px;
 }
 
-.screen.active{display:flex}
+.screen.active{
+  display:flex;
+}
 
-/* =========================
+/* =====================================================
    BOUTONS
-========================= */
+===================================================== */
 
 .btn{
   border:0;
@@ -56,7 +62,7 @@ body{
 }
 
 .btn-primary{
-  color:white;
+  color:#fff;
   background:linear-gradient(135deg,#2563eb,#173b8f);
   box-shadow:0 9px 20px #2563eb40;
 }
@@ -67,9 +73,9 @@ body{
   transform:none;
 }
 
-/* =========================
+/* =====================================================
    INSCRIPTION
-========================= */
+===================================================== */
 
 #setupScreen{
   overflow:auto;
@@ -77,7 +83,7 @@ body{
 
 .setup-container{
   width:min(1050px,100%);
-  background:white;
+  background:#fff;
   border-radius:28px;
   padding:35px;
   box-shadow:0 25px 70px #18345b25;
@@ -138,7 +144,7 @@ h1{
   position:relative;
   height:62px;
   border:2px solid #d7dfeb;
-  background:white;
+  background:#fff;
   border-radius:13px;
   cursor:pointer;
   font-size:29px;
@@ -180,20 +186,24 @@ h1{
   margin-top:13px;
 }
 
-/* =========================
-   ECRAN LANCER DE
-========================= */
+/* =====================================================
+   ECRAN DE JEU
+===================================================== */
 
 .turn-screen{
   flex-direction:column;
   justify-content:flex-start;
   gap:8px;
-  background:linear-gradient(#dcecff 0 45%,#94bd76 45% 100%);
+  background:
+    linear-gradient(
+      #bde1ff 0 42%,
+      #78a85b 42% 100%
+    );
   overflow:hidden;
 }
 
 .turn-top{
-  width:min(1200px,100%);
+  width:min(1250px,100%);
   background:#ffffffee;
   border-radius:18px;
   padding:10px 18px;
@@ -201,7 +211,7 @@ h1{
   align-items:center;
   justify-content:space-between;
   box-shadow:0 8px 25px #17365c22;
-  z-index:200;
+  z-index:500;
 }
 
 .turn-player{
@@ -224,7 +234,7 @@ h1{
 
 .game-area{
   position:relative;
-  width:min(1200px,100%);
+  width:min(1250px,100%);
   flex:1;
   min-height:0;
   display:flex;
@@ -232,15 +242,19 @@ h1{
   justify-content:center;
 }
 
+/* =====================================================
+   DE
+===================================================== */
+
 .dice-panel{
   position:absolute;
-  z-index:300;
+  z-index:600;
   left:25px;
   bottom:25px;
-  width:190px;
+  width:205px;
   padding:18px;
   border-radius:20px;
-  background:#ffffffed;
+  background:#ffffffef;
   box-shadow:0 15px 35px #172b482d;
   text-align:center;
 }
@@ -251,17 +265,24 @@ h1{
   margin-bottom:12px;
 }
 
-/* =========================
-   VRAI DE
-========================= */
+.dice-stage{
+  width:125px;
+  height:125px;
+  margin:0 auto 15px;
+  perspective:700px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 
 .dice3d{
-  width:110px;
-  height:110px;
-  margin:0 auto 15px;
+  width:100px;
+  height:100px;
   position:relative;
   transform-style:preserve-3d;
-  transform:rotateX(-18deg) rotateY(25deg);
+  transform:
+    rotateX(-18deg)
+    rotateY(25deg);
 }
 
 .dice-cube{
@@ -273,92 +294,201 @@ h1{
 
 .face{
   position:absolute;
-  width:110px;
-  height:110px;
+  width:100px;
+  height:100px;
   background:
-    linear-gradient(145deg,#fff,#e5eaf2);
-  border:4px solid #b8c2d0;
-  border-radius:18px;
+    linear-gradient(
+      145deg,
+      #ffffff 0%,
+      #f4f6fa 45%,
+      #d5dbe4 100%
+    );
+  border:4px solid #9da8b7;
+  border-radius:15px;
+
   display:grid;
   grid-template-columns:repeat(3,1fr);
   grid-template-rows:repeat(3,1fr);
-  padding:13px;
-  gap:5px;
-  box-shadow:inset 0 -8px #cbd3df;
+
+  padding:12px;
+  gap:2px;
+
+  box-shadow:
+    inset 0 -8px 0 #c0c8d3,
+    inset 4px 4px 8px #fff,
+    0 0 0 1px #697586;
 }
 
 .face span{
-  width:17px;
-  height:17px;
+  width:15px;
+  height:15px;
   border-radius:50%;
-  background:#1e293b;
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      #475569,
+      #111827 65%
+    );
   justify-self:center;
   align-self:center;
-  box-shadow:inset 2px 2px 3px #0008;
+  box-shadow:
+    inset 2px 2px 3px #0008,
+    0 1px 1px #fff;
 }
 
-.front{transform:translateZ(55px)}
-.back{transform:rotateY(180deg) translateZ(55px)}
-.right{transform:rotateY(90deg) translateZ(55px)}
-.left{transform:rotateY(-90deg) translateZ(55px)}
-.top{transform:rotateX(90deg) translateZ(55px)}
-.bottom{transform:rotateX(-90deg) translateZ(55px)}
+/* positions des faces */
+
+.front{
+  transform:translateZ(50px);
+}
+
+.back{
+  transform:rotateY(180deg) translateZ(50px);
+}
+
+.right{
+  transform:rotateY(90deg) translateZ(50px);
+}
+
+.left{
+  transform:rotateY(-90deg) translateZ(50px);
+}
+
+.top{
+  transform:rotateX(90deg) translateZ(50px);
+}
+
+.bottom{
+  transform:rotateX(-90deg) translateZ(50px);
+}
+
+/*
+   Les points des faces sont placés avec
+   les coordonnées CSS ci-dessous.
+*/
+
+.face span{
+  visibility:hidden;
+}
+
+/* FACE 1 */
+
+.front span:nth-child(5){
+  visibility:visible;
+}
+
+/* FACE 2 */
+
+.back span:nth-child(1),
+.back span:nth-child(9){
+  visibility:visible;
+}
+
+/* FACE 3 */
+
+.right span:nth-child(1),
+.right span:nth-child(5),
+.right span:nth-child(9){
+  visibility:visible;
+}
+
+/* FACE 4 */
+
+.left span:nth-child(1),
+.left span:nth-child(3),
+.left span:nth-child(7),
+.left span:nth-child(9){
+  visibility:visible;
+}
+
+/* FACE 5 */
+
+.top span:nth-child(1),
+.top span:nth-child(3),
+.top span:nth-child(5),
+.top span:nth-child(7),
+.top span:nth-child(9){
+  visibility:visible;
+}
+
+/* FACE 6 */
+
+.bottom span:nth-child(1),
+.bottom span:nth-child(3),
+.bottom span:nth-child(4),
+.bottom span:nth-child(6),
+.bottom span:nth-child(7),
+.bottom span:nth-child(9){
+  visibility:visible;
+}
 
 .dice3d.falling{
-  animation:diceFall 1.7s cubic-bezier(.18,.8,.25,1);
+  animation:diceFall 1.8s cubic-bezier(.18,.8,.25,1);
 }
 
 @keyframes diceFall{
+
   0%{
     transform:
-      translateY(-430px)
-      translateZ(250px)
+      translateY(-450px)
+      translateZ(280px)
       rotateX(0deg)
       rotateY(0deg)
       rotateZ(0deg)
       scale(1.2);
   }
-  35%{
+
+  25%{
     transform:
-      translateY(-130px)
-      translateZ(120px)
-      rotateX(230deg)
-      rotateY(310deg)
-      rotateZ(90deg)
-      scale(1.05);
+      translateY(-230px)
+      translateZ(180px)
+      rotateX(160deg)
+      rotateY(220deg)
+      rotateZ(80deg);
   }
-  60%{
+
+  50%{
     transform:
-      translateY(25px)
+      translateY(-30px)
+      translateZ(70px)
+      rotateX(390deg)
+      rotateY(500deg)
+      rotateZ(170deg);
+  }
+
+  68%{
+    transform:
+      translateY(15px)
       translateZ(20px)
-      rotateX(430deg)
-      rotateY(600deg)
-      rotateZ(180deg)
-      scale(.95);
+      rotateX(510deg)
+      rotateY(670deg)
+      rotateZ(240deg);
   }
-  75%{
+
+  82%{
     transform:
-      translateY(-35px)
+      translateY(-18px)
       translateZ(30px)
-      rotateX(500deg)
-      rotateY(700deg)
-      rotateZ(240deg)
-      scale(1);
-  }
-  88%{
-    transform:
-      translateY(5px)
-      translateZ(5px)
       rotateX(570deg)
-      rotateY(780deg)
+      rotateY(770deg)
       rotateZ(300deg);
   }
+
+  92%{
+    transform:
+      translateY(4px)
+      translateZ(5px)
+      rotateX(620deg)
+      rotateY(850deg)
+      rotateZ(335deg);
+  }
+
   100%{
     transform:
       translateY(0)
       translateZ(0)
-      rotateX(540deg)
-      rotateY(720deg)
+      rotateX(630deg)
+      rotateY(900deg)
       rotateZ(360deg);
   }
 }
@@ -370,149 +500,287 @@ h1{
   min-height:38px;
 }
 
-/* =========================
-   PLATEAU 3D
-========================= */
+/* =====================================================
+   PLATEAU
+===================================================== */
 
 .city-scene{
   position:relative;
-  width:min(1100px,94vw);
+  width:min(1120px,94vw);
   height:min(650px,78vh);
-  perspective:1500px;
+  perspective:1800px;
 }
+
+/*
+  LE PLATEAU EST COMPOSÉ DE PLUSIEURS COUCHES.
+  Ce n'est plus uniquement une ombre :
+  le socle, les trottoirs, les routes et les
+  bâtiments ont une véritable épaisseur 3D.
+*/
 
 .city-board{
   position:absolute;
   inset:0;
+
   border-radius:42px;
-  background:#477842;
-  border:10px solid #31592f;
+
+  background:
+    linear-gradient(
+      145deg,
+      #5e913f,
+      #3e6c35
+    );
+
+  border:10px solid #2b4d2b;
+
   transform:
-    rotateX(57deg)
+    rotateX(58deg)
     rotateZ(-7deg);
+
   transform-style:preserve-3d;
+
   box-shadow:
-    0 30px 0 #274b27,
-    0 47px 0 #1b371d,
-    0 65px 80px #0008;
-  transition:transform 1s ease;
+    0 28px 0 #254424,
+    0 43px 0 #1a321a,
+    0 58px 0 #102510,
+    0 80px 90px #0009;
+
+  transition:
+    transform 1s ease;
 }
 
-.city-board.board-busy{
+/* épaisseur latérale du plateau */
+
+.city-board::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:32px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #254925,
+      #3b6736 30%,
+      #1d391d
+    );
+
   transform:
-    rotateX(54deg)
-    rotateZ(-10deg)
-    scale(1.025);
+    translateZ(-45px);
+
+  z-index:-2;
 }
 
-.city-board.victory{
-  animation:boardVictory 4.5s ease-in-out;
-}
-
-@keyframes boardVictory{
-  0%{
-    transform:rotateX(57deg) rotateZ(-7deg) scale(1);
-  }
-  20%{
-    transform:rotateX(45deg) rotateZ(65deg) scale(1.07);
-  }
-  45%{
-    transform:rotateX(68deg) rotateZ(180deg) scale(1.14);
-  }
-  70%{
-    transform:rotateX(45deg) rotateZ(295deg) scale(1.07);
-  }
-  100%{
-    transform:rotateX(57deg) rotateZ(360deg) scale(1);
-  }
-}
+/* couche supérieure */
 
 .ground{
   position:absolute;
-  inset:20px;
+  inset:18px;
+
   border-radius:30px;
+
   background:
-    radial-gradient(circle at 20% 25%,#ffffff22 0 3px,transparent 4px),
-    radial-gradient(circle at 65% 75%,#00000012 0 3px,transparent 4px),
-    linear-gradient(135deg,#a7d47e,#73a85c);
-  transform:translateZ(5px);
+    radial-gradient(
+      circle at 20% 25%,
+      #ffffff20 0 3px,
+      transparent 4px
+    ),
+    radial-gradient(
+      circle at 65% 75%,
+      #00000012 0 3px,
+      transparent 4px
+    ),
+    linear-gradient(
+      135deg,
+      #a9d37c,
+      #71a457
+    );
+
+  transform:
+    translateZ(10px);
+
+  box-shadow:
+    inset 0 0 0 4px #4f813f,
+    inset 0 -10px 0 #568643;
 }
 
-/* =========================
-   ROUTES
-========================= */
+/* =====================================================
+   ROUTES ENCAISSEES
+===================================================== */
 
 .road{
   position:absolute;
-  background:#515b68;
-  transform:translateZ(10px);
-  box-shadow:0 7px 0 #3a424d;
+  background:
+    linear-gradient(
+      90deg,
+      #68727e,
+      #454e5a
+    );
+
+  transform:translateZ(15px);
+
+  box-shadow:
+    inset 0 7px 0 #78838e,
+    inset 0 -8px 0 #363e48,
+    0 7px 0 #303842;
+
+  border:4px solid #3c4652;
 }
 
 .road.horizontal{
-  left:30px;
-  right:30px;
+  left:28px;
+  right:28px;
   top:47%;
   height:82px;
+
   background:
     repeating-linear-gradient(
       90deg,
       transparent 0 35px,
       #f9e9a2 35px 55px
     ),
-    #515b68;
+    linear-gradient(
+      #5d6672,
+      #434b56
+    );
 }
 
 .road.vertical{
-  top:30px;
-  bottom:30px;
+  top:28px;
+  bottom:28px;
   left:48%;
   width:82px;
+
   background:
     repeating-linear-gradient(
       0deg,
       transparent 0 35px,
       #f9e9a2 35px 55px
     ),
-    #515b68;
+    linear-gradient(
+      90deg,
+      #5d6672,
+      #434b56
+    );
 }
 
-/* =========================
-   BATIMENTS
-========================= */
+/* trottoirs */
+
+.road.horizontal::before,
+.road.horizontal::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  height:12px;
+  background:#c7cdd3;
+}
+
+.road.horizontal::before{
+  top:-13px;
+}
+
+.road.horizontal::after{
+  bottom:-13px;
+}
+
+.road.vertical::before,
+.road.vertical::after{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:12px;
+  background:#c7cdd3;
+}
+
+.road.vertical::before{
+  left:-13px;
+}
+
+.road.vertical::after{
+  right:-13px;
+}
+
+/* =====================================================
+   BATIMENTS AVEC VOLUME
+===================================================== */
 
 .building{
   position:absolute;
+
+  transform:
+    translateZ(80px);
+
   transform-style:preserve-3d;
-  transform:translateZ(80px);
-  z-index:20;
-  border-radius:9px;
+
+  border-radius:8px;
+
   box-shadow:
-    0 11px 0 #8c99aa,
-    0 17px 20px #0005;
+    0 13px 0 #8793a2,
+    0 18px 0 #687584,
+    0 23px 25px #0006;
+
+  z-index:20;
+}
+
+.building::after{
+  content:"";
+
+  position:absolute;
+  left:8px;
+  right:8px;
+  bottom:-20px;
+  height:20px;
+
+  background:#6c7887;
+
+  transform:
+    translateZ(-10px);
+
+  border-radius:0 0 5px 5px;
 }
 
 .building .windows{
   position:absolute;
   inset:12px;
+
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:8px;
 }
 
 .building .windows span{
-  background:#8dd4f5;
-  border:2px solid #538aaa;
+  background:
+    linear-gradient(
+      135deg,
+      #b8ecff,
+      #5ba6c9
+    );
+
+  border:2px solid #4e819c;
   border-radius:3px;
+
+  box-shadow:
+    inset 2px 2px #ffffff88;
 }
+
+/* HOPITAL */
 
 .hospital{
   left:24px;
   top:28px;
   width:145px;
   height:105px;
-  background:#f8fafc;
-  border:5px solid #d2dae5;
+
+  background:
+    linear-gradient(
+      90deg,
+      #fff,
+      #dce4ec
+    );
+
+  border:5px solid #c5d0db;
 }
 
 .hospital .sign{
@@ -522,13 +790,22 @@ h1{
   font-size:30px;
 }
 
+/* CABINET */
+
 .clinic{
   right:25px;
   top:35px;
   width:135px;
   height:100px;
-  background:#eef7ff;
-  border:5px solid #c4d6e8;
+
+  background:
+    linear-gradient(
+      90deg,
+      #eef7ff,
+      #cbddec
+    );
+
+  border:5px solid #b7cadb;
 }
 
 .clinic .sign{
@@ -538,13 +815,22 @@ h1{
   font-size:40px;
 }
 
+/* PHARMACIE */
+
 .pharmacy{
   left:30px;
   bottom:30px;
   width:135px;
   height:90px;
-  background:#f8fafc;
-  border:5px solid #cbd5e1;
+
+  background:
+    linear-gradient(
+      90deg,
+      #fff,
+      #dce5ee
+    );
+
+  border:5px solid #c5d0da;
 }
 
 .pharmacy .sign{
@@ -554,13 +840,22 @@ h1{
   font-size:42px;
 }
 
+/* LABORATOIRE */
+
 .laboratory{
   right:30px;
   bottom:30px;
   width:145px;
   height:92px;
-  background:#edf5ff;
-  border:5px solid #c4d3e4;
+
+  background:
+    linear-gradient(
+      90deg,
+      #edf5ff,
+      #c8d9eb
+    );
+
+  border:5px solid #b9cbdc;
 }
 
 .laboratory .sign{
@@ -570,43 +865,81 @@ h1{
   font-size:40px;
 }
 
-/* =========================
-   MAISONS
-========================= */
+/* =====================================================
+   MAISONS AVEC TOITS EN RELIEF
+===================================================== */
 
 .house{
   position:absolute;
+
   width:85px;
   height:65px;
-  background:#f2c38b;
+
+  background:
+    linear-gradient(
+      90deg,
+      #f4c58b,
+      #d99855
+    );
+
   border:4px solid #a76c35;
-  transform:translateZ(58px);
+
+  transform:
+    translateZ(58px);
+
   border-radius:5px;
-  box-shadow:0 8px 0 #704620;
+
+  box-shadow:
+    0 9px 0 #704620,
+    0 14px 18px #0005;
+
   z-index:18;
 }
 
 .house::before{
   content:"";
+
   position:absolute;
+
   width:70px;
   height:70px;
-  background:#b94b3b;
-  transform:rotate(45deg);
+
+  background:
+    linear-gradient(
+      135deg,
+      #c45343,
+      #87372f
+    );
+
+  transform:
+    rotate(45deg);
+
   left:3px;
   top:-34px;
+
   border:4px solid #803229;
+
   border-bottom:0;
+
+  box-shadow:
+    inset 7px 7px #e06b56;
 }
 
 .house::after{
   content:"";
+
   position:absolute;
+
   width:15px;
   height:25px;
+
   background:#704b32;
+
   left:32px;
   bottom:0;
+
+  box-shadow:
+    inset 4px 0 #8b6040;
 }
 
 .house1{left:220px;top:25px}
@@ -615,9 +948,9 @@ h1{
 .house4{left:225px;bottom:25px}
 .house5{right:220px;bottom:28px}
 
-/* =========================
+/* =====================================================
    PARC
-========================= */
+===================================================== */
 
 .park{
   position:absolute;
@@ -625,52 +958,103 @@ h1{
   top:13%;
   width:125px;
   height:115px;
+
   border-radius:25px;
-  background:#72aa59;
+
+  background:
+    linear-gradient(
+      135deg,
+      #7db963,
+      #5c9548
+    );
+
   border:5px solid #52833f;
-  transform:translateZ(15px);
+
+  transform:
+    translateZ(20px);
+
+  box-shadow:
+    0 7px 0 #426d36;
+
   z-index:10;
 }
 
 .pond{
   position:absolute;
+
   width:65px;
   height:38px;
-  background:#65bce8;
+
+  background:
+    radial-gradient(
+      ellipse,
+      #a9e8ff,
+      #4eacd4
+    );
+
   border:4px solid #3187b3;
+
   border-radius:50%;
+
   left:28px;
   top:35px;
+
+  box-shadow:
+    inset 5px 4px #ffffff55;
 }
 
-/* =========================
-   ARBRES
-========================= */
+/* =====================================================
+   ARBRES VOLUMETRIQUES
+===================================================== */
 
 .tree{
   position:absolute;
-  width:42px;
-  height:78px;
-  transform:translateZ(65px);
+  width:45px;
+  height:90px;
+
+  transform:
+    translateZ(65px);
+
   z-index:22;
 }
 
 .tree::before{
   content:"";
+
   position:absolute;
+
   width:13px;
-  height:35px;
-  background:#674323;
-  left:15px;
+  height:42px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #76502c,
+      #4c321b
+    );
+
+  left:16px;
   bottom:0;
-  box-shadow:0 5px 0 #4c321b;
+
+  border-radius:4px;
+
+  box-shadow:
+    5px 3px 0 #3d2917;
 }
 
 .tree::after{
   content:"🌳";
+
   position:absolute;
-  font-size:43px;
+
+  font-size:45px;
+
   top:-3px;
+
+  filter:
+    drop-shadow(
+      4px 7px 2px #0005
+    );
 }
 
 .t1{left:190px;top:155px}
@@ -682,25 +1066,46 @@ h1{
 .t7{left:400px;bottom:45px}
 .t8{right:400px;bottom:45px}
 
-/* =========================
+/* =====================================================
    LAMPADAIRES
-========================= */
+===================================================== */
 
 .lamp{
   position:absolute;
+
   width:10px;
   height:75px;
-  background:#343b45;
-  transform:translateZ(72px);
+
+  background:
+    linear-gradient(
+      90deg,
+      #59636e,
+      #242a31
+    );
+
+  transform:
+    translateZ(72px);
+
   z-index:23;
+
+  box-shadow:
+    3px 0 0 #151a1e;
 }
 
 .lamp::before{
   content:"💡";
+
   position:absolute;
+
   left:-9px;
   top:-27px;
+
   font-size:25px;
+
+  filter:
+    drop-shadow(
+      0 0 8px #fff59d
+    );
 }
 
 .l1{left:205px;top:260px}
@@ -708,88 +1113,50 @@ h1{
 .l3{left:205px;bottom:260px}
 .l4{right:205px;bottom:250px}
 
-/* =========================
-   BANCS
-========================= */
-
-.bench{
-  position:absolute;
-  width:68px;
-  height:24px;
-  background:#8b5e34;
-  border-radius:4px;
-  transform:translateZ(43px);
-  box-shadow:0 9px 0 #56381f;
-  z-index:16;
-}
-
-.bench::before,
-.bench::after{
-  content:"";
-  position:absolute;
-  width:7px;
-  height:17px;
-  background:#3d2a1c;
-  bottom:-15px;
-}
-
-.bench::before{left:9px}
-.bench::after{right:9px}
-
-/* =========================
-   PASSAGES PIETONS
-========================= */
-
-.crossing{
-  position:absolute;
-  display:flex;
-  gap:7px;
-  transform:translateZ(18px);
-  z-index:15;
-}
-
-.crossing span{
-  width:9px;
-  height:55px;
-  background:#fff;
-}
-
-.cross1{
-  left:43%;
-  top:40%;
-}
-
-.cross2{
-  left:58%;
-  top:40%;
-}
-
-/* =========================
+/* =====================================================
    PARCOURS
-========================= */
+===================================================== */
 
 .board-path{
   position:absolute;
+
   left:105px;
   right:105px;
   top:105px;
   bottom:105px;
 
   display:grid;
+
   grid-template-columns:repeat(8,1fr);
   grid-template-rows:repeat(5,1fr);
+
   gap:10px;
 
-  transform:translateZ(36px);
+  transform:
+    translateZ(45px);
+
   z-index:60;
 }
 
+/* =====================================================
+   CASES EN VRAI RELIEF
+===================================================== */
+
 .cell{
   position:relative;
+
   min-width:0;
   min-height:0;
-  background:linear-gradient(145deg,#fff,#dce5ef);
-  border:3px solid #b4c2d3;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #dce5ef
+    );
+
+  border:3px solid #aebdcd;
+
   border-radius:13px;
 
   display:flex;
@@ -798,31 +1165,98 @@ h1{
 
   font-size:13px;
   font-weight:1000;
+
   color:#334155;
 
+  /*
+    Plusieurs faces/épaisseurs pour
+    donner un vrai volume à chaque case.
+  */
+
   box-shadow:
-    0 8px 0 #91a4b9,
-    0 13px 15px #0004;
+    inset 0 2px 0 #fff,
+    inset 0 -5px 0 #bdc9d6,
+    0 7px 0 #8295a9,
+    0 11px 0 #64788e;
+
+  transform:
+    translateZ(0);
 
   transform-style:preserve-3d;
+
+  transition:
+    transform .2s,
+    background .2s;
+}
+
+.cell::before{
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  border-radius:10px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff88,
+      transparent 45%
+    );
+
+  pointer-events:none;
 }
 
 .cell.start{
-  background:linear-gradient(145deg,#bbf7d0,#4ade80);
+  background:
+    linear-gradient(
+      145deg,
+      #bbf7d0,
+      #4ade80
+    );
+
   border-color:#15803d;
+
   color:#14532d;
+
+  box-shadow:
+    inset 0 2px #ffffffaa,
+    inset 0 -5px #35a85c,
+    0 7px #277c42,
+    0 11px #1d6133;
 }
 
 .cell.finish{
-  background:linear-gradient(145deg,#ffe9a1,#f5b301);
+  background:
+    linear-gradient(
+      145deg,
+      #ffeaa3,
+      #f5b301
+    );
+
   border-color:#b77900;
+
+  color:#694400;
+
+  box-shadow:
+    inset 0 2px #fff7,
+    inset 0 -5px #d09200,
+    0 7px #966800,
+    0 11px #674600;
+
+  transform:
+    translateZ(8px);
 }
 
 .cell-number{
   position:absolute;
+
   top:4px;
   left:6px;
+
   font-size:9px;
+
   opacity:.65;
 }
 
@@ -830,144 +1264,298 @@ h1{
   font-size:24px;
 }
 
-/* =========================
-   COFFRE FINAL
-========================= */
+/* =====================================================
+   COFFRE SUR LA DERNIERE CASE
+===================================================== */
 
 .treasure{
   position:absolute;
-  left:50%;
-  top:50%;
+
+  /*
+    IMPORTANT :
+    Le coffre est placé sur la dernière case,
+    en bas à droite du parcours.
+  */
+
+  right:113px;
+  bottom:113px;
+
+  width:75px;
+  height:75px;
+
   transform:
-    translate(-50%,-50%)
-    translateZ(100px);
-  z-index:90;
+    translateZ(105px);
+
+  z-index:300;
+
   text-align:center;
+
   pointer-events:none;
 }
 
 .treasure-box{
   position:relative;
-  width:100px;
-  height:65px;
-  background:linear-gradient(135deg,#a86420,#e8a632);
-  border:6px solid #704313;
-  border-radius:8px 8px 14px 14px;
+
+  width:72px;
+  height:48px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #a86420,
+      #f0b53b
+    );
+
+  border:5px solid #704313;
+
+  border-radius:
+    7px 7px 12px 12px;
+
   box-shadow:
-    0 12px 0 #59330f,
-    0 18px 20px #0006;
+    0 9px 0 #59330f,
+    0 14px 20px #0007;
+
+  transform:
+    rotate(-3deg);
 }
 
 .treasure-box::before{
   content:"";
+
   position:absolute;
-  width:112px;
-  height:35px;
-  background:linear-gradient(135deg,#d58b27,#f3bd4c);
-  border:6px solid #704313;
-  border-radius:50% 50% 10px 10px;
-  left:-12px;
-  top:-30px;
-  transform:rotate(-4deg);
+
+  width:80px;
+  height:30px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #d58b27,
+      #f3bd4c
+    );
+
+  border:5px solid #704313;
+
+  border-radius:
+    50% 50% 10px 10px;
+
+  left:-9px;
+  top:-27px;
+
+  transform:
+    rotate(-2deg);
 }
 
 .treasure-box::after{
-  content:"💶 💵 💶";
+  content:"💶 💵";
+
   position:absolute;
-  font-size:30px;
-  left:-20px;
-  top:-45px;
+
+  font-size:23px;
+
+  left:-10px;
+  top:-40px;
+
   white-space:nowrap;
-  transform:rotate(-3deg);
 }
 
 .treasure-label{
-  margin-top:9px;
+  position:absolute;
+
+  top:58px;
+  left:-15px;
+  width:105px;
+
   color:#5c390b;
+
   font-weight:1000;
-  font-size:14px;
-  text-shadow:0 1px white;
+
+  font-size:11px;
+
+  text-shadow:
+    0 1px #fff;
 }
 
-/* =========================
+/* =====================================================
    AVATARS
-========================= */
+===================================================== */
 
 .pawns{
   position:absolute;
+
   inset:0;
-  z-index:150;
+
+  z-index:400;
+
   pointer-events:none;
+
   transform-style:preserve-3d;
 }
 
 .pawn{
   position:absolute;
+
   font-size:44px;
+
   transform:
     translate(-50%,-50%)
-    translateZ(100px);
-  filter:drop-shadow(0 8px 4px #0007);
+    translateZ(120px);
+
+  filter:
+    drop-shadow(
+      0 8px 4px #0007
+    );
+
   transition:
     left .35s ease,
     top .35s ease;
-  z-index:150;
+
+  z-index:400;
 }
 
 .pawn::after{
   content:"";
+
   position:absolute;
+
   left:50%;
   bottom:-7px;
-  transform:translateX(-50%);
+
+  transform:
+    translateX(-50%);
+
   width:30px;
   height:10px;
+
   background:#0005;
+
   border-radius:50%;
+
   filter:blur(3px);
 }
 
 .pawn.jumping{
-  animation:pawnJump .35s ease-in-out;
+  animation:
+    pawnJump .35s ease-in-out;
 }
 
 @keyframes pawnJump{
+
   0%{
-    transform:translate(-50%,-50%) translateZ(100px) scale(1);
+    transform:
+      translate(-50%,-50%)
+      translateZ(120px)
+      scale(1);
   }
+
   50%{
-    transform:translate(-50%,-80%) translateZ(165px) scale(1.18);
+    transform:
+      translate(-50%,-80%)
+      translateZ(185px)
+      scale(1.18);
   }
+
   100%{
-    transform:translate(-50%,-50%) translateZ(100px) scale(1);
+    transform:
+      translate(-50%,-50%)
+      translateZ(120px)
+      scale(1);
   }
 }
 
-/* =========================
-   BOUTON FIN TOUR
-========================= */
+/* =====================================================
+   ROTATION DU PLATEAU
+===================================================== */
+
+.city-board.board-busy{
+
+  transform:
+    rotateX(54deg)
+    rotateZ(-10deg)
+    scale(1.025);
+
+}
+
+.city-board.victory{
+
+  animation:
+    boardVictory 4.5s ease-in-out;
+
+}
+
+@keyframes boardVictory{
+
+  0%{
+    transform:
+      rotateX(58deg)
+      rotateZ(-7deg)
+      scale(1);
+  }
+
+  20%{
+    transform:
+      rotateX(45deg)
+      rotateZ(65deg)
+      scale(1.07);
+  }
+
+  45%{
+    transform:
+      rotateX(68deg)
+      rotateZ(180deg)
+      scale(1.14);
+  }
+
+  70%{
+    transform:
+      rotateX(45deg)
+      rotateZ(295deg)
+      scale(1.07);
+  }
+
+  100%{
+    transform:
+      rotateX(58deg)
+      rotateZ(360deg)
+      scale(1);
+  }
+}
+
+/* =====================================================
+   BOUTON FIN DE TOUR
+===================================================== */
 
 .end-turn{
   position:absolute;
   right:25px;
   bottom:25px;
-  z-index:300;
+  z-index:600;
 }
 
-/* =========================
+/* =====================================================
    QUESTION
-========================= */
+===================================================== */
 
 .question-screen{
-  background:linear-gradient(135deg,#edf4ff,#fff);
+  background:
+    linear-gradient(
+      135deg,
+      #edf4ff,
+      #fff
+    );
 }
 
 .question-card{
   width:min(900px,100%);
+
   background:#fff;
+
   border-radius:28px;
+
   padding:38px;
-  box-shadow:0 25px 70px #17365c22;
+
+  box-shadow:
+    0 25px 70px #17365c22;
 }
 
 .question-header{
@@ -987,9 +1575,13 @@ h1{
 }
 
 .question-text{
-  font-size:clamp(23px,4vw,34px);
+  font-size:
+    clamp(23px,4vw,34px);
+
   font-weight:900;
+
   line-height:1.35;
+
   margin-bottom:25px;
 }
 
@@ -1000,12 +1592,19 @@ h1{
 
 .answer{
   border:2px solid #d8e1ec;
+
   background:#f9fbfe;
+
   border-radius:15px;
+
   padding:17px;
+
   font-size:18px;
+
   text-align:left;
+
   cursor:pointer;
+
   transition:.15s;
 }
 
@@ -1031,13 +1630,19 @@ h1{
 
 .feedback{
   display:none;
+
   margin-top:18px;
+
   padding:16px;
+
   border-radius:14px;
+
   font-weight:900;
 }
 
-.feedback.show{display:block}
+.feedback.show{
+  display:block;
+}
 
 .feedback.success{
   background:#e7f8ed;
@@ -1049,24 +1654,43 @@ h1{
   color:#a31313;
 }
 
-/* =========================
-   FIN
-========================= */
+/* =====================================================
+   VICTOIRE
+===================================================== */
 
 .end-screen{
   flex-direction:column;
+
   text-align:center;
-  background:radial-gradient(circle,#fff4bc,#e8f0ff 60%);
+
+  background:
+    radial-gradient(
+      circle,
+      #fff4bc,
+      #e8f0ff 60%
+    );
 }
 
 .winner-crown{
   font-size:80px;
-  animation:crown 1s infinite alternate;
+
+  animation:
+    crown 1s infinite alternate;
 }
 
 @keyframes crown{
-  from{transform:translateY(0) rotate(-5deg)}
-  to{transform:translateY(-12px) rotate(5deg)}
+
+  from{
+    transform:
+      translateY(0)
+      rotate(-5deg);
+  }
+
+  to{
+    transform:
+      translateY(-12px)
+      rotate(5deg);
+  }
 }
 
 .winner-avatar{
@@ -1074,51 +1698,73 @@ h1{
 }
 
 .winner-title{
-  font-size:clamp(45px,8vw,85px);
+  font-size:
+    clamp(45px,8vw,85px);
+
   font-weight:1000;
+
   color:#f59e0b;
-  text-shadow:0 5px #a96800;
+
+  text-shadow:
+    0 5px #a96800;
 }
 
 .winner-name{
-  font-size:clamp(35px,6vw,65px);
+  font-size:
+    clamp(35px,6vw,65px);
+
   font-weight:1000;
+
   color:var(--dark);
+
   margin-bottom:25px;
 }
 
-/* =========================
+/* =====================================================
    CONFETTIS
-========================= */
+===================================================== */
 
 .confetti{
   position:fixed;
+
   inset:0;
+
   pointer-events:none;
+
   overflow:hidden;
 }
 
 .confetti-piece{
   position:absolute;
+
   top:-20px;
+
   width:10px;
   height:20px;
-  animation:fall linear forwards;
+
+  animation:
+    fall linear forwards;
 }
 
 @keyframes fall{
+
   to{
-    transform:translateY(110vh) rotate(720deg);
+    transform:
+      translateY(110vh)
+      rotate(720deg);
   }
+
 }
 
-/* =========================
+/* =====================================================
    RESPONSIVE
-========================= */
+===================================================== */
 
 @media(max-width:850px){
 
-  body{overflow:auto}
+  body{
+    overflow:auto;
+  }
 
   .turn-screen{
     min-height:100vh;
@@ -1145,6 +1791,7 @@ h1{
     right:10px;
     bottom:10px;
   }
+
 }
 </style>
 </head>
@@ -1159,32 +1806,42 @@ h1{
 
   <div class="setup-container">
 
-    <div class="logo">🏥🎲🏙️</div>
+    <div class="logo">
+      🏥🎲🏙️
+    </div>
 
-    <h1>Le parcours de soins</h1>
+    <h1>
+      Le parcours de soins
+    </h1>
 
     <p class="subtitle">
       Inscrivez les joueurs et choisissez un avatar.
       Chaque avatar ne peut être utilisé qu'une seule fois.
     </p>
 
-    <div id="playersList" class="players-list"></div>
+    <div id="playersList"
+         class="players-list">
+    </div>
 
     <div class="setup-buttons">
 
-      <button class="btn btn-primary"
-              onclick="addPlayer()">
+      <button
+        class="btn btn-primary"
+        onclick="addPlayer()">
         ＋ Ajouter un joueur
       </button>
 
-      <button class="btn btn-primary"
-              onclick="startGame()">
+      <button
+        class="btn btn-primary"
+        onclick="startGame()">
         🎮 Commencer la partie
       </button>
 
     </div>
 
-    <div id="setupError" class="error"></div>
+    <div id="setupError"
+         class="error">
+    </div>
 
   </div>
 
@@ -1192,23 +1849,33 @@ h1{
 
 
 <!-- =====================================================
-     TOUR + PLATEAU + DE
+     ECRAN LANCER DE + PLATEAU
 ===================================================== -->
 
-<section id="turnScreen" class="screen turn-screen">
+<section
+  id="turnScreen"
+  class="screen turn-screen">
 
   <div class="turn-top">
 
     <div class="turn-player">
 
-      <div id="turnAvatar"
-           class="turn-player-avatar">
+      <div
+        id="turnAvatar"
+        class="turn-player-avatar">
         🤖
       </div>
 
       <div>
-        <small>TOUR DE</small>
-        <div id="turnName">Joueur</div>
+
+        <small>
+          TOUR DE
+        </small>
+
+        <div id="turnName">
+          Joueur
+        </div>
+
       </div>
 
     </div>
@@ -1222,10 +1889,6 @@ h1{
 
   <div class="game-area">
 
-    <!-- ==============================
-         PLATEAU
-    =============================== -->
-
     <div class="city-scene">
 
       <div id="cityBoard"
@@ -1233,17 +1896,17 @@ h1{
 
         <div class="ground"></div>
 
-        <!-- ROUTES -->
-
         <div class="road horizontal"></div>
         <div class="road vertical"></div>
 
 
-        <!-- HÔPITAL -->
+        <!-- HOPITAL -->
 
         <div class="building hospital">
 
-          <div class="sign">🏥</div>
+          <div class="sign">
+            🏥
+          </div>
 
           <div class="windows">
             <span></span>
@@ -1261,7 +1924,9 @@ h1{
 
         <div class="building clinic">
 
-          <div class="sign">🩺</div>
+          <div class="sign">
+            🩺
+          </div>
 
           <div class="windows">
             <span></span>
@@ -1277,7 +1942,9 @@ h1{
 
         <div class="building pharmacy">
 
-          <div class="sign">💊</div>
+          <div class="sign">
+            💊
+          </div>
 
           <div class="windows">
             <span></span>
@@ -1292,7 +1959,9 @@ h1{
 
         <div class="building laboratory">
 
-          <div class="sign">🔬</div>
+          <div class="sign">
+            🔬
+          </div>
 
           <div class="windows">
             <span></span>
@@ -1315,7 +1984,9 @@ h1{
         <!-- PARC -->
 
         <div class="park">
+
           <div class="pond"></div>
+
         </div>
 
 
@@ -1339,35 +2010,16 @@ h1{
         <div class="lamp l4"></div>
 
 
-        <!-- BANCS -->
-
-        <div class="bench"
-             style="left:365px;top:35px"></div>
-
-        <div class="bench"
-             style="right:365px;bottom:35px"></div>
-
-
-        <!-- PASSAGES PIÉTONS -->
-
-        <div class="crossing cross1">
-          <span></span><span></span><span></span>
-          <span></span><span></span>
-        </div>
-
-        <div class="crossing cross2">
-          <span></span><span></span><span></span>
-          <span></span><span></span>
-        </div>
-
-
         <!-- PARCOURS -->
 
         <div id="boardPath"
-             class="board-path"></div>
+             class="board-path">
+        </div>
 
 
-        <!-- COFFRE FINAL -->
+        <!-- COFFRE -->
+        <!-- Il est volontairement placé
+             sur la dernière case -->
 
         <div class="treasure">
 
@@ -1380,19 +2032,20 @@ h1{
         </div>
 
 
-        <!-- AVATARS -->
+        <!-- PIONS -->
 
         <div id="pawns"
-             class="pawns"></div>
+             class="pawns">
+        </div>
 
       </div>
 
     </div>
 
 
-    <!-- ==============================
-         DÉ
-    =============================== -->
+    <!-- =================================================
+         DE
+    ================================================= -->
 
     <div class="dice-panel">
 
@@ -1400,59 +2053,144 @@ h1{
         🎲 Lance le dé
       </div>
 
-      <div id="dice3d"
-           class="dice3d">
+      <div class="dice-stage">
 
-        <div class="dice-cube">
+        <div id="dice3d"
+             class="dice3d">
 
-          <div class="face front">
-            <span></span><span></span><span></span>
-            <span></span><span></span><span></span>
-            <span></span><span></span><span></span>
-          </div>
+          <div class="dice-cube">
 
-          <div class="face back">
-            <span></span><span></span><span></span>
-            <span></span><span></span><span></span>
-            <span></span><span></span><span></span>
-          </div>
 
-          <div class="face right">
-            <span></span><span></span><span></span>
-            <span></span><span></span><span></span>
-            <span></span><span></span><span></span>
-          </div>
+            <!-- FACE 1 -->
 
-          <div class="face left">
-            <span></span><span></span><span></span>
-            <span></span><span></span><span></span>
-            <span></span><span></span><span></span>
-          </div>
+            <div class="face front">
 
-          <div class="face top">
-            <span></span><span></span><span></span>
-            <span></span><span></span><span></span>
-            <span></span><span></span><span></span>
-          </div>
+              <span></span>
+              <span></span>
+              <span></span>
 
-          <div class="face bottom">
-            <span></span><span></span><span></span>
-            <span></span><span></span><span></span>
-            <span></span><span></span><span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+            </div>
+
+
+            <!-- FACE 2 -->
+
+            <div class="face back">
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+            </div>
+
+
+            <!-- FACE 3 -->
+
+            <div class="face right">
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+            </div>
+
+
+            <!-- FACE 4 -->
+
+            <div class="face left">
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+            </div>
+
+
+            <!-- FACE 5 -->
+
+            <div class="face top">
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+            </div>
+
+
+            <!-- FACE 6 -->
+
+            <div class="face bottom">
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+            </div>
+
           </div>
 
         </div>
 
       </div>
 
+
       <div id="diceResult"
            class="dice-result">
         ?
       </div>
 
-      <button id="rollButton"
-              class="btn btn-primary"
-              onclick="rollDice()">
+
+      <button
+        id="rollButton"
+        class="btn btn-primary"
+        onclick="rollDice()">
         🎲 Lancer
       </button>
 
@@ -1467,8 +2205,9 @@ h1{
      QUESTION
 ===================================================== -->
 
-<section id="questionScreen"
-         class="screen question-screen">
+<section
+  id="questionScreen"
+  class="screen question-screen">
 
   <div class="question-card">
 
@@ -1486,13 +2225,16 @@ h1{
 
     </div>
 
+
     <div id="questionText"
          class="question-text">
     </div>
 
+
     <div id="answers"
          class="answers">
     </div>
+
 
     <div id="feedback"
          class="feedback">
@@ -1504,11 +2246,12 @@ h1{
 
 
 <!-- =====================================================
-     FIN DE TOUR / PLATEAU
+     PLATEAU APRES QUESTION
 ===================================================== -->
 
-<section id="boardScreen"
-         class="screen turn-screen">
+<section
+  id="boardScreen"
+  class="screen turn-screen">
 
   <div class="turn-top">
 
@@ -1520,17 +2263,28 @@ h1{
       </div>
 
       <div>
-        <small>POSITION</small>
-        <div id="boardPlayerName">Joueur</div>
+
+        <small>
+          POSITION
+        </small>
+
+        <div id="boardPlayerName">
+          Joueur
+        </div>
+
       </div>
 
     </div>
 
     <div>
-      Case <strong id="positionText">0</strong>
+      Case
+      <strong id="positionText">
+        0
+      </strong>
     </div>
 
   </div>
+
 
   <div class="game-area">
 
@@ -1544,35 +2298,70 @@ h1{
         <div class="road horizontal"></div>
         <div class="road vertical"></div>
 
+
         <div class="building hospital">
-          <div class="sign">🏥</div>
-          <div class="windows">
-            <span></span><span></span><span></span>
-            <span></span><span></span><span></span>
+
+          <div class="sign">
+            🏥
           </div>
+
+          <div class="windows">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
         </div>
+
 
         <div class="building clinic">
-          <div class="sign">🩺</div>
-          <div class="windows">
-            <span></span><span></span>
-            <span></span><span></span>
+
+          <div class="sign">
+            🩺
           </div>
+
+          <div class="windows">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
         </div>
+
 
         <div class="building pharmacy">
-          <div class="sign">💊</div>
-          <div class="windows">
-            <span></span><span></span><span></span>
+
+          <div class="sign">
+            💊
           </div>
+
+          <div class="windows">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
         </div>
 
+
         <div class="building laboratory">
-          <div class="sign">🔬</div>
-          <div class="windows">
-            <span></span><span></span><span></span>
+
+          <div class="sign">
+            🔬
           </div>
+
+          <div class="windows">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
         </div>
+
 
         <div class="house house1"></div>
         <div class="house house2"></div>
@@ -1580,9 +2369,11 @@ h1{
         <div class="house house4"></div>
         <div class="house house5"></div>
 
+
         <div class="park">
           <div class="pond"></div>
         </div>
+
 
         <div class="tree t1"></div>
         <div class="tree t2"></div>
@@ -1593,46 +2384,45 @@ h1{
         <div class="tree t7"></div>
         <div class="tree t8"></div>
 
+
         <div class="lamp l1"></div>
         <div class="lamp l2"></div>
         <div class="lamp l3"></div>
         <div class="lamp l4"></div>
 
-        <div class="bench"
-             style="left:365px;top:35px"></div>
-
-        <div class="bench"
-             style="right:365px;bottom:35px"></div>
-
-        <div class="crossing cross1">
-          <span></span><span></span><span></span>
-          <span></span><span></span>
-        </div>
-
-        <div class="crossing cross2">
-          <span></span><span></span><span></span>
-          <span></span><span></span>
-        </div>
 
         <div id="boardPath2"
-             class="board-path"></div>
-
-        <div class="treasure">
-          <div class="treasure-box"></div>
-          <div class="treasure-label">ARRIVÉE</div>
+             class="board-path">
         </div>
 
+
+        <div class="treasure">
+
+          <div class="treasure-box"></div>
+
+          <div class="treasure-label">
+            ARRIVÉE
+          </div>
+
+        </div>
+
+
         <div id="pawns2"
-             class="pawns"></div>
+             class="pawns">
+        </div>
 
       </div>
 
     </div>
 
-    <button id="endTurnButton"
-            class="btn btn-primary end-turn"
-            onclick="nextTurn()">
+
+    <button
+      id="endTurnButton"
+      class="btn btn-primary end-turn"
+      onclick="nextTurn()">
+
       ➡️ Terminer le tour
+
     </button>
 
   </div>
@@ -1644,13 +2434,17 @@ h1{
      VICTOIRE
 ===================================================== -->
 
-<section id="endScreen"
-         class="screen end-screen">
+<section
+  id="endScreen"
+  class="screen end-screen">
 
   <div id="confetti"
-       class="confetti"></div>
+       class="confetti">
+  </div>
 
-  <div class="winner-crown">👑</div>
+  <div class="winner-crown">
+    👑
+  </div>
 
   <div id="winnerAvatar"
        class="winner-avatar">
@@ -1666,9 +2460,12 @@ h1{
     Joueur
   </div>
 
-  <button class="btn btn-primary"
-          onclick="location.reload()">
+  <button
+    class="btn btn-primary"
+    onclick="location.reload()">
+
     🔄 Nouvelle partie
+
   </button>
 
 </section>
@@ -1681,6 +2478,7 @@ h1{
 ===================================================== */
 
 const avatars=[
+
   {emoji:"🤖",name:"Robot"},
   {emoji:"👽",name:"Extra-terrestre"},
   {emoji:"🦊",name:"Renard"},
@@ -1691,6 +2489,7 @@ const avatars=[
   {emoji:"🦄",name:"Licorne"},
   {emoji:"🚀",name:"Astronaute"},
   {emoji:"🧙",name:"Magicien"}
+
 ];
 
 
@@ -1961,7 +2760,7 @@ let moving=false;
 
 
 /* =====================================================
-   OUTILS
+   MELANGE
 ===================================================== */
 
 function shuffle(array){
@@ -1970,10 +2769,18 @@ function shuffle(array){
 
   for(let i=result.length-1;i>0;i--){
 
-    const j=Math.floor(Math.random()*(i+1));
+    const j=
+      Math.floor(
+        Math.random()*(i+1)
+      );
 
-    [result[i],result[j]]=
-    [result[j],result[i]];
+    [
+      result[i],
+      result[j]
+    ]=[
+      result[j],
+      result[i]
+    ];
 
   }
 
@@ -1987,7 +2794,8 @@ function shuffle(array){
 
 function init(){
 
-  questions=shuffle(questionBank);
+  questions=
+    shuffle(questionBank);
 
   addPlayer();
   addPlayer();
@@ -2005,21 +2813,28 @@ function addPlayer(){
 
   if(playerForms.length>=6){
 
-    document.getElementById("setupError")
-      .textContent="Maximum 6 joueurs.";
+    document
+      .getElementById("setupError")
+      .textContent=
+      "Maximum 6 joueurs.";
 
     return;
   }
 
-  const index=playerForms.length;
+  const index=
+    playerForms.length;
 
-  const div=document.createElement("div");
+  const div=
+    document.createElement("div");
 
-  div.className="player-form";
+  div.className=
+    "player-form";
 
   div.innerHTML=`
 
-    <h3>Joueur ${index+1}</h3>
+    <h3>
+      Joueur ${index+1}
+    </h3>
 
     <input
       class="player-name"
@@ -2031,6 +2846,7 @@ function addPlayer(){
       class="avatar-grid"
       id="avatars-${index}">
     </div>
+
   `;
 
   document
@@ -2042,6 +2858,7 @@ function addPlayer(){
   });
 
   renderAvatars(index);
+
 }
 
 
@@ -2055,56 +2872,69 @@ function renderAvatars(playerIndex){
   container.innerHTML="";
 
   const selectedByOthers=
-    playerForms.map((p,i)=>
-      i!==playerIndex?p.avatar:null
+    playerForms.map(
+      (p,i)=>
+        i!==playerIndex
+          ?p.avatar
+          :null
     );
 
-  avatars.forEach((avatar,index)=>{
+  avatars.forEach(
+    (avatar,index)=>{
 
-    const button=
-      document.createElement("button");
+      const button=
+        document.createElement("button");
 
-    button.type="button";
-    button.className="avatar-option";
+      button.type="button";
 
-    const taken=
-      selectedByOthers.includes(index);
+      button.className=
+        "avatar-option";
 
-    if(taken)
-      button.classList.add("taken");
+      const taken=
+        selectedByOthers.includes(index);
 
-    if(
-      playerForms[playerIndex].avatar===index
-    )
-      button.classList.add("selected");
+      if(taken)
+        button.classList.add("taken");
 
-    button.disabled=taken;
+      if(
+        playerForms[playerIndex].avatar===index
+      )
+        button.classList.add("selected");
 
-    button.innerHTML=`
-      ${avatar.emoji}
-      <span class="avatar-label">
-        ${avatar.name}
-      </span>
-    `;
+      button.disabled=taken;
 
-    button.onclick=()=>{
+      button.innerHTML=`
 
-      playerForms[playerIndex].avatar=index;
+        ${avatar.emoji}
 
-      renderAllAvatars();
+        <span class="avatar-label">
+          ${avatar.name}
+        </span>
 
-    };
+      `;
 
-    container.appendChild(button);
+      button.onclick=()=>{
 
-  });
+        playerForms[playerIndex].avatar=
+          index;
+
+        renderAllAvatars();
+
+      };
+
+      container.appendChild(button);
+
+    }
+  );
+
 }
 
 
 function renderAllAvatars(){
 
-  playerForms.forEach((_,i)=>
-    renderAvatars(i)
+  playerForms.forEach(
+    (_,i)=>
+      renderAvatars(i)
   );
 
 }
@@ -2117,7 +2947,9 @@ function renderAllAvatars(){
 function startGame(){
 
   const error=
-    document.getElementById("setupError");
+    document.getElementById(
+      "setupError"
+    );
 
   error.textContent="";
 
@@ -2180,8 +3012,9 @@ function showScreen(id){
 
   document
     .querySelectorAll(".screen")
-    .forEach(s=>
-      s.classList.remove("active")
+    .forEach(
+      s=>
+        s.classList.remove("active")
     );
 
   document
@@ -2192,7 +3025,7 @@ function showScreen(id){
 
 
 /* =====================================================
-   CREATION DES CASES
+   CREATION DU PARCOURS
 ===================================================== */
 
 function createPath(container){
@@ -2220,14 +3053,14 @@ function createPath(container){
 
       ${
         i===0
-        ?"<span class='cell-icon'>🚩</span>"
-        :""
+          ?"<span class='cell-icon'>🚩</span>"
+          :""
       }
 
       ${
         i===39
-        ?"<span class='cell-icon'>💰</span>"
-        :""
+          ?"<span class='cell-icon'>💰</span>"
+          :""
       }
 
     `;
@@ -2242,11 +3075,15 @@ function createPath(container){
 function createBoards(){
 
   createPath(
-    document.getElementById("boardPath")
+    document.getElementById(
+      "boardPath"
+    )
   );
 
   createPath(
-    document.getElementById("boardPath2")
+    document.getElementById(
+      "boardPath2"
+    )
   );
 
 }
@@ -2278,18 +3115,25 @@ function showTurnScreen(){
     .textContent="?";
 
   const dice=
-    document.getElementById("dice3d");
+    document.getElementById(
+      "dice3d"
+    );
 
   dice.classList.remove("falling");
 
   const button=
-    document.getElementById("rollButton");
+    document.getElementById(
+      "rollButton"
+    );
 
   button.disabled=false;
 
   showScreen("turnScreen");
 
-  setTimeout(updatePawnsOnTurnBoard,100);
+  setTimeout(
+    updatePawnsOnTurnBoard,
+    100
+  );
 
 }
 
@@ -2304,12 +3148,16 @@ function rollDice(){
     return;
 
   const button=
-    document.getElementById("rollButton");
+    document.getElementById(
+      "rollButton"
+    );
 
   button.disabled=true;
 
   const dice=
-    document.getElementById("dice3d");
+    document.getElementById(
+      "dice3d"
+    );
 
   dice.classList.remove("falling");
 
@@ -2324,55 +3172,61 @@ function rollDice(){
   setTimeout(()=>{
 
     diceValue=
-      Math.floor(Math.random()*6)+1;
+      Math.floor(
+        Math.random()*6
+      )+1;
 
     document
       .getElementById("diceResult")
       .textContent=
       diceValue;
 
-    /*
-      Le plateau reste affiché.
-      Après le résultat du dé,
-      on passe à la question.
-    */
+    setTimeout(
+      showQuestion,
+      800
+    );
 
-    setTimeout(showQuestion,800);
-
-  },1700);
+  },1800);
 
 }
 
 
 /* =====================================================
-   QUESTIONS
+   QUESTION
 ===================================================== */
 
 function getNextQuestion(){
 
   if(
-    usedQuestions.length>=questions.length
+    usedQuestions.length>=
+    questions.length
   ){
 
-    questions=shuffle(questionBank);
+    questions=
+      shuffle(questionBank);
+
     usedQuestions=[];
 
   }
 
-  let available=
+  const available=
     questions.filter(
-      (_,i)=>!usedQuestions.includes(i)
+      (_,i)=>
+        !usedQuestions.includes(i)
     );
 
   const selected=
     available[
       Math.floor(
-        Math.random()*available.length
+        Math.random()*
+        available.length
       )
     ];
 
   const index=
-    questions.indexOf(selected);
+    questions.indexOf(
+      selected
+    );
 
   usedQuestions.push(index);
 
@@ -2392,19 +3246,25 @@ function showQuestion(){
     players[currentPlayerIndex];
 
   document
-    .getElementById("questionNumber")
+    .getElementById(
+      "questionNumber"
+    )
     .textContent=
-    `Question ${questionCounter}`;
+      `Question ${questionCounter}`;
 
   document
-    .getElementById("questionPlayer")
+    .getElementById(
+      "questionPlayer"
+    )
     .textContent=
-    player.name;
+      player.name;
 
   document
-    .getElementById("questionText")
+    .getElementById(
+      "questionText"
+    )
     .textContent=
-    currentQuestion.q;
+      currentQuestion.q;
 
   const correctText=
     currentQuestion.answers[
@@ -2416,13 +3276,16 @@ function showQuestion(){
       currentQuestion.answers.map(
         text=>({
           text,
-          correct:text===correctText
+          correct:
+            text===correctText
         })
       )
     );
 
   const answers=
-    document.getElementById("answers");
+    document.getElementById(
+      "answers"
+    );
 
   answers.innerHTML="";
 
@@ -2430,9 +3293,12 @@ function showQuestion(){
     (answer,index)=>{
 
       const button=
-        document.createElement("button");
+        document.createElement(
+          "button"
+        );
 
-      button.className="answer";
+      button.className=
+        "answer";
 
       button.textContent=
         `${String.fromCharCode(65+index)}. ${answer.text}`;
@@ -2449,12 +3315,18 @@ function showQuestion(){
   );
 
   const feedback=
-    document.getElementById("feedback");
+    document.getElementById(
+      "feedback"
+    );
 
-  feedback.className="feedback";
+  feedback.className=
+    "feedback";
+
   feedback.textContent="";
 
-  showScreen("questionScreen");
+  showScreen(
+    "questionScreen"
+  );
 
 }
 
@@ -2470,16 +3342,23 @@ function answerQuestion(
 
   document
     .querySelectorAll(".answer")
-    .forEach(b=>
-      b.classList.add("disabled")
+    .forEach(
+      b=>
+        b.classList.add(
+          "disabled"
+        )
     );
 
   const feedback=
-    document.getElementById("feedback");
+    document.getElementById(
+      "feedback"
+    );
 
   if(correct){
 
-    button.classList.add("correct");
+    button.classList.add(
+      "correct"
+    );
 
     feedback.className=
       "feedback show success";
@@ -2494,7 +3373,9 @@ function answerQuestion(
 
   }else{
 
-    button.classList.add("wrong");
+    button.classList.add(
+      "wrong"
+    );
 
     feedback.className=
       "feedback show failure";
@@ -2504,7 +3385,9 @@ function answerQuestion(
 
     setTimeout(
       ()=>{
-        showBoardAfterQuestion(false);
+        showBoardAfterQuestion(
+          false
+        );
       },
       1300
     );
@@ -2515,7 +3398,7 @@ function answerQuestion(
 
 
 /* =====================================================
-   DEPLACEMENT CASE PAR CASE
+   DEPLACEMENT
 ===================================================== */
 
 async function movePlayer(){
@@ -2526,27 +3409,27 @@ async function movePlayer(){
   const target=
     Math.min(
       39,
-      player.position+diceValue
+      player.position+
+      diceValue
     );
 
   moving=true;
 
-  /*
-    On fait réellement avancer le pion
-    case par case.
-  */
-
   for(
-    let step=player.position+1;
+    let step=
+      player.position+1;
     step<=target;
     step++
   ){
 
-    player.position=step;
+    player.position=
+      step;
 
     updatePositionTexts();
 
-    await animatePawnsStep(step);
+    await animatePawnsStep(
+      step
+    );
 
     await sleep(280);
 
@@ -2554,7 +3437,9 @@ async function movePlayer(){
 
   moving=false;
 
-  if(player.position>=39){
+  if(
+    player.position>=39
+  ){
 
     showVictory(player);
 
@@ -2562,103 +3447,140 @@ async function movePlayer(){
 
   }
 
-  showBoardAfterQuestion(true);
+  showBoardAfterQuestion(
+    true
+  );
 
 }
 
 
 /* =====================================================
-   ANIMATION CASE PAR CASE
+   ANIMATION DES PIONS
 ===================================================== */
 
-function animatePawnsStep(position){
+function animatePawnsStep(
+  position
+){
 
-  return new Promise(resolve=>{
+  return new Promise(
+    resolve=>{
 
-    const boards=[
-      {
-        board:
-          document.getElementById("boardPath"),
-        pawns:
-          document.getElementById("pawns")
-      },
-      {
-        board:
-          document.getElementById("boardPath2"),
-        pawns:
-          document.getElementById("pawns2")
-      }
-    ];
+      const boards=[
 
-    boards.forEach(data=>{
+        {
+          board:
+            document.getElementById(
+              "boardPath"
+            ),
 
-      const cells=
-        data.board.querySelectorAll(".cell");
+          pawns:
+            document.getElementById(
+              "pawns"
+            )
+        },
 
-      const cell=cells[position];
+        {
+          board:
+            document.getElementById(
+              "boardPath2"
+            ),
 
-      if(!cell)
-        return;
+          pawns:
+            document.getElementById(
+              "pawns2"
+            )
+        }
 
-      const boardRect=
-        data.board.parentElement
-          .getBoundingClientRect();
+      ];
 
-      const cellRect=
-        cell.getBoundingClientRect();
+      boards.forEach(
+        data=>{
 
-      const x=
-        cellRect.left+
-        cellRect.width/2-
-        boardRect.left;
+          const cells=
+            data.board
+              .querySelectorAll(
+                ".cell"
+              );
 
-      const y=
-        cellRect.top+
-        cellRect.height/2-
-        boardRect.top;
+          const cell=
+            cells[position];
 
-      const pawn=
-        data.pawns.querySelector(
-          `.pawn[data-player="${currentPlayerIndex}"]`
-        );
+          if(!cell)
+            return;
 
-      if(pawn){
+          const boardRect=
+            data.board
+              .parentElement
+              .getBoundingClientRect();
 
-        pawn.style.left=
-          `${x}px`;
+          const cellRect=
+            cell.getBoundingClientRect();
 
-        pawn.style.top=
-          `${y}px`;
+          const x=
+            cellRect.left+
+            cellRect.width/2-
+            boardRect.left;
 
-        pawn.classList.remove("jumping");
+          const y=
+            cellRect.top+
+            cellRect.height/2-
+            boardRect.top;
 
-        void pawn.offsetWidth;
+          const pawn=
+            data.pawns.querySelector(
+              `.pawn[data-player="${currentPlayerIndex}"]`
+            );
 
-        pawn.classList.add("jumping");
+          if(pawn){
 
-      }
+            pawn.style.left=
+              `${x}px`;
 
-    });
+            pawn.style.top=
+              `${y}px`;
 
-    setTimeout(
-      resolve,
-      360
-    );
+            pawn.classList.remove(
+              "jumping"
+            );
 
-  });
+            void pawn.offsetWidth;
+
+            pawn.classList.add(
+              "jumping"
+            );
+
+          }
+
+        }
+      );
+
+      setTimeout(
+        resolve,
+        360
+      );
+
+    }
+  );
 
 }
 
 
 /* =====================================================
-   POSITION INITIALE DES PIONS
+   PIONS AU DEPART
 ===================================================== */
 
 function updatePawnsOnTurnBoard(){
 
   updatePawns(
-    document.getElementById("boardPath"),
-    document.getElementById("pawns")
+
+    document.getElementById(
+      "boardPath"
+    ),
+
+    document.getElementById(
+      "pawns"
+    )
+
   );
 
 }
@@ -2672,7 +3594,9 @@ function updatePawns(
   pawnsContainer.innerHTML="";
 
   const cells=
-    path.querySelectorAll(".cell");
+    path.querySelectorAll(
+      ".cell"
+    );
 
   players.forEach(
     (player,index)=>{
@@ -2684,16 +3608,24 @@ function updatePawns(
         return;
 
       const pawn=
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
-      pawn.className="pawn";
+      pawn.className=
+        "pawn";
 
-      pawn.dataset.player=index;
+      pawn.dataset.player=
+        index;
 
       pawn.textContent=
-        avatars[player.avatar].emoji;
+        avatars[
+          player.avatar
+        ].emoji;
 
-      pawnsContainer.appendChild(pawn);
+      pawnsContainer.appendChild(
+        pawn
+      );
 
       const parent=
         path.parentElement;
@@ -2727,7 +3659,7 @@ function updatePawns(
 
 
 /* =====================================================
-   MISE A JOUR POSITION
+   POSITIONS
 ===================================================== */
 
 function updatePositionTexts(){
@@ -2736,9 +3668,11 @@ function updatePositionTexts(){
     players[currentPlayerIndex];
 
   document
-    .getElementById("positionText")
+    .getElementById(
+      "positionText"
+    )
     .textContent=
-    player.position;
+      player.position;
 
 }
 
@@ -2755,30 +3689,50 @@ function showBoardAfterQuestion(
     players[currentPlayerIndex];
 
   document
-    .getElementById("boardAvatar")
+    .getElementById(
+      "boardAvatar"
+    )
     .textContent=
-    avatars[player.avatar].emoji;
+      avatars[
+        player.avatar
+      ].emoji;
 
   document
-    .getElementById("boardPlayerName")
+    .getElementById(
+      "boardPlayerName"
+    )
     .textContent=
-    player.name;
+      player.name;
 
   document
-    .getElementById("positionText")
+    .getElementById(
+      "positionText"
+    )
     .textContent=
-    player.position;
+      player.position;
 
-  showScreen("boardScreen");
+  showScreen(
+    "boardScreen"
+  );
 
-  setTimeout(()=>{
+  setTimeout(
+    ()=>{
 
-    updatePawns(
-      document.getElementById("boardPath2"),
-      document.getElementById("pawns2")
-    );
+      updatePawns(
 
-  },100);
+        document.getElementById(
+          "boardPath2"
+        ),
+
+        document.getElementById(
+          "pawns2"
+        )
+
+      );
+
+    },
+    100
+  );
 
 }
 
@@ -2795,7 +3749,8 @@ function nextTurn(){
   currentPlayerIndex++;
 
   if(
-    currentPlayerIndex>=players.length
+    currentPlayerIndex>=
+    players.length
   )
     currentPlayerIndex=0;
 
@@ -2811,7 +3766,11 @@ function nextTurn(){
 function sleep(ms){
 
   return new Promise(
-    resolve=>setTimeout(resolve,ms)
+    resolve=>
+      setTimeout(
+        resolve,
+        ms
+      )
   );
 
 }
@@ -2821,48 +3780,75 @@ function sleep(ms){
    VICTOIRE
 ===================================================== */
 
-function showVictory(player){
+function showVictory(
+  player
+){
 
   const board=
     document.getElementById(
       "boardScreenCity"
     );
 
-  /*
-    On remet le joueur gagnant au centre
-    visuellement avant la rotation.
-  */
+  showScreen(
+    "boardScreen"
+  );
 
-  showScreen("boardScreen");
+  setTimeout(
+    ()=>{
 
-  setTimeout(()=>{
+      updatePawns(
 
-    updatePawns(
-      document.getElementById("boardPath2"),
-      document.getElementById("pawns2")
-    );
+        document.getElementById(
+          "boardPath2"
+        ),
 
-    board.classList.add("victory");
+        document.getElementById(
+          "pawns2"
+        )
 
-  },150);
+      );
 
-  setTimeout(()=>{
+      /*
+        Rotation spectaculaire du plateau
+        avec le coffre sur la dernière case.
+      */
 
-    document
-      .getElementById("winnerAvatar")
-      .textContent=
-      avatars[player.avatar].emoji;
+      board.classList.add(
+        "victory"
+      );
 
-    document
-      .getElementById("winnerName")
-      .textContent=
-      player.name;
+    },
+    150
+  );
 
-    createConfetti();
+  setTimeout(
+    ()=>{
 
-    showScreen("endScreen");
+      document
+        .getElementById(
+          "winnerAvatar"
+        )
+        .textContent=
+          avatars[
+            player.avatar
+          ].emoji;
 
-  },4300);
+      document
+        .getElementById(
+          "winnerName"
+        )
+        .textContent=
+          player.name;
+
+      createConfetti();
+
+      showScreen(
+        "endScreen"
+      );
+
+    },
+    4300
+  );
 
 }
 
@@ -2874,44 +3860,61 @@ function showVictory(player){
 function createConfetti(){
 
   const container=
-    document.getElementById("confetti");
+    document.getElementById(
+      "confetti"
+    );
 
   container.innerHTML="";
 
   const colors=[
+
     "#2563eb",
     "#f59e0b",
     "#16a34a",
     "#dc2626",
     "#7c3aed",
     "#ec4899"
+
   ];
 
-  for(let i=0;i<150;i++){
+  for(
+    let i=0;
+    i<150;
+    i++
+  ){
 
     const piece=
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     piece.className=
       "confetti-piece";
 
     piece.style.left=
-      Math.random()*100+"%";
+      Math.random()*100+
+      "%";
 
     piece.style.background=
       colors[
         Math.floor(
-          Math.random()*colors.length
+          Math.random()*
+          colors.length
         )
       ];
 
     piece.style.animationDuration=
-      (2+Math.random()*3)+"s";
+      (2+
+       Math.random()*3)+
+      "s";
 
     piece.style.animationDelay=
-      Math.random()*1.5+"s";
+      Math.random()*1.5+
+      "s";
 
-    container.appendChild(piece);
+    container.appendChild(
+      piece
+    );
 
   }
 

@@ -2,1796 +2,501 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Le parcours de soins — Jeu 3D</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le parcours de soins - Jeu 3D</title>
 
 <style>
-:root{
-  --blue:#2563eb;
-  --dark:#102d69;
-  --green:#22a447;
-  --red:#dc2626;
-  --gold:#f5b301;
-  --road:#4c5663;
-  --grass:#78a85b;
-  --text:#172033;
-}
-
 *{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+    box-sizing:border-box;
 }
 
-body{
-  min-height:100vh;
-  font-family:Arial,Helvetica,sans-serif;
-  color:var(--text);
-  background:#dcecff;
-  overflow:hidden;
+html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#07111f;
+    color:white;
+}
+
+button{
+    font-family:inherit;
 }
 
 .screen{
-  min-height:100vh;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:22px;
+    position:absolute;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:20;
 }
 
 .screen.active{
-  display:flex;
+    display:flex;
 }
 
-/* =====================================================
-   BOUTONS
-===================================================== */
-
-.btn{
-  border:0;
-  border-radius:15px;
-  padding:14px 25px;
-  font-size:17px;
-  font-weight:800;
-  cursor:pointer;
-  transition:.2s;
-}
-
-.btn:hover{
-  transform:translateY(-2px);
-}
-
-.btn-primary{
-  color:#fff;
-  background:linear-gradient(135deg,#2563eb,#173b8f);
-  box-shadow:0 9px 20px #2563eb40;
-}
-
-.btn:disabled{
-  opacity:.5;
-  cursor:not-allowed;
-  transform:none;
-}
-
-/* =====================================================
-   INSCRIPTION
-===================================================== */
+/* =========================================================
+   ÉCRAN D'ACCUEIL
+========================================================= */
 
 #setupScreen{
-  overflow:auto;
+    background:
+        radial-gradient(circle at 20% 20%,#294f75 0%,transparent 30%),
+        radial-gradient(circle at 80% 80%,#1b675d 0%,transparent 30%),
+        linear-gradient(135deg,#07111f,#10283e);
+    overflow:auto;
 }
 
-.setup-container{
-  width:min(1050px,100%);
-  background:#fff;
-  border-radius:28px;
-  padding:35px;
-  box-shadow:0 25px 70px #18345b25;
+.setup{
+    width:min(1100px,94vw);
+    max-height:94vh;
+    overflow:auto;
+    background:rgba(9,20,34,.94);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:28px;
+    padding:32px;
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
 }
 
 .logo{
-  text-align:center;
-  font-size:55px;
-}
-
-h1{
-  text-align:center;
-  color:var(--dark);
-  font-size:clamp(32px,5vw,48px);
-  margin:5px 0 8px;
+    text-align:center;
+    font-size:48px;
+    font-weight:900;
+    margin-bottom:8px;
 }
 
 .subtitle{
-  text-align:center;
-  color:#64748b;
-  margin-bottom:28px;
+    text-align:center;
+    color:#b8c8d8;
+    margin-bottom:28px;
 }
 
-.players-list{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-  gap:17px;
+.players{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:18px;
 }
 
-.player-form{
-  background:#f7f9fd;
-  border:2px solid #dbe3ef;
-  border-radius:20px;
-  padding:17px;
+.playerBox{
+    background:#122337;
+    border:1px solid #29445e;
+    border-radius:18px;
+    padding:18px;
 }
 
-.player-form h3{
-  color:var(--dark);
-  margin-bottom:12px;
+.playerBox h3{
+    margin-top:0;
 }
 
-.player-name{
-  width:100%;
-  padding:12px;
-  border:2px solid #d5dfec;
-  border-radius:12px;
-  font-size:16px;
-  margin-bottom:13px;
+.nameInput{
+    width:100%;
+    border:0;
+    border-radius:10px;
+    padding:13px;
+    background:#071522;
+    color:white;
+    font-size:16px;
+    outline:none;
+    margin-bottom:15px;
 }
 
-.avatar-grid{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:7px;
+.avatarGrid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
 }
 
-.avatar-option{
-  position:relative;
-  height:62px;
-  border:2px solid #d7dfeb;
-  background:#fff;
-  border-radius:13px;
-  cursor:pointer;
-  font-size:29px;
+.avatarChoice{
+    height:62px;
+    border:2px solid transparent;
+    border-radius:12px;
+    background:#1c344d;
+    cursor:pointer;
+    font-size:30px;
+    transition:.2s;
 }
 
-.avatar-option.selected{
-  border-color:#2563eb;
-  background:#eaf1ff;
-  box-shadow:0 0 0 3px #2563eb18;
+.avatarChoice:hover{
+    transform:translateY(-3px);
+    background:#284a68;
 }
 
-.avatar-option.taken{
-  opacity:.2;
-  filter:grayscale(1);
-  cursor:not-allowed;
+.avatarChoice.selected{
+    border-color:#48d597;
+    background:#214f48;
+    box-shadow:0 0 15px rgba(72,213,151,.35);
 }
 
-.avatar-label{
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:2px;
-  font-size:8px;
-  color:#64748b;
+.avatarChoice.disabled{
+    opacity:.25;
+    cursor:not-allowed;
 }
 
-.setup-buttons{
-  display:flex;
-  justify-content:center;
-  gap:12px;
-  margin-top:24px;
-  flex-wrap:wrap;
+.startButton{
+    display:block;
+    margin:30px auto 0;
+    border:0;
+    padding:16px 38px;
+    border-radius:14px;
+    font-size:19px;
+    font-weight:800;
+    color:#07111f;
+    background:linear-gradient(135deg,#55e7a0,#29b8f2);
+    cursor:pointer;
+    box-shadow:0 10px 30px rgba(41,184,242,.25);
 }
 
-.error{
-  color:#dc2626;
-  text-align:center;
-  font-weight:bold;
-  margin-top:13px;
+.startButton:hover{
+    transform:translateY(-2px);
 }
 
-/* =====================================================
-   ECRAN DE JEU
-===================================================== */
-
-.turn-screen{
-  flex-direction:column;
-  justify-content:flex-start;
-  gap:8px;
-  background:
-    linear-gradient(
-      #bde1ff 0 42%,
-      #78a85b 42% 100%
-    );
-  overflow:hidden;
+.info{
+    text-align:center;
+    color:#8299ad;
+    font-size:13px;
+    margin-top:15px;
 }
 
-.turn-top{
-  width:min(1250px,100%);
-  background:#ffffffee;
-  border-radius:18px;
-  padding:10px 18px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  box-shadow:0 8px 25px #17365c22;
-  z-index:500;
+/* =========================================================
+   CONTENEUR THREE.JS
+========================================================= */
+
+#gameCanvas{
+    position:absolute;
+    inset:0;
+    z-index:1;
 }
 
-.turn-player{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size:20px;
-  font-weight:900;
-  color:var(--dark);
+canvas{
+    display:block;
 }
 
-.turn-player-avatar{
-  font-size:38px;
+/* =========================================================
+   ÉCRAN DU DÉ
+========================================================= */
+
+#diceScreen{
+    background:linear-gradient(135deg,#07111f,#122d46);
 }
 
-.turn-instruction{
-  color:#64748b;
-  font-weight:bold;
+.dicePanel{
+    width:min(900px,92vw);
+    text-align:center;
 }
 
-.game-area{
-  position:relative;
-  width:min(1250px,100%);
-  flex:1;
-  min-height:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+.turnTitle{
+    font-size:38px;
+    font-weight:900;
+    margin-bottom:5px;
 }
 
-/* =====================================================
-   DE
-===================================================== */
-
-.dice-panel{
-  position:absolute;
-  z-index:600;
-  left:25px;
-  bottom:25px;
-  width:205px;
-  padding:18px;
-  border-radius:20px;
-  background:#ffffffef;
-  box-shadow:0 15px 35px #172b482d;
-  text-align:center;
+.turnSubtitle{
+    color:#9fb2c5;
+    margin-bottom:30px;
 }
 
-.dice-title{
-  font-weight:900;
-  color:var(--dark);
-  margin-bottom:12px;
+.diceStage{
+    position:relative;
+    width:260px;
+    height:260px;
+    margin:0 auto 30px;
+    perspective:900px;
 }
 
-.dice-stage{
-  width:125px;
-  height:125px;
-  margin:0 auto 15px;
-  perspective:700px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.dice3d{
-  width:100px;
-  height:100px;
-  position:relative;
-  transform-style:preserve-3d;
-  transform:
-    rotateX(-18deg)
-    rotateY(25deg);
-}
-
-.dice-cube{
-  position:absolute;
-  width:100%;
-  height:100%;
-  transform-style:preserve-3d;
+.dice{
+    width:120px;
+    height:120px;
+    position:absolute;
+    left:70px;
+    top:70px;
+    transform-style:preserve-3d;
+    transform:rotateX(-20deg) rotateY(30deg);
 }
 
 .face{
-  position:absolute;
-  width:100px;
-  height:100px;
-  background:
-    linear-gradient(
-      145deg,
-      #ffffff 0%,
-      #f4f6fa 45%,
-      #d5dbe4 100%
-    );
-  border:4px solid #9da8b7;
-  border-radius:15px;
-
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  grid-template-rows:repeat(3,1fr);
-
-  padding:12px;
-  gap:2px;
-
-  box-shadow:
-    inset 0 -8px 0 #c0c8d3,
-    inset 4px 4px 8px #fff,
-    0 0 0 1px #697586;
-}
-
-.face span{
-  width:15px;
-  height:15px;
-  border-radius:50%;
-  background:
-    radial-gradient(
-      circle at 35% 30%,
-      #475569,
-      #111827 65%
-    );
-  justify-self:center;
-  align-self:center;
-  box-shadow:
-    inset 2px 2px 3px #0008,
-    0 1px 1px #fff;
-}
-
-/* positions des faces */
-
-.front{
-  transform:translateZ(50px);
-}
-
-.back{
-  transform:rotateY(180deg) translateZ(50px);
-}
-
-.right{
-  transform:rotateY(90deg) translateZ(50px);
-}
-
-.left{
-  transform:rotateY(-90deg) translateZ(50px);
-}
-
-.top{
-  transform:rotateX(90deg) translateZ(50px);
-}
-
-.bottom{
-  transform:rotateX(-90deg) translateZ(50px);
-}
-
-/*
-   Les points des faces sont placés avec
-   les coordonnées CSS ci-dessous.
-*/
-
-.face span{
-  visibility:hidden;
-}
-
-/* FACE 1 */
-
-.front span:nth-child(5){
-  visibility:visible;
-}
-
-/* FACE 2 */
-
-.back span:nth-child(1),
-.back span:nth-child(9){
-  visibility:visible;
-}
-
-/* FACE 3 */
-
-.right span:nth-child(1),
-.right span:nth-child(5),
-.right span:nth-child(9){
-  visibility:visible;
-}
-
-/* FACE 4 */
-
-.left span:nth-child(1),
-.left span:nth-child(3),
-.left span:nth-child(7),
-.left span:nth-child(9){
-  visibility:visible;
-}
-
-/* FACE 5 */
-
-.top span:nth-child(1),
-.top span:nth-child(3),
-.top span:nth-child(5),
-.top span:nth-child(7),
-.top span:nth-child(9){
-  visibility:visible;
-}
-
-/* FACE 6 */
-
-.bottom span:nth-child(1),
-.bottom span:nth-child(3),
-.bottom span:nth-child(4),
-.bottom span:nth-child(6),
-.bottom span:nth-child(7),
-.bottom span:nth-child(9){
-  visibility:visible;
-}
-
-.dice3d.falling{
-  animation:diceFall 1.8s cubic-bezier(.18,.8,.25,1);
-}
-
-@keyframes diceFall{
-
-  0%{
-    transform:
-      translateY(-450px)
-      translateZ(280px)
-      rotateX(0deg)
-      rotateY(0deg)
-      rotateZ(0deg)
-      scale(1.2);
-  }
-
-  25%{
-    transform:
-      translateY(-230px)
-      translateZ(180px)
-      rotateX(160deg)
-      rotateY(220deg)
-      rotateZ(80deg);
-  }
-
-  50%{
-    transform:
-      translateY(-30px)
-      translateZ(70px)
-      rotateX(390deg)
-      rotateY(500deg)
-      rotateZ(170deg);
-  }
-
-  68%{
-    transform:
-      translateY(15px)
-      translateZ(20px)
-      rotateX(510deg)
-      rotateY(670deg)
-      rotateZ(240deg);
-  }
-
-  82%{
-    transform:
-      translateY(-18px)
-      translateZ(30px)
-      rotateX(570deg)
-      rotateY(770deg)
-      rotateZ(300deg);
-  }
-
-  92%{
-    transform:
-      translateY(4px)
-      translateZ(5px)
-      rotateX(620deg)
-      rotateY(850deg)
-      rotateZ(335deg);
-  }
-
-  100%{
-    transform:
-      translateY(0)
-      translateZ(0)
-      rotateX(630deg)
-      rotateY(900deg)
-      rotateZ(360deg);
-  }
-}
-
-.dice-result{
-  font-size:30px;
-  font-weight:1000;
-  color:var(--dark);
-  min-height:38px;
-}
-
-/* =====================================================
-   PLATEAU
-===================================================== */
-
-.city-scene{
-  position:relative;
-  width:min(1120px,94vw);
-  height:min(650px,78vh);
-  perspective:1800px;
-}
-
-/*
-  LE PLATEAU EST COMPOSÉ DE PLUSIEURS COUCHES.
-  Ce n'est plus uniquement une ombre :
-  le socle, les trottoirs, les routes et les
-  bâtiments ont une véritable épaisseur 3D.
-*/
-
-.city-board{
-  position:absolute;
-  inset:0;
-
-  border-radius:42px;
-
-  background:
-    linear-gradient(
-      145deg,
-      #5e913f,
-      #3e6c35
-    );
-
-  border:10px solid #2b4d2b;
-
-  transform:
-    rotateX(58deg)
-    rotateZ(-7deg);
-
-  transform-style:preserve-3d;
-
-  box-shadow:
-    0 28px 0 #254424,
-    0 43px 0 #1a321a,
-    0 58px 0 #102510,
-    0 80px 90px #0009;
-
-  transition:
-    transform 1s ease;
-}
-
-/* épaisseur latérale du plateau */
-
-.city-board::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:32px;
-
-  background:
-    linear-gradient(
-      90deg,
-      #254925,
-      #3b6736 30%,
-      #1d391d
-    );
-
-  transform:
-    translateZ(-45px);
-
-  z-index:-2;
-}
-
-/* couche supérieure */
-
-.ground{
-  position:absolute;
-  inset:18px;
-
-  border-radius:30px;
-
-  background:
-    radial-gradient(
-      circle at 20% 25%,
-      #ffffff20 0 3px,
-      transparent 4px
-    ),
-    radial-gradient(
-      circle at 65% 75%,
-      #00000012 0 3px,
-      transparent 4px
-    ),
-    linear-gradient(
-      135deg,
-      #a9d37c,
-      #71a457
-    );
-
-  transform:
-    translateZ(10px);
-
-  box-shadow:
-    inset 0 0 0 4px #4f813f,
-    inset 0 -10px 0 #568643;
-}
-
-/* =====================================================
-   ROUTES ENCAISSEES
-===================================================== */
-
-.road{
-  position:absolute;
-  background:
-    linear-gradient(
-      90deg,
-      #68727e,
-      #454e5a
-    );
-
-  transform:translateZ(15px);
-
-  box-shadow:
-    inset 0 7px 0 #78838e,
-    inset 0 -8px 0 #363e48,
-    0 7px 0 #303842;
-
-  border:4px solid #3c4652;
-}
-
-.road.horizontal{
-  left:28px;
-  right:28px;
-  top:47%;
-  height:82px;
-
-  background:
-    repeating-linear-gradient(
-      90deg,
-      transparent 0 35px,
-      #f9e9a2 35px 55px
-    ),
-    linear-gradient(
-      #5d6672,
-      #434b56
-    );
-}
-
-.road.vertical{
-  top:28px;
-  bottom:28px;
-  left:48%;
-  width:82px;
-
-  background:
-    repeating-linear-gradient(
-      0deg,
-      transparent 0 35px,
-      #f9e9a2 35px 55px
-    ),
-    linear-gradient(
-      90deg,
-      #5d6672,
-      #434b56
-    );
-}
-
-/* trottoirs */
-
-.road.horizontal::before,
-.road.horizontal::after{
-  content:"";
-  position:absolute;
-  left:0;
-  right:0;
-  height:12px;
-  background:#c7cdd3;
-}
-
-.road.horizontal::before{
-  top:-13px;
-}
-
-.road.horizontal::after{
-  bottom:-13px;
-}
-
-.road.vertical::before,
-.road.vertical::after{
-  content:"";
-  position:absolute;
-  top:0;
-  bottom:0;
-  width:12px;
-  background:#c7cdd3;
-}
-
-.road.vertical::before{
-  left:-13px;
-}
-
-.road.vertical::after{
-  right:-13px;
-}
-
-/* =====================================================
-   BATIMENTS AVEC VOLUME
-===================================================== */
-
-.building{
-  position:absolute;
-
-  transform:
-    translateZ(80px);
-
-  transform-style:preserve-3d;
-
-  border-radius:8px;
-
-  box-shadow:
-    0 13px 0 #8793a2,
-    0 18px 0 #687584,
-    0 23px 25px #0006;
-
-  z-index:20;
-}
-
-.building::after{
-  content:"";
-
-  position:absolute;
-  left:8px;
-  right:8px;
-  bottom:-20px;
-  height:20px;
-
-  background:#6c7887;
-
-  transform:
-    translateZ(-10px);
-
-  border-radius:0 0 5px 5px;
-}
-
-.building .windows{
-  position:absolute;
-  inset:12px;
-
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-}
-
-.building .windows span{
-  background:
-    linear-gradient(
-      135deg,
-      #b8ecff,
-      #5ba6c9
-    );
-
-  border:2px solid #4e819c;
-  border-radius:3px;
-
-  box-shadow:
-    inset 2px 2px #ffffff88;
-}
-
-/* HOPITAL */
-
-.hospital{
-  left:24px;
-  top:28px;
-  width:145px;
-  height:105px;
-
-  background:
-    linear-gradient(
-      90deg,
-      #fff,
-      #dce4ec
-    );
-
-  border:5px solid #c5d0db;
-}
-
-.hospital .sign{
-  position:absolute;
-  top:3px;
-  left:45px;
-  font-size:30px;
-}
-
-/* CABINET */
-
-.clinic{
-  right:25px;
-  top:35px;
-  width:135px;
-  height:100px;
-
-  background:
-    linear-gradient(
-      90deg,
-      #eef7ff,
-      #cbddec
-    );
-
-  border:5px solid #b7cadb;
-}
-
-.clinic .sign{
-  position:absolute;
-  left:45px;
-  top:18px;
-  font-size:40px;
-}
-
-/* PHARMACIE */
-
-.pharmacy{
-  left:30px;
-  bottom:30px;
-  width:135px;
-  height:90px;
-
-  background:
-    linear-gradient(
-      90deg,
-      #fff,
-      #dce5ee
-    );
-
-  border:5px solid #c5d0da;
-}
-
-.pharmacy .sign{
-  position:absolute;
-  left:44px;
-  top:13px;
-  font-size:42px;
-}
-
-/* LABORATOIRE */
-
-.laboratory{
-  right:30px;
-  bottom:30px;
-  width:145px;
-  height:92px;
-
-  background:
-    linear-gradient(
-      90deg,
-      #edf5ff,
-      #c8d9eb
-    );
-
-  border:5px solid #b9cbdc;
-}
-
-.laboratory .sign{
-  position:absolute;
-  left:48px;
-  top:13px;
-  font-size:40px;
-}
-
-/* =====================================================
-   MAISONS AVEC TOITS EN RELIEF
-===================================================== */
-
-.house{
-  position:absolute;
-
-  width:85px;
-  height:65px;
-
-  background:
-    linear-gradient(
-      90deg,
-      #f4c58b,
-      #d99855
-    );
-
-  border:4px solid #a76c35;
-
-  transform:
-    translateZ(58px);
-
-  border-radius:5px;
-
-  box-shadow:
-    0 9px 0 #704620,
-    0 14px 18px #0005;
-
-  z-index:18;
-}
-
-.house::before{
-  content:"";
-
-  position:absolute;
-
-  width:70px;
-  height:70px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #c45343,
-      #87372f
-    );
-
-  transform:
-    rotate(45deg);
-
-  left:3px;
-  top:-34px;
-
-  border:4px solid #803229;
-
-  border-bottom:0;
-
-  box-shadow:
-    inset 7px 7px #e06b56;
-}
-
-.house::after{
-  content:"";
-
-  position:absolute;
-
-  width:15px;
-  height:25px;
-
-  background:#704b32;
-
-  left:32px;
-  bottom:0;
-
-  box-shadow:
-    inset 4px 0 #8b6040;
+    position:absolute;
+    width:120px;
+    height:120px;
+    background:linear-gradient(145deg,#fff,#d8e1e8);
+    border:2px solid #a9b7c3;
+    border-radius:18px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    grid-template-rows:repeat(3,1fr);
+    padding:15px;
+    box-shadow:inset 0 0 20px rgba(0,0,0,.12);
 }
 
-.house1{left:220px;top:25px}
-.house2{left:335px;top:28px}
-.house3{right:205px;top:28px}
-.house4{left:225px;bottom:25px}
-.house5{right:220px;bottom:28px}
-
-/* =====================================================
-   PARC
-===================================================== */
-
-.park{
-  position:absolute;
-  left:42%;
-  top:13%;
-  width:125px;
-  height:115px;
-
-  border-radius:25px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #7db963,
-      #5c9548
-    );
-
-  border:5px solid #52833f;
-
-  transform:
-    translateZ(20px);
-
-  box-shadow:
-    0 7px 0 #426d36;
-
-  z-index:10;
-}
-
-.pond{
-  position:absolute;
-
-  width:65px;
-  height:38px;
-
-  background:
-    radial-gradient(
-      ellipse,
-      #a9e8ff,
-      #4eacd4
-    );
-
-  border:4px solid #3187b3;
-
-  border-radius:50%;
-
-  left:28px;
-  top:35px;
-
-  box-shadow:
-    inset 5px 4px #ffffff55;
-}
-
-/* =====================================================
-   ARBRES VOLUMETRIQUES
-===================================================== */
-
-.tree{
-  position:absolute;
-  width:45px;
-  height:90px;
-
-  transform:
-    translateZ(65px);
-
-  z-index:22;
-}
-
-.tree::before{
-  content:"";
-
-  position:absolute;
-
-  width:13px;
-  height:42px;
-
-  background:
-    linear-gradient(
-      90deg,
-      #76502c,
-      #4c321b
-    );
-
-  left:16px;
-  bottom:0;
-
-  border-radius:4px;
-
-  box-shadow:
-    5px 3px 0 #3d2917;
-}
-
-.tree::after{
-  content:"🌳";
-
-  position:absolute;
-
-  font-size:45px;
-
-  top:-3px;
-
-  filter:
-    drop-shadow(
-      4px 7px 2px #0005
-    );
-}
-
-.t1{left:190px;top:155px}
-.t2{left:305px;top:150px}
-.t3{right:185px;top:150px}
-.t4{right:300px;top:175px}
-.t5{left:185px;bottom:145px}
-.t6{right:180px;bottom:145px}
-.t7{left:400px;bottom:45px}
-.t8{right:400px;bottom:45px}
-
-/* =====================================================
-   LAMPADAIRES
-===================================================== */
-
-.lamp{
-  position:absolute;
-
-  width:10px;
-  height:75px;
-
-  background:
-    linear-gradient(
-      90deg,
-      #59636e,
-      #242a31
-    );
-
-  transform:
-    translateZ(72px);
-
-  z-index:23;
-
-  box-shadow:
-    3px 0 0 #151a1e;
-}
-
-.lamp::before{
-  content:"💡";
-
-  position:absolute;
-
-  left:-9px;
-  top:-27px;
-
-  font-size:25px;
-
-  filter:
-    drop-shadow(
-      0 0 8px #fff59d
-    );
-}
-
-.l1{left:205px;top:260px}
-.l2{right:205px;top:270px}
-.l3{left:205px;bottom:260px}
-.l4{right:205px;bottom:250px}
-
-/* =====================================================
-   PARCOURS
-===================================================== */
-
-.board-path{
-  position:absolute;
-
-  left:105px;
-  right:105px;
-  top:105px;
-  bottom:105px;
-
-  display:grid;
-
-  grid-template-columns:repeat(8,1fr);
-  grid-template-rows:repeat(5,1fr);
-
-  gap:10px;
-
-  transform:
-    translateZ(45px);
-
-  z-index:60;
-}
-
-/* =====================================================
-   CASES EN VRAI RELIEF
-===================================================== */
-
-.cell{
-  position:relative;
-
-  min-width:0;
-  min-height:0;
-
-  background:
-    linear-gradient(
-      145deg,
-      #ffffff,
-      #dce5ef
-    );
-
-  border:3px solid #aebdcd;
-
-  border-radius:13px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  font-size:13px;
-  font-weight:1000;
-
-  color:#334155;
-
-  /*
-    Plusieurs faces/épaisseurs pour
-    donner un vrai volume à chaque case.
-  */
-
-  box-shadow:
-    inset 0 2px 0 #fff,
-    inset 0 -5px 0 #bdc9d6,
-    0 7px 0 #8295a9,
-    0 11px 0 #64788e;
-
-  transform:
-    translateZ(0);
-
-  transform-style:preserve-3d;
-
-  transition:
-    transform .2s,
-    background .2s;
-}
-
-.cell::before{
-  content:"";
-
-  position:absolute;
-
-  inset:0;
-
-  border-radius:10px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #ffffff88,
-      transparent 45%
-    );
-
-  pointer-events:none;
-}
-
-.cell.start{
-  background:
-    linear-gradient(
-      145deg,
-      #bbf7d0,
-      #4ade80
-    );
-
-  border-color:#15803d;
-
-  color:#14532d;
-
-  box-shadow:
-    inset 0 2px #ffffffaa,
-    inset 0 -5px #35a85c,
-    0 7px #277c42,
-    0 11px #1d6133;
-}
-
-.cell.finish{
-  background:
-    linear-gradient(
-      145deg,
-      #ffeaa3,
-      #f5b301
-    );
-
-  border-color:#b77900;
-
-  color:#694400;
-
-  box-shadow:
-    inset 0 2px #fff7,
-    inset 0 -5px #d09200,
-    0 7px #966800,
-    0 11px #674600;
-
-  transform:
-    translateZ(8px);
-}
-
-.cell-number{
-  position:absolute;
-
-  top:4px;
-  left:6px;
-
-  font-size:9px;
-
-  opacity:.65;
-}
-
-.cell-icon{
-  font-size:24px;
-}
-
-/* =====================================================
-   COFFRE SUR LA DERNIERE CASE
-===================================================== */
-
-.treasure{
-  position:absolute;
-
-  /*
-    IMPORTANT :
-    Le coffre est placé sur la dernière case,
-    en bas à droite du parcours.
-  */
-
-  right:113px;
-  bottom:113px;
-
-  width:75px;
-  height:75px;
-
-  transform:
-    translateZ(105px);
-
-  z-index:300;
-
-  text-align:center;
-
-  pointer-events:none;
-}
-
-.treasure-box{
-  position:relative;
-
-  width:72px;
-  height:48px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #a86420,
-      #f0b53b
-    );
-
-  border:5px solid #704313;
-
-  border-radius:
-    7px 7px 12px 12px;
-
-  box-shadow:
-    0 9px 0 #59330f,
-    0 14px 20px #0007;
-
-  transform:
-    rotate(-3deg);
-}
-
-.treasure-box::before{
-  content:"";
-
-  position:absolute;
-
-  width:80px;
-  height:30px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #d58b27,
-      #f3bd4c
-    );
-
-  border:5px solid #704313;
-
-  border-radius:
-    50% 50% 10px 10px;
-
-  left:-9px;
-  top:-27px;
-
-  transform:
-    rotate(-2deg);
-}
-
-.treasure-box::after{
-  content:"💶 💵";
-
-  position:absolute;
-
-  font-size:23px;
-
-  left:-10px;
-  top:-40px;
-
-  white-space:nowrap;
-}
-
-.treasure-label{
-  position:absolute;
-
-  top:58px;
-  left:-15px;
-  width:105px;
-
-  color:#5c390b;
-
-  font-weight:1000;
-
-  font-size:11px;
-
-  text-shadow:
-    0 1px #fff;
-}
-
-/* =====================================================
-   AVATARS
-===================================================== */
-
-.pawns{
-  position:absolute;
-
-  inset:0;
-
-  z-index:400;
-
-  pointer-events:none;
-
-  transform-style:preserve-3d;
+.face.front{
+    transform:translateZ(60px);
 }
-
-.pawn{
-  position:absolute;
-
-  font-size:44px;
-
-  transform:
-    translate(-50%,-50%)
-    translateZ(120px);
-
-  filter:
-    drop-shadow(
-      0 8px 4px #0007
-    );
 
-  transition:
-    left .35s ease,
-    top .35s ease;
-
-  z-index:400;
+.face.back{
+    transform:rotateY(180deg) translateZ(60px);
 }
-
-.pawn::after{
-  content:"";
-
-  position:absolute;
-
-  left:50%;
-  bottom:-7px;
-
-  transform:
-    translateX(-50%);
-
-  width:30px;
-  height:10px;
 
-  background:#0005;
-
-  border-radius:50%;
-
-  filter:blur(3px);
+.face.right{
+    transform:rotateY(90deg) translateZ(60px);
 }
 
-.pawn.jumping{
-  animation:
-    pawnJump .35s ease-in-out;
+.face.left{
+    transform:rotateY(-90deg) translateZ(60px);
 }
-
-@keyframes pawnJump{
-
-  0%{
-    transform:
-      translate(-50%,-50%)
-      translateZ(120px)
-      scale(1);
-  }
-
-  50%{
-    transform:
-      translate(-50%,-80%)
-      translateZ(185px)
-      scale(1.18);
-  }
 
-  100%{
-    transform:
-      translate(-50%,-50%)
-      translateZ(120px)
-      scale(1);
-  }
+.face.top{
+    transform:rotateX(90deg) translateZ(60px);
 }
 
-/* =====================================================
-   ROTATION DU PLATEAU
-===================================================== */
-
-.city-board.board-busy{
-
-  transform:
-    rotateX(54deg)
-    rotateZ(-10deg)
-    scale(1.025);
-
+.face.bottom{
+    transform:rotateX(-90deg) translateZ(60px);
 }
 
-.city-board.victory{
-
-  animation:
-    boardVictory 4.5s ease-in-out;
-
+.pip{
+    width:17px;
+    height:17px;
+    border-radius:50%;
+    background:#17212c;
+    align-self:center;
+    justify-self:center;
+    box-shadow:inset 2px 2px 3px rgba(255,255,255,.25);
 }
-
-@keyframes boardVictory{
 
-  0%{
-    transform:
-      rotateX(58deg)
-      rotateZ(-7deg)
-      scale(1);
-  }
-
-  20%{
-    transform:
-      rotateX(45deg)
-      rotateZ(65deg)
-      scale(1.07);
-  }
-
-  45%{
-    transform:
-      rotateX(68deg)
-      rotateZ(180deg)
-      scale(1.14);
-  }
-
-  70%{
-    transform:
-      rotateX(45deg)
-      rotateZ(295deg)
-      scale(1.07);
-  }
-
-  100%{
-    transform:
-      rotateX(58deg)
-      rotateZ(360deg)
-      scale(1);
-  }
+.diceButton{
+    border:0;
+    padding:16px 40px;
+    border-radius:14px;
+    font-size:19px;
+    font-weight:900;
+    background:#48d597;
+    color:#06151b;
+    cursor:pointer;
 }
 
-/* =====================================================
-   BOUTON FIN DE TOUR
-===================================================== */
-
-.end-turn{
-  position:absolute;
-  right:25px;
-  bottom:25px;
-  z-index:600;
+.diceButton:disabled{
+    opacity:.4;
+    cursor:not-allowed;
 }
-
-/* =====================================================
-   QUESTION
-===================================================== */
 
-.question-screen{
-  background:
-    linear-gradient(
-      135deg,
-      #edf4ff,
-      #fff
-    );
+.diceResult{
+    margin-top:20px;
+    font-size:26px;
+    font-weight:900;
+    min-height:35px;
 }
 
-.question-card{
-  width:min(900px,100%);
+/* =========================================================
+   ÉCRAN QUESTION
+========================================================= */
 
-  background:#fff;
-
-  border-radius:28px;
-
-  padding:38px;
-
-  box-shadow:
-    0 25px 70px #17365c22;
+#questionScreen{
+    background:
+        radial-gradient(circle at 30% 20%,#263f59,transparent 40%),
+        linear-gradient(135deg,#07111f,#101c2b);
 }
 
-.question-header{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:22px;
+.questionPanel{
+    width:min(900px,92vw);
+    max-height:90vh;
+    overflow:auto;
+    background:rgba(12,28,44,.97);
+    border:1px solid #34506b;
+    border-radius:25px;
+    padding:32px;
+    box-shadow:0 30px 80px rgba(0,0,0,.55);
 }
 
-.question-number{
-  color:#2563eb;
-  font-weight:900;
+.questionHeader{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-bottom:20px;
 }
 
-.question-player{
-  color:#64748b;
-  font-weight:900;
+.questionNumber{
+    color:#56dfa1;
+    font-weight:800;
 }
-
-.question-text{
-  font-size:
-    clamp(23px,4vw,34px);
-
-  font-weight:900;
-
-  line-height:1.35;
 
-  margin-bottom:25px;
+.questionTitle{
+    font-size:28px;
+    line-height:1.3;
+    margin:10px 0 25px;
 }
 
 .answers{
-  display:grid;
-  gap:12px;
+    display:grid;
+    gap:12px;
 }
 
 .answer{
-  border:2px solid #d8e1ec;
-
-  background:#f9fbfe;
-
-  border-radius:15px;
-
-  padding:17px;
-
-  font-size:18px;
-
-  text-align:left;
-
-  cursor:pointer;
-
-  transition:.15s;
+    border:2px solid #2c4860;
+    background:#142b40;
+    color:white;
+    border-radius:14px;
+    padding:17px;
+    text-align:left;
+    font-size:17px;
+    cursor:pointer;
+    transition:.2s;
 }
 
-.answer:hover:not(.disabled){
-  border-color:#2563eb;
-  background:#eef5ff;
-  transform:translateX(4px);
+.answer:hover{
+    border-color:#4bdca1;
+    background:#1a3a51;
+    transform:translateX(4px);
 }
 
 .answer.correct{
-  background:#e7f8ed;
-  border-color:#16a34a;
+    background:#14563f;
+    border-color:#53e5a4;
 }
 
 .answer.wrong{
-  background:#ffeded;
-  border-color:#dc2626;
-}
-
-.answer.disabled{
-  cursor:default;
+    background:#612f38;
+    border-color:#ff6673;
 }
 
 .feedback{
-  display:none;
-
-  margin-top:18px;
-
-  padding:16px;
-
-  border-radius:14px;
-
-  font-weight:900;
+    margin-top:20px;
+    padding:16px;
+    border-radius:12px;
+    display:none;
+    line-height:1.5;
 }
 
 .feedback.show{
-  display:block;
+    display:block;
 }
 
-.feedback.success{
-  background:#e7f8ed;
-  color:#08752f;
+.feedback.good{
+    background:#123f31;
+    color:#7df1b9;
 }
 
-.feedback.failure{
-  background:#ffeded;
-  color:#a31313;
+.feedback.bad{
+    background:#461f29;
+    color:#ff9da6;
 }
 
-/* =====================================================
-   VICTOIRE
-===================================================== */
-
-.end-screen{
-  flex-direction:column;
-
-  text-align:center;
-
-  background:
-    radial-gradient(
-      circle,
-      #fff4bc,
-      #e8f0ff 60%
-    );
-}
-
-.winner-crown{
-  font-size:80px;
-
-  animation:
-    crown 1s infinite alternate;
-}
-
-@keyframes crown{
-
-  from{
-    transform:
-      translateY(0)
-      rotate(-5deg);
-  }
-
-  to{
-    transform:
-      translateY(-12px)
-      rotate(5deg);
-  }
-}
-
-.winner-avatar{
-  font-size:115px;
-}
-
-.winner-title{
-  font-size:
-    clamp(45px,8vw,85px);
-
-  font-weight:1000;
-
-  color:#f59e0b;
-
-  text-shadow:
-    0 5px #a96800;
-}
-
-.winner-name{
-  font-size:
-    clamp(35px,6vw,65px);
-
-  font-weight:1000;
-
-  color:var(--dark);
-
-  margin-bottom:25px;
-}
-
-/* =====================================================
-   CONFETTIS
-===================================================== */
-
-.confetti{
-  position:fixed;
-
-  inset:0;
-
-  pointer-events:none;
-
-  overflow:hidden;
-}
-
-.confetti-piece{
-  position:absolute;
-
-  top:-20px;
-
-  width:10px;
-  height:20px;
-
-  animation:
-    fall linear forwards;
-}
-
-@keyframes fall{
-
-  to{
-    transform:
-      translateY(110vh)
-      rotate(720deg);
-  }
-
-}
-
-/* =====================================================
-   RESPONSIVE
-===================================================== */
-
-@media(max-width:850px){
-
-  body{
-    overflow:auto;
-  }
-
-  .turn-screen{
-    min-height:100vh;
-  }
-
-  .turn-instruction{
+.nextButton{
+    margin-top:20px;
+    width:100%;
+    border:0;
+    padding:15px;
+    border-radius:12px;
+    background:#31b9f3;
+    color:#06131d;
+    font-size:17px;
+    font-weight:900;
+    cursor:pointer;
     display:none;
-  }
+}
 
-  .city-scene{
-    width:900px;
-    height:570px;
-    transform:scale(.75);
-  }
+.nextButton.show{
+    display:block;
+}
 
-  .dice-panel{
-    left:10px;
-    bottom:10px;
-    transform:scale(.85);
-    transform-origin:bottom left;
-  }
+/* =========================================================
+   HUD MINIMAL DU PLATEAU
+========================================================= */
 
-  .end-turn{
-    right:10px;
-    bottom:10px;
-  }
+#boardScreen{
+    pointer-events:none;
+    background:transparent;
+    align-items:flex-start;
+    justify-content:flex-start;
+}
 
+.boardHUD{
+    margin:22px;
+    padding:15px 20px;
+    border-radius:15px;
+    background:rgba(4,14,24,.82);
+    border:1px solid rgba(255,255,255,.15);
+    backdrop-filter:blur(10px);
+    pointer-events:auto;
+}
+
+.hudPlayer{
+    font-size:21px;
+    font-weight:900;
+}
+
+.hudPosition{
+    color:#9db3c6;
+    margin-top:4px;
+}
+
+.endTurn{
+    margin-top:10px;
+    border:0;
+    background:#48d597;
+    color:#06151b;
+    padding:10px 18px;
+    border-radius:9px;
+    font-weight:900;
+    cursor:pointer;
+}
+
+/* =========================================================
+   VICTOIRE
+========================================================= */
+
+#winScreen{
+    background:rgba(1,8,14,.35);
+    pointer-events:none;
+}
+
+.winPanel{
+    text-align:center;
+    animation:winPop .7s ease forwards;
+}
+
+.winTitle{
+    font-size:70px;
+    font-weight:1000;
+    text-shadow:0 0 30px #ffd95a;
+}
+
+.winName{
+    font-size:34px;
+    font-weight:900;
+}
+
+.winMessage{
+    margin-top:12px;
+    font-size:19px;
+    color:#dbe8f3;
+}
+
+.restartButton{
+    pointer-events:auto;
+    margin-top:25px;
+    border:0;
+    padding:14px 32px;
+    border-radius:12px;
+    background:#ffd95a;
+    color:#191305;
+    font-size:18px;
+    font-weight:900;
+    cursor:pointer;
+}
+
+@keyframes winPop{
+    0%{transform:scale(.2) rotate(-10deg);opacity:0}
+    70%{transform:scale(1.15) rotate(3deg);opacity:1}
+    100%{transform:scale(1) rotate(0);opacity:1}
+}
+
+@media(max-width:600px){
+    .logo{font-size:34px}
+    .setup{padding:20px}
+    .questionTitle{font-size:22px}
+    .turnTitle{font-size:29px}
 }
 </style>
 </head>
@@ -1804,400 +509,166 @@ h1{
 
 <section id="setupScreen" class="screen active">
 
-  <div class="setup-container">
+<div class="setup">
 
-    <div class="logo">
-      🏥🎲🏙️
-    </div>
+<div class="logo">🏙️ PARCOURS DE SOINS</div>
 
-    <h1>
-      Le parcours de soins
-    </h1>
+<div class="subtitle">
+    Jeu de plateau pédagogique — avancez dans la ville et atteignez la case finale.
+</div>
 
-    <p class="subtitle">
-      Inscrivez les joueurs et choisissez un avatar.
-      Chaque avatar ne peut être utilisé qu'une seule fois.
-    </p>
+<div class="players">
 
-    <div id="playersList"
-         class="players-list">
-    </div>
+<div class="playerBox">
+<h3>👤 Joueur 1</h3>
+<input id="name1" class="nameInput" placeholder="Prénom du joueur">
 
-    <div class="setup-buttons">
+<div class="avatarGrid">
+<button class="avatarChoice" data-player="1" data-avatar="robot">🤖</button>
+<button class="avatarChoice" data-player="1" data-avatar="alien">👽</button>
+<button class="avatarChoice" data-player="1" data-avatar="astronaut">👨‍🚀</button>
+<button class="avatarChoice" data-player="1" data-avatar="ninja">🥷</button>
+<button class="avatarChoice" data-player="1" data-avatar="wizard">🧙</button>
+<button class="avatarChoice" data-player="1" data-avatar="detective">🕵️</button>
+<button class="avatarChoice" data-player="1" data-avatar="pirate">🏴‍☠️</button>
+<button class="avatarChoice" data-player="1" data-avatar="scientist">🧑‍🔬</button>
+</div>
+</div>
 
-      <button
-        class="btn btn-primary"
-        onclick="addPlayer()">
-        ＋ Ajouter un joueur
-      </button>
+<div class="playerBox">
+<h3>👤 Joueur 2</h3>
+<input id="name2" class="nameInput" placeholder="Prénom du joueur">
 
-      <button
-        class="btn btn-primary"
-        onclick="startGame()">
-        🎮 Commencer la partie
-      </button>
+<div class="avatarGrid">
+<button class="avatarChoice" data-player="2" data-avatar="robot">🤖</button>
+<button class="avatarChoice" data-player="2" data-avatar="alien">👽</button>
+<button class="avatarChoice" data-player="2" data-avatar="astronaut">👨‍🚀</button>
+<button class="avatarChoice" data-player="2" data-avatar="ninja">🥷</button>
+<button class="avatarChoice" data-player="2" data-avatar="wizard">🧙</button>
+<button class="avatarChoice" data-player="2" data-avatar="detective">🕵️</button>
+<button class="avatarChoice" data-player="2" data-avatar="pirate">🏴‍☠️</button>
+<button class="avatarChoice" data-player="2" data-avatar="scientist">🧑‍🔬</button>
+</div>
+</div>
 
-    </div>
+<div class="playerBox">
+<h3>👤 Joueur 3</h3>
+<input id="name3" class="nameInput" placeholder="Prénom du joueur">
 
-    <div id="setupError"
-         class="error">
-    </div>
+<div class="avatarGrid">
+<button class="avatarChoice" data-player="3" data-avatar="robot">🤖</button>
+<button class="avatarChoice" data-player="3" data-avatar="alien">👽</button>
+<button class="avatarChoice" data-player="3" data-avatar="astronaut">👨‍🚀</button>
+<button class="avatarChoice" data-player="3" data-avatar="ninja">🥷</button>
+<button class="avatarChoice" data-player="3" data-avatar="wizard">🧙</button>
+<button class="avatarChoice" data-player="3" data-avatar="detective">🕵️</button>
+<button class="avatarChoice" data-player="3" data-avatar="pirate">🏴‍☠️</button>
+<button class="avatarChoice" data-player="3" data-avatar="scientist">🧑‍🔬</button>
+</div>
+</div>
 
-  </div>
+<div class="playerBox">
+<h3>👤 Joueur 4</h3>
+<input id="name4" class="nameInput" placeholder="Prénom du joueur">
 
+<div class="avatarGrid">
+<button class="avatarChoice" data-player="4" data-avatar="robot">🤖</button>
+<button class="avatarChoice" data-player="4" data-avatar="alien">👽</button>
+<button class="avatarChoice" data-player="4" data-avatar="astronaut">👨‍🚀</button>
+<button class="avatarChoice" data-player="4" data-avatar="ninja">🥷</button>
+<button class="avatarChoice" data-player="4" data-avatar="wizard">🧙</button>
+<button class="avatarChoice" data-player="4" data-avatar="detective">🕵️</button>
+<button class="avatarChoice" data-player="4" data-avatar="pirate">🏴‍☠️</button>
+<button class="avatarChoice" data-player="4" data-avatar="scientist">🧑‍🔬</button>
+</div>
+</div>
+
+</div>
+
+<button id="startButton" class="startButton">
+    🚀 COMMENCER LA PARTIE
+</button>
+
+<div class="info">
+    2 à 4 joueurs · Chaque joueur doit choisir un avatar différent.
+</div>
+
+</div>
 </section>
 
 
 <!-- =====================================================
-     ECRAN LANCER DE + PLATEAU
+     ÉCRAN DÉ
 ===================================================== -->
 
-<section
-  id="turnScreen"
-  class="screen turn-screen">
-
-  <div class="turn-top">
-
-    <div class="turn-player">
-
-      <div
-        id="turnAvatar"
-        class="turn-player-avatar">
-        🤖
-      </div>
-
-      <div>
-
-        <small>
-          TOUR DE
-        </small>
-
-        <div id="turnName">
-          Joueur
-        </div>
-
-      </div>
-
-    </div>
-
-    <div class="turn-instruction">
-      Lancez le dé pour avancer dans la ville.
-    </div>
-
-  </div>
-
-
-  <div class="game-area">
-
-    <div class="city-scene">
-
-      <div id="cityBoard"
-           class="city-board">
-
-        <div class="ground"></div>
-
-        <div class="road horizontal"></div>
-        <div class="road vertical"></div>
-
-
-        <!-- HOPITAL -->
-
-        <div class="building hospital">
-
-          <div class="sign">
-            🏥
-          </div>
-
-          <div class="windows">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-
-        </div>
-
-
-        <!-- CABINET -->
-
-        <div class="building clinic">
-
-          <div class="sign">
-            🩺
-          </div>
-
-          <div class="windows">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-
-        </div>
-
-
-        <!-- PHARMACIE -->
-
-        <div class="building pharmacy">
-
-          <div class="sign">
-            💊
-          </div>
-
-          <div class="windows">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-
-        </div>
-
-
-        <!-- LABORATOIRE -->
-
-        <div class="building laboratory">
-
-          <div class="sign">
-            🔬
-          </div>
-
-          <div class="windows">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-
-        </div>
-
-
-        <!-- MAISONS -->
-
-        <div class="house house1"></div>
-        <div class="house house2"></div>
-        <div class="house house3"></div>
-        <div class="house house4"></div>
-        <div class="house house5"></div>
-
-
-        <!-- PARC -->
-
-        <div class="park">
-
-          <div class="pond"></div>
-
-        </div>
-
-
-        <!-- ARBRES -->
-
-        <div class="tree t1"></div>
-        <div class="tree t2"></div>
-        <div class="tree t3"></div>
-        <div class="tree t4"></div>
-        <div class="tree t5"></div>
-        <div class="tree t6"></div>
-        <div class="tree t7"></div>
-        <div class="tree t8"></div>
-
-
-        <!-- LAMPADAIRES -->
-
-        <div class="lamp l1"></div>
-        <div class="lamp l2"></div>
-        <div class="lamp l3"></div>
-        <div class="lamp l4"></div>
-
-
-        <!-- PARCOURS -->
-
-        <div id="boardPath"
-             class="board-path">
-        </div>
-
-
-        <!-- COFFRE -->
-        <!-- Il est volontairement placé
-             sur la dernière case -->
-
-        <div class="treasure">
-
-          <div class="treasure-box"></div>
-
-          <div class="treasure-label">
-            ARRIVÉE
-          </div>
-
-        </div>
-
-
-        <!-- PIONS -->
-
-        <div id="pawns"
-             class="pawns">
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- =================================================
-         DE
-    ================================================= -->
-
-    <div class="dice-panel">
-
-      <div class="dice-title">
-        🎲 Lance le dé
-      </div>
-
-      <div class="dice-stage">
-
-        <div id="dice3d"
-             class="dice3d">
-
-          <div class="dice-cube">
-
-
-            <!-- FACE 1 -->
-
-            <div class="face front">
-
-              <span></span>
-              <span></span>
-              <span></span>
-
-              <span></span>
-              <span></span>
-              <span></span>
-
-              <span></span>
-              <span></span>
-              <span></span>
-
-            </div>
-
-
-            <!-- FACE 2 -->
-
-            <div class="face back">
-
-              <span></span>
-              <span></span>
-              <span></span>
-
-              <span></span>
-              <span></span>
-              <span></span>
-
-              <span></span>
-              <span></span>
-              <span></span>
-
-            </div>
-
-
-            <!-- FACE 3 -->
-
-            <div class="face right">
-
-              <span></span>
-              <span></span>
-              <span></span>
-
-              <span></span>
-              <span></span>
-              <span></span>
-
-              <span></span>
-              <span></span>
-              <span></span>
-
-            </div>
-
-
-            <!-- FACE 4 -->
-
-            <div class="face left">
-
-              <span></span>
-              <span></span>
-              <span></span>
-
-              <span></span>
-              <span></span>
-              <span></span>
-
-              <span></span>
-              <span></span>
-              <span></span>
-
-            </div>
-
-
-            <!-- FACE 5 -->
-
-            <div class="face top">
-
-              <span></span>
-              <span></span>
-              <span></span>
-
-              <span></span>
-              <span></span>
-              <span></span>
-
-              <span></span>
-              <span></span>
-              <span></span>
-
-            </div>
-
-
-            <!-- FACE 6 -->
-
-            <div class="face bottom">
-
-              <span></span>
-              <span></span>
-              <span></span>
-
-              <span></span>
-              <span></span>
-              <span></span>
-
-              <span></span>
-              <span></span>
-              <span></span>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div id="diceResult"
-           class="dice-result">
-        ?
-      </div>
-
-
-      <button
-        id="rollButton"
-        class="btn btn-primary"
-        onclick="rollDice()">
-        🎲 Lancer
-      </button>
-
-    </div>
-
-  </div>
-
+<section id="diceScreen" class="screen">
+
+<div class="dicePanel">
+
+<div id="turnTitle" class="turnTitle">
+    Au tour de...
+</div>
+
+<div class="turnSubtitle">
+    Lance le dé pour découvrir ton nombre de cases.
+</div>
+
+<div class="diceStage">
+
+<div id="dice3D" class="dice">
+
+<!-- face 1 -->
+<div class="face front">
+    <span></span><span></span><span></span>
+    <span></span><span class="pip"></span><span></span>
+    <span></span><span></span><span></span>
+</div>
+
+<!-- face 6 -->
+<div class="face back">
+    <span class="pip"></span><span></span><span class="pip"></span>
+    <span class="pip"></span><span></span><span class="pip"></span>
+    <span class="pip"></span><span></span><span class="pip"></span>
+</div>
+
+<!-- face 3 -->
+<div class="face right">
+    <span class="pip"></span><span></span><span></span>
+    <span></span><span class="pip"></span><span></span>
+    <span></span><span></span><span class="pip"></span>
+</div>
+
+<!-- face 4 -->
+<div class="face left">
+    <span class="pip"></span><span></span><span class="pip"></span>
+    <span></span><span></span><span></span>
+    <span class="pip"></span><span></span><span class="pip"></span>
+</div>
+
+<!-- face 5 -->
+<div class="face top">
+    <span class="pip"></span><span></span><span class="pip"></span>
+    <span></span><span class="pip"></span><span></span>
+    <span class="pip"></span><span></span><span class="pip"></span>
+</div>
+
+<!-- face 2 -->
+<div class="face bottom">
+    <span class="pip"></span><span></span><span></span>
+    <span></span><span></span><span></span>
+    <span></span><span></span><span class="pip"></span>
+</div>
+
+</div>
+</div>
+
+<button id="rollButton" class="diceButton">
+    🎲 LANCER LE DÉ
+</button>
+
+<div id="diceResult" class="diceResult"></div>
+
+</div>
 </section>
 
 
@@ -2205,227 +676,48 @@ h1{
      QUESTION
 ===================================================== -->
 
-<section
-  id="questionScreen"
-  class="screen question-screen">
+<section id="questionScreen" class="screen">
 
-  <div class="question-card">
+<div class="questionPanel">
 
-    <div class="question-header">
+<div class="questionHeader">
+<div class="questionNumber" id="questionNumber">
+QUESTION
+</div>
+<div id="questionPlayer"></div>
+</div>
 
-      <div id="questionNumber"
-           class="question-number">
-        Question
-      </div>
+<div id="questionText" class="questionTitle"></div>
 
-      <div id="questionPlayer"
-           class="question-player">
-        Joueur
-      </div>
+<div id="answers" class="answers"></div>
 
-    </div>
+<div id="feedback" class="feedback"></div>
 
+<button id="nextButton" class="nextButton">
+    CONTINUER →
+</button>
 
-    <div id="questionText"
-         class="question-text">
-    </div>
-
-
-    <div id="answers"
-         class="answers">
-    </div>
-
-
-    <div id="feedback"
-         class="feedback">
-    </div>
-
-  </div>
-
+</div>
 </section>
 
 
 <!-- =====================================================
-     PLATEAU APRES QUESTION
+     PLATEAU
 ===================================================== -->
 
-<section
-  id="boardScreen"
-  class="screen turn-screen">
+<section id="boardScreen" class="screen">
 
-  <div class="turn-top">
+<div class="boardHUD">
 
-    <div class="turn-player">
+<div id="hudPlayer" class="hudPlayer"></div>
 
-      <div id="boardAvatar"
-           class="turn-player-avatar">
-        🤖
-      </div>
+<div id="hudPosition" class="hudPosition"></div>
 
-      <div>
+<button id="endTurn" class="endTurn">
+    Terminer le tour →
+</button>
 
-        <small>
-          POSITION
-        </small>
-
-        <div id="boardPlayerName">
-          Joueur
-        </div>
-
-      </div>
-
-    </div>
-
-    <div>
-      Case
-      <strong id="positionText">
-        0
-      </strong>
-    </div>
-
-  </div>
-
-
-  <div class="game-area">
-
-    <div class="city-scene">
-
-      <div id="boardScreenCity"
-           class="city-board">
-
-        <div class="ground"></div>
-
-        <div class="road horizontal"></div>
-        <div class="road vertical"></div>
-
-
-        <div class="building hospital">
-
-          <div class="sign">
-            🏥
-          </div>
-
-          <div class="windows">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-
-        </div>
-
-
-        <div class="building clinic">
-
-          <div class="sign">
-            🩺
-          </div>
-
-          <div class="windows">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-
-        </div>
-
-
-        <div class="building pharmacy">
-
-          <div class="sign">
-            💊
-          </div>
-
-          <div class="windows">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-
-        </div>
-
-
-        <div class="building laboratory">
-
-          <div class="sign">
-            🔬
-          </div>
-
-          <div class="windows">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-
-        </div>
-
-
-        <div class="house house1"></div>
-        <div class="house house2"></div>
-        <div class="house house3"></div>
-        <div class="house house4"></div>
-        <div class="house house5"></div>
-
-
-        <div class="park">
-          <div class="pond"></div>
-        </div>
-
-
-        <div class="tree t1"></div>
-        <div class="tree t2"></div>
-        <div class="tree t3"></div>
-        <div class="tree t4"></div>
-        <div class="tree t5"></div>
-        <div class="tree t6"></div>
-        <div class="tree t7"></div>
-        <div class="tree t8"></div>
-
-
-        <div class="lamp l1"></div>
-        <div class="lamp l2"></div>
-        <div class="lamp l3"></div>
-        <div class="lamp l4"></div>
-
-
-        <div id="boardPath2"
-             class="board-path">
-        </div>
-
-
-        <div class="treasure">
-
-          <div class="treasure-box"></div>
-
-          <div class="treasure-label">
-            ARRIVÉE
-          </div>
-
-        </div>
-
-
-        <div id="pawns2"
-             class="pawns">
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <button
-      id="endTurnButton"
-      class="btn btn-primary end-turn"
-      onclick="nextTurn()">
-
-      ➡️ Terminer le tour
-
-    </button>
-
-  </div>
+</div>
 
 </section>
 
@@ -2434,1491 +726,1809 @@ h1{
      VICTOIRE
 ===================================================== -->
 
-<section
-  id="endScreen"
-  class="screen end-screen">
+<section id="winScreen" class="screen">
 
-  <div id="confetti"
-       class="confetti">
-  </div>
+<div class="winPanel">
 
-  <div class="winner-crown">
-    👑
-  </div>
+<div class="winTitle">🏆 VICTOIRE !</div>
 
-  <div id="winnerAvatar"
-       class="winner-avatar">
-    🤖
-  </div>
+<div id="winnerName" class="winName"></div>
 
-  <div class="winner-title">
-    VICTOIRE !
-  </div>
+<div class="winMessage">
+    Tu as atteint la dernière case et terminé le parcours de soins !
+</div>
 
-  <div id="winnerName"
-       class="winner-name">
-    Joueur
-  </div>
-
-  <button
-    class="btn btn-primary"
-    onclick="location.reload()">
-
+<button id="restartButton" class="restartButton">
     🔄 Nouvelle partie
+</button>
 
-  </button>
+</div>
 
 </section>
 
 
+<!-- THREE.JS -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
+
 <script>
 
-/* =====================================================
-   AVATARS
-===================================================== */
-
-const avatars=[
-
-  {emoji:"🤖",name:"Robot"},
-  {emoji:"👽",name:"Extra-terrestre"},
-  {emoji:"🦊",name:"Renard"},
-  {emoji:"🐼",name:"Panda"},
-  {emoji:"🦁",name:"Lion"},
-  {emoji:"🐸",name:"Grenouille"},
-  {emoji:"🐙",name:"Poulpe"},
-  {emoji:"🦄",name:"Licorne"},
-  {emoji:"🚀",name:"Astronaute"},
-  {emoji:"🧙",name:"Magicien"}
-
-];
-
-
-/* =====================================================
+/* =========================================================
    QUESTIONS
-===================================================== */
+========================================================= */
 
-const questionBank=[
+const questionBank = [
 
 {
-q:"Dans le parcours de soins coordonnés, vers quel professionnel se tourne-t-on généralement en premier ?",
+q:"Quel professionnel de santé est généralement le premier interlocuteur dans le parcours de soins coordonné ?",
 answers:[
-"Son médecin traitant",
-"Un spécialiste choisi au hasard",
-"L'hôpital",
-"La pharmacie"
+"Le médecin traitant",
+"Le pharmacien uniquement",
+"Le dentiste uniquement",
+"L'hôpital systématiquement"
 ],
-correct:0
+correct:0,
+explanation:"Le médecin traitant joue un rôle central dans la coordination du parcours de soins."
+},
+
+{
+q:"Que peut-il se passer si un patient consulte directement un spécialiste sans respecter le parcours de soins coordonné ?",
+answers:[
+"Il peut être moins bien remboursé",
+"Il est toujours mieux remboursé",
+"Il ne paie jamais la consultation",
+"Il reçoit automatiquement une prime"
+],
+correct:0,
+explanation:"Dans certaines situations, le remboursement peut être moins favorable lorsque le parcours coordonné n'est pas respecté."
 },
 
 {
 q:"Quel est le rôle principal du médecin traitant ?",
 answers:[
-"Coordonner et orienter le parcours de soins",
-"Rembourser les consultations",
-"Vendre les médicaments",
-"Fixer les tarifs des hôpitaux"
+"Coordonner le parcours de soins",
+"Vendre des médicaments",
+"Fixer les tarifs de tous les médecins",
+"Remplacer tous les spécialistes"
 ],
-correct:0
+correct:0,
+explanation:"Le médecin traitant assure notamment la coordination du parcours de soins."
 },
 
 {
-q:"Pourquoi est-il conseillé de déclarer un médecin traitant ?",
+q:"Dans le parcours de soins coordonné, le patient peut être orienté vers un spécialiste par :",
 answers:[
-"Pour bénéficier du parcours de soins coordonnés",
-"Pour ne plus payer aucune consultation",
-"Pour obtenir automatiquement tous les médicaments gratuitement",
-"Pour éviter toute consultation chez un spécialiste"
+"Son médecin traitant",
+"Uniquement son pharmacien",
+"Uniquement son voisin",
+"Personne"
 ],
-correct:0
+correct:0,
+explanation:"Le médecin traitant peut orienter son patient vers un spécialiste lorsque cela est nécessaire."
 },
 
 {
-q:"Que peut-il se passer si un patient consulte directement un spécialiste sans respecter le parcours de soins ?",
+q:"Quel organisme gère l'Assurance maladie obligatoire pour une grande partie de la population en France ?",
 answers:[
-"Il peut être moins bien remboursé",
-"Il est toujours remboursé à 100 %",
-"La consultation est automatiquement gratuite",
-"Il reçoit une amende"
+"L'Assurance Maladie",
+"Une banque privée",
+"La mairie",
+"L'école"
 ],
-correct:0
+correct:0,
+explanation:"L'Assurance Maladie constitue une composante essentielle de la protection sociale."
 },
 
 {
-q:"Que signifie « parcours de soins coordonnés » ?",
+q:"À quoi sert principalement le remboursement des soins ?",
 answers:[
-"Un parcours dans lequel les soins sont organisés notamment autour du médecin traitant",
-"Un parcours où l'on consulte uniquement l'hôpital",
-"Un parcours réservé aux personnes âgées",
-"Un parcours sans médecin"
+"À réduire le coût restant à la charge du patient",
+"À supprimer tous les soins",
+"À remplacer les médecins",
+"À empêcher les consultations"
 ],
-correct:0
+correct:0,
+explanation:"Les remboursements permettent de prendre en charge une partie des dépenses de santé."
 },
 
 {
-q:"Quel est le principal objectif du parcours de soins coordonnés ?",
+q:"Le ticket modérateur correspond :",
 answers:[
-"Améliorer la coordination et le suivi des soins",
-"Interdire l'accès aux spécialistes",
-"Supprimer les consultations",
-"Faire payer davantage tous les patients"
+"À la partie des dépenses qui reste généralement à la charge de l'assuré après le remboursement de l'Assurance Maladie",
+"Au salaire du médecin",
+"Au prix d'une carte bancaire",
+"À une taxe sur les transports"
 ],
-correct:0
+correct:0,
+explanation:"Le ticket modérateur désigne la part restant après la prise en charge de l'Assurance Maladie obligatoire, avant d'éventuelles autres prises en charge."
 },
 
 {
-q:"Un patient consulte un spécialiste sans passer par son médecin traitant alors qu'il n'est pas dans une situation d'accès direct prévue. Que risque-t-il ?",
+q:"Une complémentaire santé peut notamment servir à :",
 answers:[
-"Une diminution du remboursement",
-"Une hospitalisation obligatoire",
-"Une consultation gratuite",
-"La suppression de sa carte Vitale"
+"Prendre en charge une partie des frais restant après l'Assurance Maladie",
+"Remplacer le médecin traitant",
+"Décider du diagnostic",
+"Prescrire tous les médicaments"
 ],
-correct:0
+correct:0,
+explanation:"Une complémentaire santé peut compléter les remboursements de l'Assurance Maladie."
 },
 
 {
-q:"Quel document permet notamment de justifier ses droits auprès de l'Assurance Maladie ?",
+q:"Pourquoi le parcours de soins coordonné a-t-il été mis en place ?",
 answers:[
-"La carte Vitale",
-"Le permis de conduire",
-"La carte de bibliothèque",
-"Le carnet de correspondance"
+"Pour favoriser une meilleure coordination des soins",
+"Pour empêcher les patients de consulter",
+"Pour supprimer les spécialistes",
+"Pour rendre tous les soins gratuits"
 ],
-correct:0
-},
-
-{
-q:"Dans une situation d'urgence médicale, doit-on obligatoirement passer par son médecin traitant avant d'être soigné ?",
-answers:[
-"Non",
-"Oui, toujours",
-"Seulement le week-end",
-"Seulement pour les adultes"
-],
-correct:0
-},
-
-{
-q:"Quel professionnel délivre généralement les médicaments prescrits ?",
-answers:[
-"Le pharmacien",
-"Le médecin traitant",
-"L'infirmier scolaire",
-"Le kinésithérapeute"
-],
-correct:0
-},
-
-{
-q:"Une consultation médicale peut être remboursée par l'Assurance Maladie selon des règles précises. Le remboursement dépend notamment :",
-answers:[
-"Des tarifs et règles de prise en charge",
-"De la couleur de la carte Vitale",
-"Du nombre de personnes dans la salle d'attente",
-"De l'âge du médecin"
-],
-correct:0
-},
-
-{
-q:"Pourquoi le patient doit-il transmettre les informations importantes aux professionnels qui le suivent ?",
-answers:[
-"Pour favoriser la continuité et la coordination des soins",
-"Pour accélérer les remboursements uniquement",
-"Pour éviter toute prescription",
-"Pour remplacer son médecin"
-],
-correct:0
+correct:0,
+explanation:"Le dispositif vise notamment à améliorer la coordination et le suivi des soins."
 },
 
 {
 q:"Quelle situation correspond le mieux à un parcours de soins coordonné ?",
 answers:[
-"Le médecin traitant évalue la situation puis oriente si nécessaire vers un spécialiste",
-"Le patient consulte plusieurs spécialistes sans communiquer les informations",
-"Le patient choisit systématiquement l'hôpital le plus éloigné",
-"Le patient ne consulte personne"
+"Un patient consulte son médecin traitant qui l'oriente vers un spécialiste si nécessaire",
+"Un patient choisit au hasard plusieurs spécialistes sans suivi",
+"Un patient évite systématiquement son médecin traitant",
+"Un patient demande à un ami de choisir son traitement"
 ],
-correct:0
+correct:0,
+explanation:"Le médecin traitant coordonne les soins et peut orienter vers un spécialiste."
 },
 
 {
-q:"Pourquoi le médecin traitant peut-il orienter vers un spécialiste ?",
+q:"Un médecin spécialiste peut-il être consulté sans passer par le médecin traitant dans certaines situations ?",
 answers:[
-"Parce qu'il assure notamment la coordination du parcours",
-"Parce qu'il décide du prix des médicaments",
-"Parce qu'il remplace tous les spécialistes",
-"Parce qu'il gère les pharmacies"
+"Oui, dans certains cas prévus par le dispositif",
+"Non, jamais",
+"Oui, mais uniquement à l'étranger",
+"Non, sauf le dimanche"
 ],
-correct:0
+correct:0,
+explanation:"Certaines consultations en accès direct sont prévues par le parcours de soins coordonné."
 },
 
 {
-q:"Un patient consulte directement un spécialiste alors qu'il aurait dû passer par son médecin traitant. La conséquence possible est :",
+q:"Pourquoi est-il important de conserver les informations concernant ses soins ?",
 answers:[
-"Une moins bonne prise en charge financière",
-"Une interdiction définitive de consulter",
-"Une hospitalisation automatique",
-"La suppression de son dossier médical"
+"Pour faciliter le suivi et la coordination",
+"Pour éviter tout contact avec les professionnels",
+"Pour empêcher les remboursements",
+"Pour remplacer les ordonnances"
 ],
-correct:0
+correct:0,
+explanation:"Le suivi des informations de santé facilite la continuité et la coordination des soins."
 },
 
 {
-q:"Quel comportement favorise le mieux un parcours de soins coordonné ?",
+q:"Le pharmacien intervient notamment pour :",
 answers:[
-"Informer son médecin traitant et suivre les orientations nécessaires",
-"Multiplier les consultations sans transmettre les informations",
-"Changer de spécialiste à chaque problème",
-"Éviter de conserver les documents médicaux"
+"Délivrer les médicaments prescrits et conseiller le patient",
+"Effectuer toutes les opérations chirurgicales",
+"Remplacer systématiquement le médecin",
+"Fixer les remboursements de l'Assurance Maladie"
 ],
-correct:0
+correct:0,
+explanation:"Le pharmacien délivre les médicaments et peut apporter des conseils."
+},
+
+{
+q:"Lorsqu'un médecin traitant adresse un patient à un spécialiste, cela participe :",
+answers:[
+"Au parcours de soins coordonné",
+"À une démarche bancaire",
+"À une activité sportive",
+"À une inscription scolaire"
+],
+correct:0,
+explanation:"L'orientation vers un spécialiste s'inscrit dans la coordination des soins."
+},
+
+{
+q:"Le respect du parcours de soins peut avoir une conséquence sur :",
+answers:[
+"Le niveau de remboursement",
+"Le groupe sanguin",
+"La taille du patient",
+"La durée de la journée"
+],
+correct:0,
+explanation:"Le respect du parcours peut influencer le niveau de remboursement des consultations."
+},
+
+{
+q:"Qui peut assurer le suivi global de la santé d'un patient ?",
+answers:[
+"Le médecin traitant",
+"Le conducteur de bus",
+"Le professeur de sport uniquement",
+"Le vendeur d'un magasin"
+],
+correct:0,
+explanation:"Le médecin traitant joue un rôle important dans le suivi global."
+},
+
+{
+q:"Si un patient a besoin d'un avis spécialisé, le médecin traitant peut :",
+answers:[
+"L'orienter vers un spécialiste",
+"Modifier son groupe sanguin",
+"Annuler son assurance",
+"Créer une carte bancaire"
+],
+correct:0,
+explanation:"L'orientation vers un spécialiste permet d'adapter le parcours aux besoins du patient."
+},
+
+{
+q:"Quel est l'objectif d'une bonne coordination des professionnels de santé ?",
+answers:[
+"Éviter les ruptures dans le suivi du patient",
+"Multiplier inutilement les consultations",
+"Empêcher le partage d'informations utiles",
+"Supprimer les traitements"
+],
+correct:0,
+explanation:"La coordination favorise la continuité et la qualité du suivi."
+},
+
+{
+q:"Une consultation chez un spécialiste peut coûter plus cher au patient lorsque :",
+answers:[
+"Le parcours de soins coordonné n'est pas respecté dans une situation où il devrait l'être",
+"Le patient est ponctuel",
+"Le médecin est diplômé",
+"Le patient possède une carte Vitale"
+],
+correct:0,
+explanation:"Le non-respect du parcours peut entraîner une prise en charge moins favorable."
+},
+
+{
+q:"La carte Vitale permet notamment :",
+answers:[
+"De faciliter la transmission des informations nécessaires au remboursement des soins",
+"De remplacer le médecin traitant",
+"De choisir un spécialiste automatiquement",
+"De rendre tous les soins gratuits"
+],
+correct:0,
+explanation:"La carte Vitale facilite la transmission des informations nécessaires à la prise en charge."
 },
 
 {
 q:"Le parcours de soins concerne principalement :",
 answers:[
-"L'organisation et la coordination des consultations et soins",
-"Uniquement les hospitalisations",
-"Uniquement les médicaments",
-"Uniquement les remboursements dentaires"
+"La manière dont les différents professionnels interviennent et se coordonnent autour du patient",
+"Uniquement les urgences",
+"Uniquement les pharmacies",
+"Uniquement les opérations chirurgicales"
 ],
-correct:0
+correct:0,
+explanation:"Le parcours de soins repose notamment sur l'organisation et la coordination des interventions."
 },
 
 {
-q:"Un patient consulte régulièrement son médecin traitant. Celui-ci l'oriente vers un spécialiste lorsque cela est nécessaire. Cette situation montre :",
+q:"Pourquoi un patient peut-il être orienté vers plusieurs professionnels de santé ?",
 answers:[
-"Une coordination des soins",
-"Une absence de parcours",
-"Une situation d'urgence",
-"Un refus de soins"
+"Parce que leurs compétences peuvent être complémentaires",
+"Parce qu'un seul professionnel ne peut jamais soigner personne",
+"Parce que cela est obligatoire dans tous les cas",
+"Pour éviter tout diagnostic"
 ],
-correct:0
+correct:0,
+explanation:"Les différents professionnels disposent de compétences complémentaires."
 },
 
 {
-q:"Pourquoi le respect du parcours peut-il avoir un impact financier pour le patient ?",
+q:"Dans le parcours de soins coordonné, consulter son médecin traitant permet notamment :",
 answers:[
-"Parce que le niveau de remboursement peut être différent selon la situation",
-"Parce que le médecin traitant fixe directement le prix",
-"Parce que les spécialistes deviennent gratuits",
-"Parce que les pharmacies ne remboursent jamais"
+"D'avoir un interlocuteur qui connaît le suivi global du patient",
+"De ne plus jamais consulter de spécialiste",
+"D'obtenir automatiquement tous les médicaments gratuitement",
+"De supprimer toute démarche administrative"
 ],
-correct:0
+correct:0,
+explanation:"Le médecin traitant assure un rôle de suivi et de coordination."
 },
 
 {
-q:"Quel acteur joue un rôle central dans la coordination du parcours de soins ?",
+q:"Quel exemple montre une rupture de coordination ?",
 answers:[
-"Le médecin traitant",
-"Le patient uniquement",
-"Le pharmacien uniquement",
-"Le laboratoire uniquement"
+"Plusieurs professionnels interviennent sans transmission utile des informations nécessaires",
+"Le médecin traitant adresse un patient à un spécialiste",
+"Le pharmacien explique comment prendre un médicament",
+"Le patient suit les recommandations de son médecin"
 ],
-correct:0
+correct:0,
+explanation:"Une mauvaise transmission d'informations peut compliquer la continuité des soins."
 },
 
 {
-q:"Le respect du parcours de soins permet notamment :",
+q:"Le parcours de soins coordonné est principalement lié :",
 answers:[
-"Une meilleure organisation du suivi médical",
-"De supprimer les spécialistes",
-"D'éviter tous les examens",
-"De ne jamais consulter un médecin"
+"À l'organisation et à la coordination des soins",
+"À l'organisation des transports scolaires",
+"À la pratique d'un sport",
+"Au fonctionnement d'une banque"
 ],
-correct:0
-},
-
-{
-q:"Quel exemple correspond à une situation où le passage par le médecin traitant peut ne pas être nécessaire ?",
-answers:[
-"Une situation d'urgence",
-"Une consultation choisie au hasard sans raison",
-"Une consultation parce que la salle d'attente est vide",
-"Une consultation pour éviter toute coordination"
-],
-correct:0
+correct:0,
+explanation:"Le parcours de soins concerne l'organisation et la coordination des soins."
 }
 
 ];
 
-
-/* =====================================================
+/* =========================================================
    VARIABLES
-===================================================== */
+========================================================= */
 
 let players=[];
-let playerForms=[];
-let currentPlayerIndex=0;
+let currentPlayer=0;
 let diceValue=0;
-let currentQuestion=null;
 let questions=[];
-let usedQuestions=[];
-let questionCounter=0;
-let moving=false;
+let currentQuestion=null;
+let answered=false;
 
+const screens={
+setup:document.getElementById("setupScreen"),
+dice:document.getElementById("diceScreen"),
+question:document.getElementById("questionScreen"),
+board:document.getElementById("boardScreen"),
+win:document.getElementById("winScreen")
+};
 
-/* =====================================================
-   MELANGE
-===================================================== */
+/* =========================================================
+   AVATARS
+========================================================= */
 
-function shuffle(array){
+const avatarButtons=document.querySelectorAll(".avatarChoice");
 
-  const result=[...array];
+avatarButtons.forEach(btn=>{
 
-  for(let i=result.length-1;i>0;i--){
+btn.addEventListener("click",()=>{
 
-    const j=
-      Math.floor(
-        Math.random()*(i+1)
-      );
+const player=btn.dataset.player;
+const avatar=btn.dataset.avatar;
 
-    [
-      result[i],
-      result[j]
-    ]=[
-      result[j],
-      result[i]
-    ];
+if(btn.classList.contains("disabled")) return;
 
-  }
+document.querySelectorAll(
+'.avatarChoice[data-player="'+player+'"]'
+).forEach(b=>b.classList.remove("selected"));
 
-  return result;
+btn.classList.add("selected");
+
+players[player-1]=players[player-1] || {};
+players[player-1].avatar=avatar;
+players[player-1].emoji=btn.textContent;
+
+updateAvatarAvailability();
+
+});
+
+});
+
+function updateAvatarAvailability(){
+
+const selected={};
+
+players.forEach(p=>{
+if(p && p.avatar) selected[p.avatar]=true;
+});
+
+avatarButtons.forEach(btn=>{
+
+const player=parseInt(btn.dataset.player);
+const avatar=btn.dataset.avatar;
+
+if(selected[avatar] && players[player-1]?.avatar!==avatar){
+btn.classList.add("disabled");
+}else{
+btn.classList.remove("disabled");
 }
 
-
-/* =====================================================
-   INITIALISATION
-===================================================== */
-
-function init(){
-
-  questions=
-    shuffle(questionBank);
-
-  addPlayer();
-  addPlayer();
-
-}
-
-init();
-
-
-/* =====================================================
-   JOUEURS
-===================================================== */
-
-function addPlayer(){
-
-  if(playerForms.length>=6){
-
-    document
-      .getElementById("setupError")
-      .textContent=
-      "Maximum 6 joueurs.";
-
-    return;
-  }
-
-  const index=
-    playerForms.length;
-
-  const div=
-    document.createElement("div");
-
-  div.className=
-    "player-form";
-
-  div.innerHTML=`
-
-    <h3>
-      Joueur ${index+1}
-    </h3>
-
-    <input
-      class="player-name"
-      id="name-${index}"
-      maxlength="20"
-      placeholder="Prénom du joueur">
-
-    <div
-      class="avatar-grid"
-      id="avatars-${index}">
-    </div>
-
-  `;
-
-  document
-    .getElementById("playersList")
-    .appendChild(div);
-
-  playerForms.push({
-    avatar:null
-  });
-
-  renderAvatars(index);
+});
 
 }
 
+/* =========================================================
+   DÉMARRAGE
+========================================================= */
 
-function renderAvatars(playerIndex){
+document.getElementById("startButton").addEventListener("click",()=>{
 
-  const container=
-    document.getElementById(
-      `avatars-${playerIndex}`
-    );
+players=[];
 
-  container.innerHTML="";
+for(let i=1;i<=4;i++){
 
-  const selectedByOthers=
-    playerForms.map(
-      (p,i)=>
-        i!==playerIndex
-          ?p.avatar
-          :null
-    );
+const name=document.getElementById("name"+i).value.trim();
 
-  avatars.forEach(
-    (avatar,index)=>{
+const selected=document.querySelector(
+'.avatarChoice[data-player="'+i+'"].selected'
+);
 
-      const button=
-        document.createElement("button");
+if(name && selected){
 
-      button.type="button";
-
-      button.className=
-        "avatar-option";
-
-      const taken=
-        selectedByOthers.includes(index);
-
-      if(taken)
-        button.classList.add("taken");
-
-      if(
-        playerForms[playerIndex].avatar===index
-      )
-        button.classList.add("selected");
-
-      button.disabled=taken;
-
-      button.innerHTML=`
-
-        ${avatar.emoji}
-
-        <span class="avatar-label">
-          ${avatar.name}
-        </span>
-
-      `;
-
-      button.onclick=()=>{
-
-        playerForms[playerIndex].avatar=
-          index;
-
-        renderAllAvatars();
-
-      };
-
-      container.appendChild(button);
-
-    }
-  );
+players.push({
+name:name,
+avatar:selected.dataset.avatar,
+emoji:selected.textContent,
+position:0,
+object:null
+});
 
 }
 
+}
 
-function renderAllAvatars(){
+if(players.length<2){
 
-  playerForms.forEach(
-    (_,i)=>
-      renderAvatars(i)
-  );
+alert("Il faut au moins 2 joueurs.");
+
+return;
 
 }
 
+if(new Set(players.map(p=>p.avatar)).size!==players.length){
 
-/* =====================================================
-   DEMARRAGE
-===================================================== */
+alert("Chaque joueur doit avoir un avatar différent.");
 
-function startGame(){
-
-  const error=
-    document.getElementById(
-      "setupError"
-    );
-
-  error.textContent="";
-
-  const newPlayers=[];
-
-  for(
-    let i=0;
-    i<playerForms.length;
-    i++
-  ){
-
-    const name=
-      document
-        .getElementById(`name-${i}`)
-        .value
-        .trim();
-
-    if(!name){
-
-      error.textContent=
-        `Veuillez renseigner le prénom du joueur ${i+1}.`;
-
-      return;
-    }
-
-    if(playerForms[i].avatar===null){
-
-      error.textContent=
-        `Veuillez choisir un avatar pour ${name}.`;
-
-      return;
-    }
-
-    newPlayers.push({
-
-      name,
-      avatar:playerForms[i].avatar,
-      position:0
-
-    });
-
-  }
-
-  players=newPlayers;
-
-  currentPlayerIndex=0;
-
-  createBoards();
-
-  showTurnScreen();
+return;
 
 }
 
+startNewGame();
 
-/* =====================================================
-   ECRANS
-===================================================== */
+});
 
-function showScreen(id){
+/* =========================================================
+   NOUVELLE PARTIE
+========================================================= */
 
-  document
-    .querySelectorAll(".screen")
-    .forEach(
-      s=>
-        s.classList.remove("active")
-    );
+function startNewGame(){
 
-  document
-    .getElementById(id)
-    .classList.add("active");
+questions=[...questionBank];
 
-}
+shuffle(questions);
 
+questions=questions.map(q=>{
 
-/* =====================================================
-   CREATION DU PARCOURS
-===================================================== */
+const answers=q.answers.map((text,index)=>({
+text,
+correct:index===q.correct
+}));
 
-function createPath(container){
+shuffle(answers);
 
-  container.innerHTML="";
+return{
+q:q.q,
+answers:answers,
+correct:answers.findIndex(a=>a.correct),
+explanation:q.explanation
+};
 
-  for(let i=0;i<40;i++){
+});
 
-    const cell=
-      document.createElement("div");
+currentPlayer=0;
 
-    cell.className="cell";
+players.forEach(p=>p.position=0);
 
-    if(i===0)
-      cell.classList.add("start");
+create3DWorld();
 
-    if(i===39)
-      cell.classList.add("finish");
+showScreen("dice");
 
-    cell.innerHTML=`
-
-      <span class="cell-number">
-        ${i}
-      </span>
-
-      ${
-        i===0
-          ?"<span class='cell-icon'>🚩</span>"
-          :""
-      }
-
-      ${
-        i===39
-          ?"<span class='cell-icon'>💰</span>"
-          :""
-      }
-
-    `;
-
-    container.appendChild(cell);
-
-  }
+showDiceTurn();
 
 }
 
+/* =========================================================
+   ÉCRANS
+========================================================= */
 
-function createBoards(){
+function showScreen(name){
 
-  createPath(
-    document.getElementById(
-      "boardPath"
-    )
-  );
+Object.values(screens).forEach(s=>s.classList.remove("active"));
 
-  createPath(
-    document.getElementById(
-      "boardPath2"
-    )
-  );
+screens[name].classList.add("active");
 
 }
 
+function showDiceTurn(){
 
-/* =====================================================
-   TOUR
-===================================================== */
+const p=players[currentPlayer];
 
-function showTurnScreen(){
+document.getElementById("turnTitle").textContent=
+"🎲 Au tour de "+p.name;
 
-  moving=false;
+document.getElementById("diceResult").textContent="";
 
-  const player=
-    players[currentPlayerIndex];
+const button=document.getElementById("rollButton");
 
-  document
-    .getElementById("turnAvatar")
-    .textContent=
-    avatars[player.avatar].emoji;
-
-  document
-    .getElementById("turnName")
-    .textContent=
-    player.name;
-
-  document
-    .getElementById("diceResult")
-    .textContent="?";
-
-  const dice=
-    document.getElementById(
-      "dice3d"
-    );
-
-  dice.classList.remove("falling");
-
-  const button=
-    document.getElementById(
-      "rollButton"
-    );
-
-  button.disabled=false;
-
-  showScreen("turnScreen");
-
-  setTimeout(
-    updatePawnsOnTurnBoard,
-    100
-  );
+button.disabled=false;
 
 }
 
+/* =========================================================
+   LANCER DU DÉ
+========================================================= */
 
-/* =====================================================
-   LANCER DE
-===================================================== */
+document.getElementById("rollButton").addEventListener("click",()=>{
 
-function rollDice(){
+const button=document.getElementById("rollButton");
 
-  if(moving)
-    return;
+button.disabled=true;
 
-  const button=
-    document.getElementById(
-      "rollButton"
-    );
+const dice=document.getElementById("dice3D");
 
-  button.disabled=true;
+const value=Math.floor(Math.random()*6)+1;
 
-  const dice=
-    document.getElementById(
-      "dice3d"
-    );
+diceValue=value;
 
-  dice.classList.remove("falling");
-
-  void dice.offsetWidth;
-
-  dice.classList.add("falling");
-
-  document
-    .getElementById("diceResult")
-    .textContent="…";
-
-  setTimeout(()=>{
-
-    diceValue=
-      Math.floor(
-        Math.random()*6
-      )+1;
-
-    document
-      .getElementById("diceResult")
-      .textContent=
-      diceValue;
-
-    setTimeout(
-      showQuestion,
-      800
-    );
-
-  },1800);
-
+dice.animate([
+{
+transform:"translateY(-120px) rotateX(0deg) rotateY(0deg) rotateZ(0deg)"
+},
+{
+transform:"translateY(60px) rotateX(720deg) rotateY(540deg) rotateZ(360deg)",
+offset:.65
+},
+{
+transform:"translateY(0) rotateX(1080deg) rotateY(720deg) rotateZ(540deg)"
 }
+],{
+duration:1600,
+easing:"cubic-bezier(.2,.8,.2,1)"
+});
 
+setTimeout(()=>{
 
-/* =====================================================
+document.getElementById("diceResult").textContent=
+"Tu as obtenu : "+value+" 🎲";
+
+setTimeout(()=>{
+
+showQuestion();
+
+},1000);
+
+},1600);
+
+});
+
+/* =========================================================
    QUESTION
-===================================================== */
-
-function getNextQuestion(){
-
-  if(
-    usedQuestions.length>=
-    questions.length
-  ){
-
-    questions=
-      shuffle(questionBank);
-
-    usedQuestions=[];
-
-  }
-
-  const available=
-    questions.filter(
-      (_,i)=>
-        !usedQuestions.includes(i)
-    );
-
-  const selected=
-    available[
-      Math.floor(
-        Math.random()*
-        available.length
-      )
-    ];
-
-  const index=
-    questions.indexOf(
-      selected
-    );
-
-  usedQuestions.push(index);
-
-  return selected;
-
-}
-
+========================================================= */
 
 function showQuestion(){
 
-  currentQuestion=
-    getNextQuestion();
+showScreen("question");
 
-  questionCounter++;
+const p=players[currentPlayer];
 
-  const player=
-    players[currentPlayerIndex];
+currentQuestion=questions.shift();
 
-  document
-    .getElementById(
-      "questionNumber"
-    )
-    .textContent=
-      `Question ${questionCounter}`;
+if(!currentQuestion){
 
-  document
-    .getElementById(
-      "questionPlayer"
-    )
-    .textContent=
-      player.name;
+questions=[...questionBank];
 
-  document
-    .getElementById(
-      "questionText"
-    )
-    .textContent=
-      currentQuestion.q;
+shuffle(questions);
 
-  const correctText=
-    currentQuestion.answers[
-      currentQuestion.correct
-    ];
-
-  const shuffledAnswers=
-    shuffle(
-      currentQuestion.answers.map(
-        text=>({
-          text,
-          correct:
-            text===correctText
-        })
-      )
-    );
-
-  const answers=
-    document.getElementById(
-      "answers"
-    );
-
-  answers.innerHTML="";
-
-  shuffledAnswers.forEach(
-    (answer,index)=>{
-
-      const button=
-        document.createElement(
-          "button"
-        );
-
-      button.className=
-        "answer";
-
-      button.textContent=
-        `${String.fromCharCode(65+index)}. ${answer.text}`;
-
-      button.onclick=()=>
-        answerQuestion(
-          button,
-          answer.correct
-        );
-
-      answers.appendChild(button);
-
-    }
-  );
-
-  const feedback=
-    document.getElementById(
-      "feedback"
-    );
-
-  feedback.className=
-    "feedback";
-
-  feedback.textContent="";
-
-  showScreen(
-    "questionScreen"
-  );
+currentQuestion=questions.shift();
 
 }
 
+document.getElementById("questionNumber").textContent=
+"QUESTION "+(questionBank.length-questions.length);
 
-/* =====================================================
-   REPONSE
-===================================================== */
+document.getElementById("questionPlayer").textContent=
+p.emoji+" "+p.name;
 
-function answerQuestion(
-  button,
-  correct
-){
+document.getElementById("questionText").textContent=
+currentQuestion.q;
 
-  document
-    .querySelectorAll(".answer")
-    .forEach(
-      b=>
-        b.classList.add(
-          "disabled"
-        )
-    );
+const answers=document.getElementById("answers");
 
-  const feedback=
-    document.getElementById(
-      "feedback"
-    );
+answers.innerHTML="";
 
-  if(correct){
+currentQuestion.answers.forEach((a,index)=>{
 
-    button.classList.add(
-      "correct"
-    );
+const button=document.createElement("button");
 
-    feedback.className=
-      "feedback show success";
+button.className="answer";
 
-    feedback.textContent=
-      `✅ Bonne réponse ! Le joueur avance de ${diceValue} case${diceValue>1?"s":""}.`;
+button.textContent=
+String.fromCharCode(65+index)+". "+a.text;
 
-    setTimeout(
-      movePlayer,
-      1200
-    );
+button.addEventListener("click",()=>answerQuestion(index,button));
 
-  }else{
+answers.appendChild(button);
 
-    button.classList.add(
-      "wrong"
-    );
+});
 
-    feedback.className=
-      "feedback show failure";
+document.getElementById("feedback").className="feedback";
 
-    feedback.textContent=
-      "❌ Mauvaise réponse : le joueur reste sur sa case.";
+document.getElementById("feedback").textContent="";
 
-    setTimeout(
-      ()=>{
-        showBoardAfterQuestion(
-          false
-        );
-      },
-      1300
-    );
+document.getElementById("nextButton").className="nextButton";
 
-  }
+answered=false;
 
 }
 
+/* =========================================================
+   RÉPONSE
+========================================================= */
 
-/* =====================================================
-   DEPLACEMENT
-===================================================== */
+function answerQuestion(index,button){
 
-async function movePlayer(){
+if(answered) return;
 
-  const player=
-    players[currentPlayerIndex];
+answered=true;
 
-  const target=
-    Math.min(
-      39,
-      player.position+
-      diceValue
-    );
+const all=document.querySelectorAll(".answer");
 
-  moving=true;
+all.forEach(b=>b.disabled=true);
 
-  for(
-    let step=
-      player.position+1;
-    step<=target;
-    step++
-  ){
+const feedback=document.getElementById("feedback");
 
-    player.position=
-      step;
+if(index===currentQuestion.correct){
 
-    updatePositionTexts();
+button.classList.add("correct");
 
-    await animatePawnsStep(
-      step
-    );
+feedback.className="feedback show good";
 
-    await sleep(280);
+feedback.innerHTML=
+"✅ <strong>Bonne réponse !</strong><br>"+
+currentQuestion.explanation+
+"<br><br>Tu peux maintenant avancer de "+diceValue+" case(s).";
 
-  }
+}else{
 
-  moving=false;
+button.classList.add("wrong");
 
-  if(
-    player.position>=39
-  ){
+all[currentQuestion.correct].classList.add("correct");
 
-    showVictory(player);
+feedback.className="feedback show bad";
 
-    return;
-
-  }
-
-  showBoardAfterQuestion(
-    true
-  );
+feedback.innerHTML=
+"❌ <strong>Mauvaise réponse.</strong><br>"+
+"Ton avatar reste sur sa case actuelle.<br><br>"+
+currentQuestion.explanation;
 
 }
 
-
-/* =====================================================
-   ANIMATION DES PIONS
-===================================================== */
-
-function animatePawnsStep(
-  position
-){
-
-  return new Promise(
-    resolve=>{
-
-      const boards=[
-
-        {
-          board:
-            document.getElementById(
-              "boardPath"
-            ),
-
-          pawns:
-            document.getElementById(
-              "pawns"
-            )
-        },
-
-        {
-          board:
-            document.getElementById(
-              "boardPath2"
-            ),
-
-          pawns:
-            document.getElementById(
-              "pawns2"
-            )
-        }
-
-      ];
-
-      boards.forEach(
-        data=>{
-
-          const cells=
-            data.board
-              .querySelectorAll(
-                ".cell"
-              );
-
-          const cell=
-            cells[position];
-
-          if(!cell)
-            return;
-
-          const boardRect=
-            data.board
-              .parentElement
-              .getBoundingClientRect();
-
-          const cellRect=
-            cell.getBoundingClientRect();
-
-          const x=
-            cellRect.left+
-            cellRect.width/2-
-            boardRect.left;
-
-          const y=
-            cellRect.top+
-            cellRect.height/2-
-            boardRect.top;
-
-          const pawn=
-            data.pawns.querySelector(
-              `.pawn[data-player="${currentPlayerIndex}"]`
-            );
-
-          if(pawn){
-
-            pawn.style.left=
-              `${x}px`;
-
-            pawn.style.top=
-              `${y}px`;
-
-            pawn.classList.remove(
-              "jumping"
-            );
-
-            void pawn.offsetWidth;
-
-            pawn.classList.add(
-              "jumping"
-            );
-
-          }
-
-        }
-      );
-
-      setTimeout(
-        resolve,
-        360
-      );
-
-    }
-  );
+document.getElementById("nextButton").className="nextButton show";
 
 }
 
+document.getElementById("nextButton").addEventListener("click",()=>{
 
-/* =====================================================
-   PIONS AU DEPART
-===================================================== */
+const correct=
+currentQuestion.answers[currentQuestion.correct].correct;
 
-function updatePawnsOnTurnBoard(){
+if(correct){
 
-  updatePawns(
+movePlayer(diceValue);
 
-    document.getElementById(
-      "boardPath"
-    ),
+}else{
 
-    document.getElementById(
-      "pawns"
-    )
-
-  );
+showBoardWithoutMovement();
 
 }
 
+});
 
-function updatePawns(
-  path,
-  pawnsContainer
-){
+/* =========================================================
+   PLATEAU
+========================================================= */
 
-  pawnsContainer.innerHTML="";
+const BOARD_LENGTH=24;
 
-  const cells=
-    path.querySelectorAll(
-      ".cell"
-    );
+let scene;
+let camera;
+let renderer;
+let boardGroup;
+let playerMeshes=[];
+let cityObjects=[];
+let clock=new THREE.Clock();
 
-  players.forEach(
-    (player,index)=>{
+function create3DWorld(){
 
-      const cell=
-        cells[player.position];
+if(renderer){
 
-      if(!cell)
-        return;
+renderer.dispose();
 
-      const pawn=
-        document.createElement(
-          "div"
-        );
-
-      pawn.className=
-        "pawn";
-
-      pawn.dataset.player=
-        index;
-
-      pawn.textContent=
-        avatars[
-          player.avatar
-        ].emoji;
-
-      pawnsContainer.appendChild(
-        pawn
-      );
-
-      const parent=
-        path.parentElement;
-
-      const parentRect=
-        parent.getBoundingClientRect();
-
-      const cellRect=
-        cell.getBoundingClientRect();
-
-      const x=
-        cellRect.left+
-        cellRect.width/2-
-        parentRect.left;
-
-      const y=
-        cellRect.top+
-        cellRect.height/2-
-        parentRect.top;
-
-      pawn.style.left=
-        `${x}px`;
-
-      pawn.style.top=
-        `${y}px`;
-
-    }
-  );
+document.getElementById("gameCanvas")?.remove();
 
 }
 
+scene=new THREE.Scene();
 
-/* =====================================================
-   POSITIONS
-===================================================== */
+scene.background=new THREE.Color(0x91c8e8);
 
-function updatePositionTexts(){
+scene.fog=new THREE.Fog(0x91c8e8,45,130);
 
-  const player=
-    players[currentPlayerIndex];
+camera=new THREE.PerspectiveCamera(
+45,
+window.innerWidth/window.innerHeight,
+0.1,
+500
+);
 
-  document
-    .getElementById(
-      "positionText"
-    )
-    .textContent=
-      player.position;
+camera.position.set(18,26,25);
+
+renderer=new THREE.WebGLRenderer({
+antialias:true,
+alpha:false
+});
+
+renderer.setSize(window.innerWidth,window.innerHeight);
+
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+
+renderer.shadowMap.enabled=true;
+
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+
+renderer.toneMappingExposure=1.15;
+
+renderer.domElement.id="gameCanvas";
+
+document.body.appendChild(renderer.domElement);
+
+/* lumière */
+
+const hemi=new THREE.HemisphereLight(
+0xdff4ff,
+0x405c38,
+2.3
+);
+
+scene.add(hemi);
+
+const sun=new THREE.DirectionalLight(
+0xffffff,
+3.5
+);
+
+sun.position.set(-30,45,20);
+
+sun.castShadow=true;
+
+sun.shadow.mapSize.width=2048;
+sun.shadow.mapSize.height=2048;
+
+sun.shadow.camera.left=-60;
+sun.shadow.camera.right=60;
+sun.shadow.camera.top=60;
+sun.shadow.camera.bottom=-60;
+
+scene.add(sun);
+
+/* sol */
+
+const groundGeo=new THREE.BoxGeometry(100,1,100);
+
+const groundMat=new THREE.MeshStandardMaterial({
+color:0x4e7d55,
+roughness:.9
+});
+
+const ground=new THREE.Mesh(groundGeo,groundMat);
+
+ground.position.y=-.8;
+
+ground.receiveShadow=true;
+
+scene.add(ground);
+
+/* plateau */
+
+boardGroup=new THREE.Group();
+
+scene.add(boardGroup);
+
+createBoard();
+
+createCity();
+
+createPlayers();
+
+animate();
 
 }
 
+/* =========================================================
+   CRÉATION DU PLATEAU
+========================================================= */
 
-/* =====================================================
-   PLATEAU APRES QUESTION
-===================================================== */
+function createBoard(){
 
-function showBoardAfterQuestion(
-  correct
-){
+const baseGeo=new THREE.BoxGeometry(18,1.2,72);
 
-  const player=
-    players[currentPlayerIndex];
+const baseMat=new THREE.MeshStandardMaterial({
+color:0x6b4733,
+roughness:.8
+});
 
-  document
-    .getElementById(
-      "boardAvatar"
-    )
-    .textContent=
-      avatars[
-        player.avatar
-      ].emoji;
+const base=new THREE.Mesh(baseGeo,baseMat);
 
-  document
-    .getElementById(
-      "boardPlayerName"
-    )
-    .textContent=
-      player.name;
+base.position.set(0,0,-20);
 
-  document
-    .getElementById(
-      "positionText"
-    )
-    .textContent=
-      player.position;
+base.castShadow=true;
+base.receiveShadow=true;
 
-  showScreen(
-    "boardScreen"
-  );
+boardGroup.add(base);
 
-  setTimeout(
-    ()=>{
+/* route centrale */
 
-      updatePawns(
+const roadGeo=new THREE.BoxGeometry(10,.2,68);
 
-        document.getElementById(
-          "boardPath2"
-        ),
+const roadMat=new THREE.MeshStandardMaterial({
+color:0x303943,
+roughness:.95
+});
 
-        document.getElementById(
-          "pawns2"
-        )
+const road=new THREE.Mesh(roadGeo,roadMat);
 
-      );
+road.position.set(0,.7,-20);
 
-    },
-    100
-  );
+road.receiveShadow=true;
+
+boardGroup.add(road);
+
+/* cases */
+
+for(let i=0;i<BOARD_LENGTH;i++){
+
+const z=12-i*2.75;
+
+const isStart=i===0;
+
+const isFinish=i===BOARD_LENGTH-1;
+
+const color=
+isFinish?0xf0b83c:
+isStart?0x43d597:
+i%2===0?0xe4edf2:0xcbd8e0;
+
+const geo=new THREE.BoxGeometry(7.4,.45,2.25);
+
+const mat=new THREE.MeshStandardMaterial({
+color:color,
+roughness:.65
+});
+
+const tile=new THREE.Mesh(geo,mat);
+
+tile.position.set(0,1,z);
+
+tile.castShadow=true;
+tile.receiveShadow=true;
+
+boardGroup.add(tile);
+
+/* bordure */
+
+const edgeGeo=new THREE.BoxGeometry(7.7,.18,2.5);
+
+const edgeMat=new THREE.MeshStandardMaterial({
+color:0x253340
+});
+
+const edge=new THREE.Mesh(edgeGeo,edgeMat);
+
+edge.position.set(0,.88,z);
+
+boardGroup.add(edge);
 
 }
 
+/* panneau départ */
 
-/* =====================================================
+addSign(-5,2.8,12,"DÉPART","#43d597");
+
+/* coffre final */
+
+createTreasure(0,3,12-(BOARD_LENGTH-1)*2.75);
+
+}
+
+/* =========================================================
+   VILLE
+========================================================= */
+
+function createCity(){
+
+/* bâtiments */
+
+for(let i=0;i<14;i++){
+
+const side=i%2===0?-1:1;
+
+const z=8-i*5;
+
+const width=2.8+Math.random()*2;
+
+const height=3+Math.random()*6;
+
+const depth=3+Math.random()*2;
+
+const colors=[
+0xe4a97a,
+0xd4d9df,
+0x9fc3d6,
+0xd7bc7c,
+0xb4c9a8
+];
+
+const geo=new THREE.BoxGeometry(width,height,depth);
+
+const mat=new THREE.MeshStandardMaterial({
+color:colors[i%colors.length],
+roughness:.8
+});
+
+const building=new THREE.Mesh(geo,mat);
+
+building.position.set(
+side*(7+Math.random()*2),
+height/2,
+z
+);
+
+building.castShadow=true;
+building.receiveShadow=true;
+
+scene.add(building);
+
+cityObjects.push(building);
+
+/* toit */
+
+const roofGeo=new THREE.ConeGeometry(
+Math.max(width,depth)*.72,
+1.4,
+4
+);
+
+const roofMat=new THREE.MeshStandardMaterial({
+color:0x6b3d34
+});
+
+const roof=new THREE.Mesh(roofGeo,roofMat);
+
+roof.position.set(
+building.position.x,
+height+.65,
+building.position.z
+);
+
+roof.rotation.y=Math.PI/4;
+
+roof.castShadow=true;
+
+scene.add(roof);
+
+/* fenêtres */
+
+for(let f=0;f<3;f++){
+
+const windowGeo=new THREE.BoxGeometry(.45,.65,.08);
+
+const windowMat=new THREE.MeshStandardMaterial({
+color:0x9ee8f5,
+emissive:0x193c46,
+emissiveIntensity:.35
+});
+
+const win=new THREE.Mesh(windowGeo,windowMat);
+
+win.position.set(
+building.position.x-side*(width/2+.05),
+height*.25+f*1.15,
+building.position.z
+);
+
+scene.add(win);
+
+}
+
+}
+
+/* arbres */
+
+for(let i=0;i<22;i++){
+
+const side=i%2===0?-1:1;
+
+const tree=createTree();
+
+tree.position.set(
+side*(7+Math.random()*3),
+0,
+Math.random()*65-50
+);
+
+scene.add(tree);
+
+}
+
+/* lampadaires */
+
+for(let i=0;i<12;i++){
+
+const side=i%2===0?-1:1;
+
+const lamp=createLamp();
+
+lamp.position.set(
+side*5.7,
+0,
+12-i*5.5
+);
+
+scene.add(lamp);
+
+}
+
+}
+
+/* =========================================================
+   ARBRE
+========================================================= */
+
+function createTree(){
+
+const g=new THREE.Group();
+
+const trunkGeo=new THREE.CylinderGeometry(.18,.24,1.5,8);
+
+const trunkMat=new THREE.MeshStandardMaterial({
+color:0x70462e
+});
+
+const trunk=new THREE.Mesh(trunkGeo,trunkMat);
+
+trunk.position.y=.75;
+
+trunk.castShadow=true;
+
+g.add(trunk);
+
+const leavesGeo=new THREE.SphereGeometry(1.15,12,10);
+
+const leavesMat=new THREE.MeshStandardMaterial({
+color:0x267044,
+roughness:1
+});
+
+const leaves=new THREE.Mesh(leavesGeo,leavesMat);
+
+leaves.position.y=2;
+
+leaves.castShadow=true;
+
+g.add(leaves);
+
+return g;
+
+}
+
+/* =========================================================
+   LAMPADAIRE
+========================================================= */
+
+function createLamp(){
+
+const g=new THREE.Group();
+
+const poleGeo=new THREE.CylinderGeometry(.07,.1,3.5,8);
+
+const poleMat=new THREE.MeshStandardMaterial({
+color:0x26313a,
+metalness:.7,
+roughness:.3
+});
+
+const pole=new THREE.Mesh(poleGeo,poleMat);
+
+pole.position.y=1.75;
+
+g.add(pole);
+
+const lightGeo=new THREE.SphereGeometry(.22,12,12);
+
+const lightMat=new THREE.MeshStandardMaterial({
+color:0xffe7a4,
+emissive:0xffb833,
+emissiveIntensity:2
+});
+
+const light=new THREE.Mesh(lightGeo,lightMat);
+
+light.position.y=3.45;
+
+g.add(light);
+
+return g;
+
+}
+
+/* =========================================================
+   PANNEAU
+========================================================= */
+
+function addSign(x,y,z,text,color){
+
+const group=new THREE.Group();
+
+const poleGeo=new THREE.CylinderGeometry(.07,.07,2,8);
+
+const poleMat=new THREE.MeshStandardMaterial({
+color:0x333b43
+});
+
+const pole=new THREE.Mesh(poleGeo,poleMat);
+
+pole.position.y=1;
+
+group.add(pole);
+
+const boardGeo=new THREE.BoxGeometry(2.5,.8,.12);
+
+const boardMat=new THREE.MeshStandardMaterial({
+color:color
+});
+
+const sign=new THREE.Mesh(boardGeo,boardMat);
+
+sign.position.y=2;
+
+group.add(sign);
+
+group.position.set(x,0,z);
+
+scene.add(group);
+
+}
+
+/* =========================================================
+   COFFRE FINAL
+========================================================= */
+
+function createTreasure(x,y,z){
+
+const chest=new THREE.Group();
+
+const boxGeo=new THREE.BoxGeometry(2.5,1.2,1.5);
+
+const goldMat=new THREE.MeshStandardMaterial({
+color:0x8a5519,
+metalness:.7,
+roughness:.3
+});
+
+const box=new THREE.Mesh(boxGeo,goldMat);
+
+box.castShadow=true;
+
+chest.add(box);
+
+const lidGeo=new THREE.BoxGeometry(2.5,.35,1.55);
+
+const lid=new THREE.Mesh(lidGeo,
+new THREE.MeshStandardMaterial({
+color:0xd89d2d,
+metalness:.8,
+roughness:.25
+}));
+
+lid.position.y=.78;
+
+lid.castShadow=true;
+
+chest.add(lid);
+
+/* billets */
+
+for(let i=0;i<8;i++){
+
+const moneyGeo=new THREE.BoxGeometry(.7,.12,.4);
+
+const moneyMat=new THREE.MeshStandardMaterial({
+color:0x4fbf69
+});
+
+const money=new THREE.Mesh(moneyGeo,moneyMat);
+
+money.position.set(
+(Math.random()-.5)*1.6,
+1.05+Math.random()*.2,
+(Math.random()-.5)*.8
+);
+
+money.rotation.y=Math.random();
+
+chest.add(money);
+
+}
+
+chest.position.set(x,y,z);
+
+scene.add(chest);
+
+}
+
+/* =========================================================
+   AVATARS
+========================================================= */
+
+function createPlayers(){
+
+playerMeshes=[];
+
+players.forEach((p,index)=>{
+
+const avatar=createAvatar(p.avatar);
+
+avatar.position.set(
+(index-(players.length-1)/2)*1.8,
+2,
+12
+);
+
+scene.add(avatar);
+
+p.object=avatar;
+
+playerMeshes.push(avatar);
+
+});
+
+}
+
+/* avatars 3D */
+
+function createAvatar(type){
+
+const g=new THREE.Group();
+
+const colors={
+robot:0x61c5e8,
+alien:0x65db75,
+astronaut:0xe5e8ed,
+ninja:0x242833,
+wizard:0x7d57c9,
+detective:0x756048,
+pirate:0xb94e3c,
+scientist:0xffffff
+};
+
+const main=colors[type]||0x4dd6a0;
+
+const bodyGeo=new THREE.CylinderGeometry(.45,.6,1.2,12);
+
+const bodyMat=new THREE.MeshStandardMaterial({
+color:main,
+roughness:.5
+});
+
+const body=new THREE.Mesh(bodyGeo,bodyMat);
+
+body.castShadow=true;
+
+body.position.y=.8;
+
+g.add(body);
+
+const headGeo=new THREE.SphereGeometry(.48,16,12);
+
+const headMat=new THREE.MeshStandardMaterial({
+color:type==="alien"?0x7be38a:0xf0c6a5,
+roughness:.7
+});
+
+const head=new THREE.Mesh(headGeo,headMat);
+
+head.position.y=1.75;
+
+head.castShadow=true;
+
+g.add(head);
+
+/* yeux */
+
+const eyeGeo=new THREE.SphereGeometry(.08,8,8);
+
+const eyeMat=new THREE.MeshStandardMaterial({
+color:0x111820,
+emissive:0x000000
+});
+
+[-.17,.17].forEach(x=>{
+
+const eye=new THREE.Mesh(eyeGeo,eyeMat);
+
+eye.position.set(x,1.8,.42);
+
+g.add(eye);
+
+});
+
+/* accessoires */
+
+if(type==="robot"){
+
+const antennaGeo=new THREE.CylinderGeometry(.04,.04,.4,8);
+
+const antenna=new THREE.Mesh(
+antennaGeo,
+new THREE.MeshStandardMaterial({color:0x555e68})
+);
+
+antenna.position.y=2.35;
+
+g.add(antenna);
+
+const ball=new THREE.Mesh(
+new THREE.SphereGeometry(.09,8,8),
+new THREE.MeshStandardMaterial({
+color:0xff4f62,
+emissive:0xff273c,
+emissiveIntensity:1.5
+})
+);
+
+ball.position.y=2.57;
+
+g.add(ball);
+
+}
+
+if(type==="wizard"){
+
+const hatGeo=new THREE.ConeGeometry(.6,1,16);
+
+const hat=new THREE.Mesh(
+hatGeo,
+new THREE.MeshStandardMaterial({color:0x352260})
+);
+
+hat.position.y=2.4;
+
+g.add(hat);
+
+}
+
+if(type==="astronaut"){
+
+const helmet=new THREE.Mesh(
+new THREE.SphereGeometry(.58,16,12),
+new THREE.MeshStandardMaterial({
+color:0xffffff,
+metalness:.3,
+roughness:.2
+})
+);
+
+helmet.position.y=1.8;
+
+g.add(helmet);
+
+}
+
+if(type==="pirate"){
+
+const hat=new THREE.Mesh(
+new THREE.BoxGeometry(.75,.25,.6),
+new THREE.MeshStandardMaterial({color:0x171717})
+);
+
+hat.position.y=2.15;
+
+g.add(hat);
+
+}
+
+return g;
+
+}
+
+/* =========================================================
+   POSITION D'UNE CASE
+========================================================= */
+
+function tileZ(position){
+
+return 12-position*2.75;
+
+}
+
+/* =========================================================
+   DÉPLACEMENT CASE PAR CASE
+========================================================= */
+
+function movePlayer(amount){
+
+showScreen("board");
+
+const p=players[currentPlayer];
+
+const target=Math.min(
+BOARD_LENGTH-1,
+p.position+amount
+);
+
+const start=p.position;
+
+animateMovement(p,start,target);
+
+}
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+function animateMovement(player,start,target){
+
+let current=start;
+
+function nextStep(){
+
+if(current>=target){
+
+player.position=target;
+
+updateHUD();
+
+if(target===BOARD_LENGTH-1){
+
+setTimeout(()=>winGame(player),700);
+
+}else{
+
+setTimeout(()=>{
+document.getElementById("endTurn").style.display="block";
+},400);
+
+}
+
+return;
+
+}
+
+current++;
+
+player.position=current;
+
+const targetZ=tileZ(current);
+
+const startZ=player.object.position.z;
+
+const duration=450;
+
+const startTime=performance.now();
+
+function stepAnimation(now){
+
+const progress=Math.min(
+1,
+(now-startTime)/duration
+);
+
+const ease=
+progress<.5
+?4*progress*progress*progress
+:1-Math.pow(-2*progress+2,3)/2;
+
+player.object.position.z=
+startZ+(targetZ-startZ)*ease;
+
+player.object.position.y=
+2+Math.sin(progress*Math.PI)*1.3;
+
+player.object.rotation.y+=.15;
+
+if(progress<1){
+
+requestAnimationFrame(stepAnimation);
+
+}else{
+
+player.object.position.z=targetZ;
+player.object.position.y=2;
+
+setTimeout(nextStep,120);
+
+}
+
+}
+
+requestAnimationFrame(stepAnimation);
+
+}
+
+nextStep();
+
+}
+
+/* =========================================================
+   PLATEAU APRÈS MAUVAISE RÉPONSE
+========================================================= */
+
+function showBoardWithoutMovement(){
+
+showScreen("board");
+
+updateHUD();
+
+document.getElementById("endTurn").style.display="block";
+
+}
+
+/* =========================================================
+   HUD
+========================================================= */
+
+function updateHUD(){
+
+const p=players[currentPlayer];
+
+document.getElementById("hudPlayer").textContent=
+p.emoji+" "+p.name;
+
+document.getElementById("hudPosition").textContent=
+"Case "+(p.position+1)+" / "+BOARD_LENGTH;
+
+}
+
+/* =========================================================
    FIN DU TOUR
-===================================================== */
+========================================================= */
 
-function nextTurn(){
+document.getElementById("endTurn").addEventListener("click",()=>{
 
-  if(moving)
-    return;
+document.getElementById("endTurn").style.display="none";
 
-  currentPlayerIndex++;
+currentPlayer++;
 
-  if(
-    currentPlayerIndex>=
-    players.length
-  )
-    currentPlayerIndex=0;
+if(currentPlayer>=players.length){
 
-  showTurnScreen();
+currentPlayer=0;
 
 }
 
+showScreen("dice");
 
-/* =====================================================
-   ATTENTE
-===================================================== */
+showDiceTurn();
 
-function sleep(ms){
+});
 
-  return new Promise(
-    resolve=>
-      setTimeout(
-        resolve,
-        ms
-      )
-  );
-
-}
-
-
-/* =====================================================
+/* =========================================================
    VICTOIRE
-===================================================== */
+========================================================= */
 
-function showVictory(
-  player
-){
+function winGame(player){
 
-  const board=
-    document.getElementById(
-      "boardScreenCity"
-    );
+document.getElementById("winnerName").textContent=
+player.emoji+" "+player.name;
 
-  showScreen(
-    "boardScreen"
-  );
+showScreen("win");
 
-  setTimeout(
-    ()=>{
-
-      updatePawns(
-
-        document.getElementById(
-          "boardPath2"
-        ),
-
-        document.getElementById(
-          "pawns2"
-        )
-
-      );
-
-      /*
-        Rotation spectaculaire du plateau
-        avec le coffre sur la dernière case.
-      */
-
-      board.classList.add(
-        "victory"
-      );
-
-    },
-    150
-  );
-
-  setTimeout(
-    ()=>{
-
-      document
-        .getElementById(
-          "winnerAvatar"
-        )
-        .textContent=
-          avatars[
-            player.avatar
-          ].emoji;
-
-      document
-        .getElementById(
-          "winnerName"
-        )
-        .textContent=
-          player.name;
-
-      createConfetti();
-
-      showScreen(
-        "endScreen"
-      );
-
-    },
-    4300
-  );
+victoryAnimation();
 
 }
 
+/* =========================================================
+   ANIMATION VICTOIRE
+========================================================= */
 
-/* =====================================================
-   CONFETTIS
-===================================================== */
+let victoryParticles=[];
 
-function createConfetti(){
+function victoryAnimation(){
 
-  const container=
-    document.getElementById(
-      "confetti"
-    );
+const winner=players[currentPlayer];
 
-  container.innerHTML="";
+camera.position.set(
+15,
+18,
+winner.object.position.z+15
+);
 
-  const colors=[
+let start=performance.now();
 
-    "#2563eb",
-    "#f59e0b",
-    "#16a34a",
-    "#dc2626",
-    "#7c3aed",
-    "#ec4899"
+function animateVictory(now){
 
-  ];
+const t=(now-start)/1000;
 
-  for(
-    let i=0;
-    i<150;
-    i++
-  ){
+camera.position.x=
+Math.cos(t*.8)*20;
 
-    const piece=
-      document.createElement(
-        "div"
-      );
+camera.position.z=
+winner.object.position.z+
+Math.sin(t*.8)*20;
 
-    piece.className=
-      "confetti-piece";
+camera.position.y=
+18+Math.sin(t*2)*4;
 
-    piece.style.left=
-      Math.random()*100+
-      "%";
+camera.lookAt(
+0,
+2,
+winner.object.position.z
+);
 
-    piece.style.background=
-      colors[
-        Math.floor(
-          Math.random()*
-          colors.length
-        )
-      ];
+boardGroup.rotation.y=
+Math.sin(t*.7)*.08;
 
-    piece.style.animationDuration=
-      (2+
-       Math.random()*3)+
-      "s";
+if(t<7){
 
-    piece.style.animationDelay=
-      Math.random()*1.5+
-      "s";
-
-    container.appendChild(
-      piece
-    );
-
-  }
+requestAnimationFrame(animateVictory);
 
 }
+
+}
+
+animateVictory(start);
+
+/* particules */
+
+for(let i=0;i<120;i++){
+
+const geo=new THREE.SphereGeometry(.08,6,6);
+
+const mat=new THREE.MeshBasicMaterial({
+color:[
+0xffd84d,
+0x48e09c,
+0x4bc6ff,
+0xff6680
+][i%4]
+});
+
+const particle=new THREE.Mesh(geo,mat);
+
+particle.position.copy(winner.object.position);
+
+particle.userData={
+vx:(Math.random()-.5)*.2,
+vy:.05+Math.random()*.18,
+vz:(Math.random()-.5)*.2
+};
+
+scene.add(particle);
+
+victoryParticles.push(particle);
+
+}
+
+}
+
+function updateParticles(){
+
+victoryParticles.forEach(p=>{
+
+p.position.x+=p.userData.vx;
+
+p.position.y+=p.userData.vy;
+
+p.position.z+=p.userData.vz;
+
+p.userData.vy-=.003;
+
+});
+
+}
+
+/* =========================================================
+   RENDU
+========================================================= */
+
+function animate(){
+
+requestAnimationFrame(animate);
+
+const delta=clock.getDelta();
+
+updateParticles();
+
+if(renderer && scene && camera){
+
+/* caméra légèrement vivante */
+
+if(!screens.win.classList.contains("active")){
+
+const p=players[currentPlayer];
+
+if(p && p.object){
+
+const desiredX=p.object.position.x+12;
+
+const desiredY=15;
+
+const desiredZ=p.object.position.z+14;
+
+camera.position.x+=
+(desiredX-camera.position.x)*.025;
+
+camera.position.y+=
+(desiredY-camera.position.y)*.025;
+
+camera.position.z+=
+(desiredZ-camera.position.z)*.025;
+
+camera.lookAt(
+p.object.position.x,
+1.5,
+p.object.position.z
+);
+
+}
+
+}
+
+renderer.render(scene,camera);
+
+}
+
+}
+
+/* =========================================================
+   REDIMENSIONNEMENT
+========================================================= */
+
+window.addEventListener("resize",()=>{
+
+if(camera && renderer){
+
+camera.aspect=
+window.innerWidth/window.innerHeight;
+
+camera.updateProjectionMatrix();
+
+renderer.setSize(
+window.innerWidth,
+window.innerHeight
+);
+
+}
+
+});
+
+/* =========================================================
+   UTILITAIRES
+========================================================= */
+
+function shuffle(array){
+
+for(let i=array.length-1;i>0;i--){
+
+const j=Math.floor(Math.random()*(i+1));
+
+[array[i],array[j]]=
+[array[j],array[i]];
+
+}
+
+return array;
+
+}
+
+/* =========================================================
+   RECOMMENCER
+========================================================= */
+
+document.getElementById("restartButton").addEventListener("click",()=>{
+
+location.reload();
+
+});
 
 </script>
 
